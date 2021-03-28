@@ -1,9 +1,10 @@
 package name.eraxillan.ongoingschedule
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
+//import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -12,8 +13,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class MainActivity : AppCompatActivity() {
-    private val TAG = MainActivity::class.java.simpleName
+class MainActivity
+    : AppCompatActivity()
+    , ListSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener {
+
+    companion object {
+        const val INTENT_LIST_KEY = "list"
+        val TAG = MainActivity::class.java.simpleName
+    }
 
     // You use the `lateinit` keyword to tell the compiler that a `RecyclerView` will be
     // created sometime in the future.
@@ -28,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         fab = findViewById<FloatingActionButton>(R.id.fab)
 
-        fab.setOnClickListener { view ->
+        fab.setOnClickListener { /*view*/ _ ->
             /*
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
@@ -42,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         // https://developer.android.com/guide/topics/ui/layout/recyclerview#modifying-layout
         lstOngoings.layoutManager = LinearLayoutManager(this)
         val lists = listDataManager.readLists()
-        lstOngoings.adapter = ListSelectionRecyclerViewAdapter(lists)
+        lstOngoings.adapter = ListSelectionRecyclerViewAdapter(lists, this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -74,12 +81,24 @@ class MainActivity : AppCompatActivity() {
         builder.setPositiveButton(positiveButtonTitle) { dialog, _ ->
             val list = TaskList(listTitleEditText.text.toString())
             listDataManager.saveList(list)
+
             val recyclerAdapter = lstOngoings.adapter as ListSelectionRecyclerViewAdapter
             recyclerAdapter.addList(list)
 
             dialog.dismiss()
+            showListDetail(list)
         }
 
         builder.create().show()
+    }
+
+    private fun showListDetail(list: TaskList) {
+        val listDetailIntent = Intent(this, ListDetailActivity::class.java)
+        listDetailIntent.putExtra(INTENT_LIST_KEY, list)
+        startActivity(listDetailIntent)
+    }
+
+    override fun listItemClicked(list: TaskList) {
+        showListDetail(list)
     }
 }

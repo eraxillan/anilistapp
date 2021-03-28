@@ -34,8 +34,4 @@ class ListDataManager(private val context: Context) {
         }
         return taskLists
     }
-
-    private inline fun <reified T> isType(obj: Any?, contract: T): Boolean {
-        return (obj is T)
-    }
 }
