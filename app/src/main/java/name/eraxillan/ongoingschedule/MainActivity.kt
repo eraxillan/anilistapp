@@ -13,10 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
+    private val TAG = MainActivity::class.java.simpleName
+
     // You use the `lateinit` keyword to tell the compiler that a `RecyclerView` will be
     // created sometime in the future.
     private lateinit var fab: FloatingActionButton
     private lateinit var lstOngoings: RecyclerView
+    private val listDataManager: ListDataManager = ListDataManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +41,8 @@ class MainActivity : AppCompatActivity() {
         // NOTE: Android also provides the `GridLayoutManager` and `StaggeredGridLayoutManager`:
         // https://developer.android.com/guide/topics/ui/layout/recyclerview#modifying-layout
         lstOngoings.layoutManager = LinearLayoutManager(this)
-        lstOngoings.adapter = ListSelectionRecyclerViewAdapter()
+        val lists = listDataManager.readLists()
+        lstOngoings.adapter = ListSelectionRecyclerViewAdapter(lists)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -68,6 +72,11 @@ class MainActivity : AppCompatActivity() {
         builder.setView(listTitleEditText)
 
         builder.setPositiveButton(positiveButtonTitle) { dialog, _ ->
+            val list = TaskList(listTitleEditText.text.toString())
+            listDataManager.saveList(list)
+            val recyclerAdapter = lstOngoings.adapter as ListSelectionRecyclerViewAdapter
+            recyclerAdapter.addList(list)
+
             dialog.dismiss()
         }
 
