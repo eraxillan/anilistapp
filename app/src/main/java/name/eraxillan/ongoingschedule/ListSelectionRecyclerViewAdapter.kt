@@ -9,6 +9,8 @@ class ListSelectionRecyclerViewAdapter(
     val clickListener: ListSelectionRecyclerViewClickListener)
     : RecyclerView.Adapter<ListSelectionViewHolder>() {
 
+    private val TAG = ListSelectionRecyclerViewAdapter::class.java.simpleName
+
     interface ListSelectionRecyclerViewClickListener {
         fun listItemClicked(list: TaskList)
     }

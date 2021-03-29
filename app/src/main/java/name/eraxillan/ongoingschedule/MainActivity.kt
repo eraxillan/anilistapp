@@ -1,5 +1,6 @@
 package name.eraxillan.ongoingschedule
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
@@ -19,6 +20,7 @@ class MainActivity
 
     companion object {
         const val INTENT_LIST_KEY = "list"
+        const val LIST_DETAIL_REQUEST_CODE = 123
         val TAG = MainActivity::class.java.simpleName
     }
 
@@ -29,11 +31,12 @@ class MainActivity
     private val listDataManager: ListDataManager = ListDataManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
 
-        fab = findViewById<FloatingActionButton>(R.id.fab)
+        fab = findViewById(R.id.fab)
 
         fab.setOnClickListener { /*view*/ _ ->
             /*
@@ -44,7 +47,7 @@ class MainActivity
         }
 
         // Setup the list view (`RecyclerView`): give it a LayoutManager and Adapter
-        lstOngoings = findViewById(R.id.lstOngoings)
+        lstOngoings = findViewById(R.id.lst_ongoings)
         // NOTE: Android also provides the `GridLayoutManager` and `StaggeredGridLayoutManager`:
         // https://developer.android.com/guide/topics/ui/layout/recyclerview#modifying-layout
         lstOngoings.layoutManager = LinearLayoutManager(this)
@@ -53,12 +56,14 @@ class MainActivity
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -69,6 +74,7 @@ class MainActivity
     }
 
     private fun showCreateListDialog() {
+
         val dialogTitle = getString(R.string.name_of_list)
         val positiveButtonTitle = getString(R.string.create_list)
 
@@ -93,12 +99,32 @@ class MainActivity
     }
 
     private fun showListDetail(list: TaskList) {
+
         val listDetailIntent = Intent(this, ListDetailActivity::class.java)
         listDetailIntent.putExtra(INTENT_LIST_KEY, list)
-        startActivity(listDetailIntent)
+        startActivityForResult(listDetailIntent, LIST_DETAIL_REQUEST_CODE)
     }
 
     override fun listItemClicked(list: TaskList) {
         showListDetail(list)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == LIST_DETAIL_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            data?.let {
+                // FIXME: original `data.getParcelableExtra(INTENT_LIST_KEY) as TaskList` cause error
+                listDataManager.saveList(data.getParcelableExtra(INTENT_LIST_KEY)!!)
+                updateLists()
+            }
+        }
+    }
+
+    private fun updateLists() {
+
+        val lists = listDataManager.readLists()
+        lstOngoings.adapter = ListSelectionRecyclerViewAdapter(lists, this)
     }
 }

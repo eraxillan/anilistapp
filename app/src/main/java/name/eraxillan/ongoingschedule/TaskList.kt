@@ -6,14 +6,15 @@ import android.os.Parcelable
 class TaskList constructor (val name: String, val tasks: ArrayList<String> = ArrayList())
     : Parcelable
 {
+    private val TAG = TaskList::class.java.simpleName
+
     constructor(source: Parcel) : this(
-        //source.readString()!!,
-        //source.createStringArrayList()!!
         source.readString() ?: "",
         source.createStringArrayList() ?: ArrayList()
     )
 
     override fun writeToParcel(destination: Parcel, flags: Int) {
+
         destination.writeString(name)
         destination.writeStringList(tasks)
     }
