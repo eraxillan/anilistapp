@@ -58,6 +58,8 @@ captures/
 .idea/modules.xml
 .idea/scopes/scope_settings.xml
 .idea/vcs.xml
+.idea/codeStyles/Project.xml
+.idea/codeStyles/codeStyleConfig.xml
 *.iml
 # NOTE: added by me
 .idea/.gitignore

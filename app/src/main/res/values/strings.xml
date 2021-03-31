@@ -5,4 +5,5 @@
     <string name="create_list">Watch</string>
     <string name="task_to_add">What is the task you want to add?</string>
     <string name="add_task">Add</string>
+    <string name="list_fragment_tag">List Fragment</string>
 </resources>

@@ -12,11 +12,11 @@ class ListItemsRecyclerViewAdapter(var list: TaskList)
     // Create a `View` from the `Layout`
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListItemViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(
-                        R.layout.task_view_holder,
-                        parent,
-                        false
-                )
+            .inflate(
+                R.layout.task_view_holder,
+                parent,
+                false
+            )
         return ListItemViewHolder(view)
     }
 

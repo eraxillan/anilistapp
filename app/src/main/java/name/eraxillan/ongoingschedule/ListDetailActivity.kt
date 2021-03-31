@@ -19,7 +19,6 @@ class ListDetailActivity : AppCompatActivity() {
     lateinit var btnAddTask: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_detail)
 
@@ -37,25 +36,23 @@ class ListDetailActivity : AppCompatActivity() {
     }
 
     private fun showCreateTaskDialog() {
-
         val taskEditText = EditText(this)
         taskEditText.inputType = InputType.TYPE_CLASS_TEXT
 
         AlertDialog.Builder(this)
-                .setTitle(R.string.task_to_add)
-                .setView(taskEditText)
-                .setPositiveButton(R.string.add_task) { dialog, _ ->
-                    val task = taskEditText.text.toString()
-                    list.tasks.add(task)
+            .setTitle(R.string.task_to_add)
+            .setView(taskEditText)
+            .setPositiveButton(R.string.add_task) { dialog, _ ->
+                val task = taskEditText.text.toString()
+                list.tasks.add(task)
 
-                    val recyclerAdapter = lstOngoingInfo.adapter
-                            as ListItemsRecyclerViewAdapter
-                    recyclerAdapter.notifyItemInserted(list.tasks.size - 1)
+                val recyclerAdapter = lstOngoingInfo.adapter as ListItemsRecyclerViewAdapter
+                recyclerAdapter.notifyItemInserted(list.tasks.size - 1)
 
-                    dialog.dismiss()
-                }
-                .create()
-                .show()
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     // Called whenever the back button is tapped to get back to the List Activity
