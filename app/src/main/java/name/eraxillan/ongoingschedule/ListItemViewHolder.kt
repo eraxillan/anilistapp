@@ -7,5 +7,5 @@ import androidx.recyclerview.widget.RecyclerView
 class ListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val TAG = ListItemViewHolder::class.java.simpleName
 
-    val taskTextView = itemView.findViewById(R.id.txt_task) as TextView
+    val taskTextView = itemView.findViewById(R.id.textview_task) as TextView
 }
