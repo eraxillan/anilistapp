@@ -1,4 +1,4 @@
-package name.eraxillan.ongoingschedule
+package name.eraxillan.ongoingschedule.ui
 
 import android.content.Context
 import android.os.Bundle
@@ -8,6 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import name.eraxillan.ongoingschedule.ListDataManager
+import name.eraxillan.ongoingschedule.ListSelectionRecyclerViewAdapter
+import name.eraxillan.ongoingschedule.R
+import name.eraxillan.ongoingschedule.TaskList
 
 /**
  * A simple [Fragment] (isolated view) subclass.

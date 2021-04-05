@@ -1,4 +1,4 @@
-package name.eraxillan.ongoingschedule
+package name.eraxillan.ongoingschedule.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import name.eraxillan.ongoingschedule.ListItemsRecyclerViewAdapter
+import name.eraxillan.ongoingschedule.R
+import name.eraxillan.ongoingschedule.TaskList
 
 class ListDetailActivity : AppCompatActivity() {
     private val TAG = ListDetailActivity::class.java.simpleName

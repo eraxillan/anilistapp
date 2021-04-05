@@ -1,4 +1,4 @@
-package name.eraxillan.ongoingschedule
+package name.eraxillan.ongoingschedule.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -12,8 +12,7 @@ import android.view.MenuItem
 import android.widget.EditText
 import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import name.eraxillan.ongoingschedule.*
 
 /*
 Remember that splitting your code into individual, isolated Fragments makes them reusable.
