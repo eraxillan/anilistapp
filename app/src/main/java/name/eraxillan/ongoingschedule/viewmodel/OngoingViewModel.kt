@@ -7,10 +7,10 @@ import androidx.lifecycle.LiveData
 import name.eraxillan.ongoingschedule.model.Ongoing
 import name.eraxillan.ongoingschedule.repository.OngoingRepo
 
-class MainViewModel(application: Application)
+class OngoingViewModel(application: Application)
     : AndroidViewModel(application) {
 
-    private val TAG = "MainViewModel"
+    private val TAG = "OngoingViewModel"
 
     private var ongoingRepo: OngoingRepo = OngoingRepo(getApplication())
     private var ongoings: LiveData<List<Ongoing>>? = null
