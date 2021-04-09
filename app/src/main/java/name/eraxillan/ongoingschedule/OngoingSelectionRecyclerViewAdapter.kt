@@ -4,12 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class ListSelectionRecyclerViewAdapter(
+class OngoingSelectionRecyclerViewAdapter(
     private val lists : ArrayList<TaskList>,
     private val clickListener: ListSelectionRecyclerViewClickListener)
     : RecyclerView.Adapter<OngoingSelectionViewHolder>() {
 
-    private val TAG = ListSelectionRecyclerViewAdapter::class.java.simpleName
+    private val TAG = OngoingSelectionRecyclerViewAdapter::class.java.simpleName
 
     interface ListSelectionRecyclerViewClickListener {
         fun listItemClicked(list: TaskList)

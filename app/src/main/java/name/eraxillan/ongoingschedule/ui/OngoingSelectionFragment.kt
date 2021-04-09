@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.ongoingschedule.ListDataManager
-import name.eraxillan.ongoingschedule.ListSelectionRecyclerViewAdapter
+import name.eraxillan.ongoingschedule.OngoingSelectionRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.R
 import name.eraxillan.ongoingschedule.TaskList
 
@@ -21,7 +21,7 @@ import name.eraxillan.ongoingschedule.TaskList
  */
 class OngoingSelectionFragment
     : Fragment()
-    , ListSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener {
+    , OngoingSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener {
 
     private var listener: OnListItemFragmentInteractionListener? = null
     private lateinit var lstOngoings: RecyclerView
@@ -32,7 +32,7 @@ class OngoingSelectionFragment
     fun addList(list: TaskList) {
         listDataManager.saveList(list)
 
-        val recyclerAdapter = lstOngoings.adapter as ListSelectionRecyclerViewAdapter
+        val recyclerAdapter = lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
         recyclerAdapter.addList(list)
     }
 
@@ -43,7 +43,7 @@ class OngoingSelectionFragment
 
     private fun updateLists() {
         val lists = listDataManager.readLists()
-        lstOngoings.adapter = ListSelectionRecyclerViewAdapter(lists, this)
+        lstOngoings.adapter = OngoingSelectionRecyclerViewAdapter(lists, this)
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ class OngoingSelectionFragment
         view.let {
             lstOngoings = it.findViewById(R.id.lst_ongoings)
             lstOngoings.layoutManager = LinearLayoutManager(activity)
-            lstOngoings.adapter = ListSelectionRecyclerViewAdapter(lists, this)
+            lstOngoings.adapter = OngoingSelectionRecyclerViewAdapter(lists, this)
         }
 
         // FIXME: implement Edit/Delete buttons first
@@ -106,7 +106,7 @@ class OngoingSelectionFragment
         listener = null
     }
 
-    // `ListSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener` implementation
+    // `OngoingSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener` implementation
     override fun listItemClicked(list: TaskList) {
         listener?.onListItemClicked(list)
     }
@@ -124,7 +124,7 @@ class OngoingSelectionFragment
                 //recyclerView.adapter!!.notifyItemRemoved(position)
 
                 // FIXME: implement
-                val recyclerAdapter = lstOngoings.adapter as ListSelectionRecyclerViewAdapter
+                val recyclerAdapter = lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
                 //recyclerAdapter.removeList(list)
             }
         }
