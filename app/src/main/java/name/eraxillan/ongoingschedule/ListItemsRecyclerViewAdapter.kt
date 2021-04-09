@@ -5,22 +5,22 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 class ListItemsRecyclerViewAdapter(var list: TaskList)
-    : RecyclerView.Adapter<ListItemViewHolder>() {
+    : RecyclerView.Adapter<OngoingItemViewHolder>() {
 
     private val TAG = ListItemsRecyclerViewAdapter::class.java.simpleName
 
     // Create a `View` from the `Layout`
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListItemViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingItemViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(
                 R.layout.task_view_holder,
                 parent,
                 false
             )
-        return ListItemViewHolder(view)
+        return OngoingItemViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ListItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: OngoingItemViewHolder, position: Int) {
         holder.taskTextView.text = list.tasks[position]
     }
 
