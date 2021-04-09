@@ -8,10 +8,10 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.MainActivity"
     tools:showIn="@layout/activity_main">
-    <!-- 1 -->
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/list_selection_fragment"
-        android:name="name.eraxillan.ongoingschedule.ListSelectionFragment"
+        android:name="name.eraxillan.ongoingschedule.ui.ListSelectionFragment"
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_marginStart="0dp"
@@ -21,7 +21,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-    <!-- 2 -->
+
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="0dp"

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
-    <!-- A FrameLayout lets you allocate space for a single item. This is perfect for something
-    like a Fragment that could take up an entire screen. -->
+
+    <!-- A FrameLayout lets you allocate space for a single item.
+    This is perfect for something like a Fragment that could
+    take up an entire screen. -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/list_selection_fragment"
-        android:name="name.eraxillan.ongoingschedule.ListSelectionFragment"
+        android:name="name.eraxillan.ongoingschedule.ui.ListSelectionFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="0dp"
@@ -19,4 +20,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
