@@ -21,14 +21,14 @@ Any app that wants to succeed across multiple devices and multiple size classes
 need to use Fragments to ensure it provides the best experience for its users.
  */
 
-class MainActivity
+class OngoingListActivity
     : AppCompatActivity()
     , ListSelectionFragment.OnListItemFragmentInteractionListener {
 
     companion object {
         const val INTENT_LIST_KEY = "list"
         const val LIST_DETAIL_REQUEST_CODE = 123
-        val TAG = MainActivity::class.java.simpleName
+        val TAG = OngoingListActivity::class.java.simpleName
     }
 
     // You use the `lateinit` keyword to tell the compiler that a `RecyclerView` will be

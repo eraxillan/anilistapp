@@ -25,7 +25,7 @@ class ListDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_detail)
 
-        list = intent.getParcelableExtra(MainActivity.INTENT_LIST_KEY)!!
+        list = intent.getParcelableExtra(OngoingListActivity.INTENT_LIST_KEY)!!
         title = list.name
 
         lstOngoingInfo = findViewById(R.id.lst_ongoing_info)
@@ -63,7 +63,7 @@ class ListDetailActivity : AppCompatActivity() {
         // Bundle up the list in its current state, then put it into an Intent
 
         val bundle = Bundle()
-        bundle.putParcelable(MainActivity.INTENT_LIST_KEY, list)
+        bundle.putParcelable(OngoingListActivity.INTENT_LIST_KEY, list)
 
         val intent = Intent()
         intent.putExtras(bundle)

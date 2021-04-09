@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".ui.ListDetailActivity" />
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.OngoingListActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

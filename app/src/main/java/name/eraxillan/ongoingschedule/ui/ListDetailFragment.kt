@@ -32,7 +32,7 @@ class ListDetailFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            list = it.getParcelable(MainActivity.INTENT_LIST_KEY)!!
+            list = it.getParcelable(OngoingListActivity.INTENT_LIST_KEY)!!
         }
     }
 

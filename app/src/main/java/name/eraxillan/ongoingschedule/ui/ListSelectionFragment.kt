@@ -137,7 +137,7 @@ class ListSelectionFragment
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Inform objects that a list has been tapped.
-    // `MainActivity` will implement this interface
+    // `OngoingListActivity` will implement this interface
     interface OnListItemFragmentInteractionListener {
         fun onListItemClicked(list: TaskList)
     }
