@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.ongoingschedule.ListDataManager
@@ -90,6 +91,9 @@ class ListSelectionFragment
             lstOngoings.layoutManager = LinearLayoutManager(activity)
             lstOngoings.adapter = ListSelectionRecyclerViewAdapter(lists, this)
         }
+
+        // FIXME: implement Edit/Delete buttons first
+        //setRecyclerViewItemTouchListener()
     }
 
     // Lifecycle method.
@@ -106,6 +110,31 @@ class ListSelectionFragment
     override fun listItemClicked(list: TaskList) {
         listener?.onListItemClicked(list)
     }
+
+    private fun setRecyclerViewItemTouchListener() {
+
+        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, viewHolder1: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
+                val position = viewHolder.adapterPosition
+                //photosList.removeAt(position)
+                //recyclerView.adapter!!.notifyItemRemoved(position)
+
+                // FIXME: implement
+                val recyclerAdapter = lstOngoings.adapter as ListSelectionRecyclerViewAdapter
+                //recyclerAdapter.removeList(list)
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(lstOngoings)
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Inform objects that a list has been tapped.
     // `MainActivity` will implement this interface

@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 class ListSelectionRecyclerViewAdapter(
-    val lists : ArrayList<TaskList>,
-    val clickListener: ListSelectionRecyclerViewClickListener)
+    private val lists : ArrayList<TaskList>,
+    private val clickListener: ListSelectionRecyclerViewClickListener)
     : RecyclerView.Adapter<ListSelectionViewHolder>() {
 
     private val TAG = ListSelectionRecyclerViewAdapter::class.java.simpleName
@@ -14,6 +14,8 @@ class ListSelectionRecyclerViewAdapter(
     interface ListSelectionRecyclerViewClickListener {
         fun listItemClicked(list: TaskList)
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListSelectionViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -37,6 +39,8 @@ class ListSelectionRecyclerViewAdapter(
     override fun getItemCount(): Int {
         return lists.size
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     fun addList(list: TaskList) {
         lists.add(list)
