@@ -23,7 +23,7 @@ need to use Fragments to ensure it provides the best experience for its users.
 
 class OngoingListActivity
     : AppCompatActivity()
-    , ListSelectionFragment.OnListItemFragmentInteractionListener {
+    , OngoingSelectionFragment.OnListItemFragmentInteractionListener {
 
     companion object {
         const val INTENT_LIST_KEY = "list"
@@ -34,7 +34,7 @@ class OngoingListActivity
     // You use the `lateinit` keyword to tell the compiler that a `RecyclerView` will be
     // created sometime in the future
     private lateinit var fab: FloatingActionButton
-    private var listSelectionFragment: ListSelectionFragment = ListSelectionFragment.newInstance()
+    private var ongoingSelectionFragment: OngoingSelectionFragment = OngoingSelectionFragment.newInstance()
     private var fragmentContainer: FrameLayout? = null
     private var largeScreen = false
     private var listFragment: ListDetailFragment? = null
@@ -54,7 +54,7 @@ class OngoingListActivity
 
         builder.setPositiveButton(positiveButtonTitle) { dialog, _ ->
             val list = TaskList(listTitleEditText.text.toString())
-            listSelectionFragment.addList(list)
+            ongoingSelectionFragment.addList(list)
 
             dialog.dismiss()
             showListDetail(list)
@@ -117,8 +117,8 @@ class OngoingListActivity
         // powerful tool to make the UI as flexible as possible across various screen sizes.
         // It's called a support Fragment manager rather than just a Fragment manager because
         // some older versions of Android didn't include fragments
-        listSelectionFragment =
-            supportFragmentManager.findFragmentById(R.id.list_selection_fragment) as ListSelectionFragment
+        ongoingSelectionFragment =
+            supportFragmentManager.findFragmentById(R.id.list_selection_fragment) as OngoingSelectionFragment
         fragmentContainer = findViewById(R.id.fragment_container)
         largeScreen = (fragmentContainer != null)
 
@@ -156,7 +156,7 @@ class OngoingListActivity
         if (requestCode == LIST_DETAIL_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             data?.let {
                 // FIXME: original `data.getParcelableExtra(INTENT_LIST_KEY) as TaskList` cause error
-                listSelectionFragment.saveList(data.getParcelableExtra(INTENT_LIST_KEY)!!)
+                ongoingSelectionFragment.saveList(data.getParcelableExtra(INTENT_LIST_KEY)!!)
             }
         }
     }
@@ -167,7 +167,7 @@ class OngoingListActivity
 
         title = resources.getString(R.string.app_name)
         listFragment?.list?.let {
-            listSelectionFragment.listDataManager.saveList(it)
+            ongoingSelectionFragment.listDataManager.saveList(it)
         }
         listFragment?.let {
             supportFragmentManager
