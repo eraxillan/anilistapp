@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.ListDetailActivity" />
+        <activity android:name=".ui.OngoingDetailActivity" />
         <activity
             android:name=".ui.OngoingListActivity"
             android:label="@string/app_name"

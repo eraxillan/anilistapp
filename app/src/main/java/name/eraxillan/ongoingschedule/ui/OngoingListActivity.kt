@@ -81,7 +81,7 @@ class OngoingListActivity
 
     private fun showListDetail(list: TaskList) {
         if (!largeScreen) {
-            val listDetailIntent = Intent(this, ListDetailActivity::class.java)
+            val listDetailIntent = Intent(this, OngoingDetailActivity::class.java)
             listDetailIntent.putExtra(INTENT_LIST_KEY, list)
             startActivityForResult(listDetailIntent, LIST_DETAIL_REQUEST_CODE)
         } else {

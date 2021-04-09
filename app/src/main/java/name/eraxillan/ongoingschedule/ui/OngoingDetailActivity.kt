@@ -14,8 +14,8 @@ import name.eraxillan.ongoingschedule.ListItemsRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.R
 import name.eraxillan.ongoingschedule.TaskList
 
-class ListDetailActivity : AppCompatActivity() {
-    private val TAG = ListDetailActivity::class.java.simpleName
+class OngoingDetailActivity : AppCompatActivity() {
+    private val TAG = OngoingDetailActivity::class.java.simpleName
 
     lateinit var list: TaskList
     lateinit var lstOngoingInfo: RecyclerView
