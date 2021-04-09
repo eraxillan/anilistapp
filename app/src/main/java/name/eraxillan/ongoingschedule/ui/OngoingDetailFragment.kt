@@ -13,10 +13,10 @@ import name.eraxillan.ongoingschedule.TaskList
 
 /**
  * A simple [Fragment] subclass.
- * Use the [ListDetailFragment.newInstance] factory method to
+ * Use the [OngoingDetailFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ListDetailFragment : Fragment() {
+class OngoingDetailFragment : Fragment() {
     lateinit var listItemsRecyclerView: RecyclerView
     lateinit var list: TaskList
 
@@ -57,11 +57,11 @@ class ListDetailFragment : Fragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @return A new instance of fragment ListDetailFragment.
+         * @return A new instance of fragment OngoingDetailFragment.
          */
         @JvmStatic
-        fun newInstance(list: TaskList): ListDetailFragment {
-            val fragment = ListDetailFragment()
+        fun newInstance(list: TaskList): OngoingDetailFragment {
+            val fragment = OngoingDetailFragment()
             val arguments = Bundle()
             arguments.putParcelable(ARG_LIST, list)
             fragment.arguments = arguments

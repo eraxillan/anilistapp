@@ -37,7 +37,7 @@ class OngoingListActivity
     private var ongoingSelectionFragment: OngoingSelectionFragment = OngoingSelectionFragment.newInstance()
     private var fragmentContainer: FrameLayout? = null
     private var largeScreen = false
-    private var listFragment: ListDetailFragment? = null
+    private var ongoingFragment: OngoingDetailFragment? = null
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -72,7 +72,7 @@ class OngoingListActivity
             .setView(taskEditText)
             .setPositiveButton(R.string.add_task) { dialog, _ ->
                 val task = taskEditText.text.toString()
-                listFragment?.addTask(task)
+                ongoingFragment?.addTask(task)
                 dialog.dismiss()
             }
             .create()
@@ -87,8 +87,8 @@ class OngoingListActivity
         } else {
             title = list.name
 
-            listFragment = ListDetailFragment.newInstance(list)
-            listFragment?.let {
+            ongoingFragment = OngoingDetailFragment.newInstance(list)
+            ongoingFragment?.let {
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, it, getString(R.string.list_fragment_tag))
                     .addToBackStack(null)
@@ -166,15 +166,15 @@ class OngoingListActivity
         super.onBackPressed()
 
         title = resources.getString(R.string.app_name)
-        listFragment?.list?.let {
+        ongoingFragment?.list?.let {
             ongoingSelectionFragment.listDataManager.saveList(it)
         }
-        listFragment?.let {
+        ongoingFragment?.let {
             supportFragmentManager
                 .beginTransaction()
                 .remove(it)
                 .commit()
-            listFragment = null
+            ongoingFragment = null
         }
 
         fab.setOnClickListener {
