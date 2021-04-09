@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import name.eraxillan.ongoingschedule.ListItemsRecyclerViewAdapter
+import name.eraxillan.ongoingschedule.OngoingItemsRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.R
 import name.eraxillan.ongoingschedule.TaskList
 
@@ -29,7 +29,7 @@ class OngoingDetailActivity : AppCompatActivity() {
         title = list.name
 
         lstOngoingInfo = findViewById(R.id.lst_ongoing_info)
-        lstOngoingInfo.adapter = ListItemsRecyclerViewAdapter(list)
+        lstOngoingInfo.adapter = OngoingItemsRecyclerViewAdapter(list)
         lstOngoingInfo.layoutManager = LinearLayoutManager(this)
 
         btnAddTask = findViewById(R.id.btn_add_task)
@@ -49,7 +49,7 @@ class OngoingDetailActivity : AppCompatActivity() {
                 val task = taskEditText.text.toString()
                 list.tasks.add(task)
 
-                val recyclerAdapter = lstOngoingInfo.adapter as ListItemsRecyclerViewAdapter
+                val recyclerAdapter = lstOngoingInfo.adapter as OngoingItemsRecyclerViewAdapter
                 recyclerAdapter.notifyItemInserted(list.tasks.size - 1)
 
                 dialog.dismiss()

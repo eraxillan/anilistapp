@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class ListItemsRecyclerViewAdapter(var list: TaskList)
+class OngoingItemsRecyclerViewAdapter(var list: TaskList)
     : RecyclerView.Adapter<OngoingItemViewHolder>() {
 
-    private val TAG = ListItemsRecyclerViewAdapter::class.java.simpleName
+    private val TAG = OngoingItemsRecyclerViewAdapter::class.java.simpleName
 
     // Create a `View` from the `Layout`
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingItemViewHolder {

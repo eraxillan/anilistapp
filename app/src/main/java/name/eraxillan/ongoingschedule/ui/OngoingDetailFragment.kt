@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import name.eraxillan.ongoingschedule.ListItemsRecyclerViewAdapter
+import name.eraxillan.ongoingschedule.OngoingItemsRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.R
 import name.eraxillan.ongoingschedule.TaskList
 
@@ -23,7 +23,7 @@ class OngoingDetailFragment : Fragment() {
     fun addTask(item: String) {
         list.tasks.add(item)
 
-        val listRecyclerAdapter = listItemsRecyclerView.adapter as ListItemsRecyclerViewAdapter
+        val listRecyclerAdapter = listItemsRecyclerView.adapter as OngoingItemsRecyclerViewAdapter
         listRecyclerAdapter.list = list
         listRecyclerAdapter.notifyDataSetChanged()
     }
@@ -43,7 +43,7 @@ class OngoingDetailFragment : Fragment() {
 
         view?.let {
             listItemsRecyclerView = it.findViewById(R.id.lst_ongoing_info)
-            listItemsRecyclerView.adapter = ListItemsRecyclerViewAdapter(list)
+            listItemsRecyclerView.adapter = OngoingItemsRecyclerViewAdapter(list)
             listItemsRecyclerView.layoutManager = LinearLayoutManager(context)
         }
 
