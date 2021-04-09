@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.ongoingschedule.ListDataManager
-import name.eraxillan.ongoingschedule.OngoingSelectionRecyclerViewAdapter
+import name.eraxillan.ongoingschedule.ui.adapter.OngoingSelectionRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.R
 import name.eraxillan.ongoingschedule.TaskList
 

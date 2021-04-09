@@ -1,8 +1,9 @@
-package name.eraxillan.ongoingschedule
+package name.eraxillan.ongoingschedule.ui.holder
 
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import name.eraxillan.ongoingschedule.R
 
 class OngoingSelectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val TAG = OngoingSelectionViewHolder::class.java.simpleName

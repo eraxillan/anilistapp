@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import name.eraxillan.ongoingschedule.OngoingItemsRecyclerViewAdapter
+import name.eraxillan.ongoingschedule.ui.adapter.OngoingItemsRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.R
 import name.eraxillan.ongoingschedule.TaskList
 

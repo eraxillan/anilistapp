@@ -1,8 +1,11 @@
-package name.eraxillan.ongoingschedule
+package name.eraxillan.ongoingschedule.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import name.eraxillan.ongoingschedule.R
+import name.eraxillan.ongoingschedule.TaskList
+import name.eraxillan.ongoingschedule.ui.holder.OngoingItemViewHolder
 
 class OngoingItemsRecyclerViewAdapter(var list: TaskList)
     : RecyclerView.Adapter<OngoingItemViewHolder>() {
