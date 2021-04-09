@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 class ListSelectionRecyclerViewAdapter(
     private val lists : ArrayList<TaskList>,
     private val clickListener: ListSelectionRecyclerViewClickListener)
-    : RecyclerView.Adapter<ListSelectionViewHolder>() {
+    : RecyclerView.Adapter<OngoingSelectionViewHolder>() {
 
     private val TAG = ListSelectionRecyclerViewAdapter::class.java.simpleName
 
@@ -17,7 +17,7 @@ class ListSelectionRecyclerViewAdapter(
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListSelectionViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingSelectionViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(
                 R.layout.list_selection_view_holder,
@@ -25,10 +25,10 @@ class ListSelectionRecyclerViewAdapter(
                 false
             )
 
-        return ListSelectionViewHolder(view)
+        return OngoingSelectionViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ListSelectionViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: OngoingSelectionViewHolder, position: Int) {
         holder.listPosition.text = (position + 1).toString()
         holder.listTitle.text = lists[position].name
         holder.itemView.setOnClickListener {
