@@ -6,13 +6,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import name.eraxillan.ongoingschedule.ListDataManager
+import kotlinx.coroutines.*
 import name.eraxillan.ongoingschedule.ui.adapter.OngoingSelectionRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.R
-import name.eraxillan.ongoingschedule.TaskList
+import name.eraxillan.ongoingschedule.model.Ongoing
+import name.eraxillan.ongoingschedule.viewmodel.OngoingViewModel
 
 /**
  * A simple [Fragment] (isolated view) subclass.
@@ -21,30 +23,55 @@ import name.eraxillan.ongoingschedule.TaskList
  */
 class OngoingSelectionFragment
     : Fragment()
-    , OngoingSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener {
+    , OngoingSelectionRecyclerViewAdapter.OngoingSelectionRecyclerViewClickListener {
 
-    private var listener: OnListItemFragmentInteractionListener? = null
+    private var listener: OnOngoingInfoFragmentInteractionListener? = null
     private lateinit var lstOngoings: RecyclerView
-    lateinit var listDataManager: ListDataManager
+
+    /**
+     * `by viewModels<MainViewModel>()` is a lazy delegate that creates a new `mainViewModel`
+     * only the first time the `Activity` is created.
+     * If a configuration change happens, such as a screen rotation,
+     * it returns the previously created `MainViewModel`
+     */
+    private val ongoingViewModel by viewModels<OngoingViewModel>()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun addList(list: TaskList) {
+    fun addOngoing(url: String) {
+        /*val job =*/ GlobalScope.launch(Dispatchers.IO) {
+            // 1) Parse ongoing data from website
+            val ongoing = ongoingViewModel.parseOngoingFromUrl(url)
+
+            // 2) Save ongoing to database
+            ongoingViewModel.addOngoing(ongoing)
+
+            // 3) Add ongoing to list view in UI
+            withContext(Dispatchers.Main) {
+                val recyclerAdapter = lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
+                recyclerAdapter.addOngoing(ongoing)
+            }
+
+            listener?.onOngoingAdded(ongoing)
+        }
+        //job.cancelAndJoin()
+    }
+
+    /*
+    fun saveOngoing(ongoing: Ongoing) {
         listDataManager.saveList(list)
 
-        val recyclerAdapter = lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
-        recyclerAdapter.addList(list)
+        updateOngoings()
     }
+     */
 
-    fun saveList(list: TaskList) {
-        listDataManager.saveList(list)
-        updateLists()
+    /*
+    private fun updateOngoings() {
+        //val lists = listDataManager.readLists()
+        val ongoings: ArrayList<Ongoing> = ArrayList()
+        lstOngoings.adapter = OngoingSelectionRecyclerViewAdapter(ongoings, this)
     }
-
-    private fun updateLists() {
-        val lists = listDataManager.readLists()
-        lstOngoings.adapter = OngoingSelectionRecyclerViewAdapter(lists, this)
-    }
+    */
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -54,11 +81,10 @@ class OngoingSelectionFragment
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        if (context is OnListItemFragmentInteractionListener) {
+        if (context is OnOngoingInfoFragmentInteractionListener) {
             listener = context
-            listDataManager = ListDataManager(context)
         } else {
-            throw RuntimeException("$context must implement OnListItemFragmentInteractionListener")
+            throw RuntimeException("$context must implement OnOngoingInfoFragmentInteractionListener")
         }
     }
 
@@ -85,15 +111,17 @@ class OngoingSelectionFragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val lists = listDataManager.readLists()
+        val ongoings: ArrayList<Ongoing> = ArrayList()
         view.let {
             lstOngoings = it.findViewById(R.id.lst_ongoings)
             lstOngoings.layoutManager = LinearLayoutManager(activity)
-            lstOngoings.adapter = OngoingSelectionRecyclerViewAdapter(lists, this)
+            lstOngoings.adapter = OngoingSelectionRecyclerViewAdapter(ongoings, this)
         }
 
         // FIXME: implement Edit/Delete buttons first
         //setRecyclerViewItemTouchListener()
+
+        createOngoingObserver()
     }
 
     // Lifecycle method.
@@ -106,9 +134,9 @@ class OngoingSelectionFragment
         listener = null
     }
 
-    // `OngoingSelectionRecyclerViewAdapter.ListSelectionRecyclerViewClickListener` implementation
-    override fun listItemClicked(list: TaskList) {
-        listener?.onListItemClicked(list)
+    // `OngoingSelectionRecyclerViewAdapter.OngoingSelectionRecyclerViewClickListener` implementation
+    override fun ongoingClicked(ongoing: Ongoing) {
+        listener?.onOngoingClicked(ongoing)
     }
 
     private fun setRecyclerViewItemTouchListener() {
@@ -119,12 +147,12 @@ class OngoingSelectionFragment
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
-                val position = viewHolder.adapterPosition
+                //val position = viewHolder.adapterPosition
                 //photosList.removeAt(position)
                 //recyclerView.adapter!!.notifyItemRemoved(position)
 
                 // FIXME: implement
-                val recyclerAdapter = lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
+                //val recyclerAdapter = lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
                 //recyclerAdapter.removeList(list)
             }
         }
@@ -133,36 +161,38 @@ class OngoingSelectionFragment
         itemTouchHelper.attachToRecyclerView(lstOngoings)
     }
 
+    private fun createOngoingObserver() {
+        ongoingViewModel.getOngoings()?.observe(
+            viewLifecycleOwner, {
+                // Clean old ongoing list
+                val recyclerAdapter = lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
+                recyclerAdapter.clearOngoings()
+
+                // Add new ongoing list
+                it?.let {
+                    displayAllOngoings(it)
+                }
+            }
+        )
+    }
+
+    private fun displayAllOngoings(ongoings: List<Ongoing>) {
+        val recyclerAdapter = lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
+        ongoings.forEach { recyclerAdapter.addOngoing(it) }
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Inform objects that a list has been tapped.
     // `OngoingListActivity` will implement this interface
-    interface OnListItemFragmentInteractionListener {
-        fun onListItemClicked(list: TaskList)
+    interface OnOngoingInfoFragmentInteractionListener {
+        fun onOngoingAdded(ongoing: Ongoing)
+        fun onOngoingClicked(ongoing: Ongoing)
     }
 
     companion object {
-        fun newInstance(): OngoingSelectionFragment = OngoingSelectionFragment()
-
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment OngoingSelectionFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        /*
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-                OngoingSelectionFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
-                    }
-                }
-         */
+        fun newInstance(): OngoingSelectionFragment = OngoingSelectionFragment()
     }
 }

@@ -1,35 +1,36 @@
 package name.eraxillan.ongoingschedule.ui
 
+import android.os.Bundle
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
 import android.text.InputType
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-//import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import name.eraxillan.ongoingschedule.*
+import name.eraxillan.ongoingschedule.model.Ongoing
 
 /*
-Remember that splitting your code into individual, isolated Fragments makes them reusable.
-It’s essential that the Fragment needs nothing inside the Activity.
-Any app that wants to succeed across multiple devices and multiple size classes
-need to use Fragments to ensure it provides the best experience for its users.
+  Remember that splitting your code into individual, isolated Fragments makes them reusable.
+  It’s essential that the Fragment needs nothing inside the Activity.
+  Any app that wants to succeed across multiple devices and multiple size classes
+  need to use Fragments to ensure it provides the best experience for its users.
  */
 
 class OngoingListActivity
     : AppCompatActivity()
-    , OngoingSelectionFragment.OnListItemFragmentInteractionListener {
+    , OngoingSelectionFragment.OnOngoingInfoFragmentInteractionListener {
 
     companion object {
-        const val INTENT_LIST_KEY = "list"
-        const val LIST_DETAIL_REQUEST_CODE = 123
-        val TAG = OngoingListActivity::class.java.simpleName
+        const val INTENT_ONGOING_KEY = "ongoing"
+        const val ONGOING_INFO_REQUEST_CODE = 123
     }
+
+    private val TAG = OngoingListActivity::class.java.simpleName
 
     // You use the `lateinit` keyword to tell the compiler that a `RecyclerView` will be
     // created sometime in the future
@@ -41,28 +42,27 @@ class OngoingListActivity
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private fun showCreateListDialog() {
+    private fun showAddOngoingDialog() {
         val dialogTitle = getString(R.string.name_of_list)
         val positiveButtonTitle = getString(R.string.create_list)
 
         val builder = AlertDialog.Builder(this)
-        val listTitleEditText = EditText(this)
-        listTitleEditText.inputType = InputType.TYPE_CLASS_TEXT  // FIXME: TYPE_TEXT_VARIATION_URI ?
+        val ongoingUrlEditText = EditText(this)
+        ongoingUrlEditText.inputType = InputType.TYPE_CLASS_TEXT  // FIXME: TYPE_TEXT_VARIATION_URI ?
 
         builder.setTitle(dialogTitle)
-        builder.setView(listTitleEditText)
+        builder.setView(ongoingUrlEditText)
 
         builder.setPositiveButton(positiveButtonTitle) { dialog, _ ->
-            val list = TaskList(listTitleEditText.text.toString())
-            ongoingSelectionFragment.addList(list)
+            ongoingSelectionFragment.addOngoing(ongoingUrlEditText.text.toString())
 
             dialog.dismiss()
-            showListDetail(list)
         }
 
         builder.create().show()
     }
 
+    /*
     private fun showCreateTaskDialog() {
         val taskEditText = EditText(this)
         taskEditText.inputType = InputType.TYPE_CLASS_TEXT
@@ -78,16 +78,17 @@ class OngoingListActivity
             .create()
             .show()
     }
+    */
 
-    private fun showListDetail(list: TaskList) {
+    private fun showOngoingInfo(ongoing: Ongoing) {
         if (!largeScreen) {
-            val listDetailIntent = Intent(this, OngoingDetailActivity::class.java)
-            listDetailIntent.putExtra(INTENT_LIST_KEY, list)
-            startActivityForResult(listDetailIntent, LIST_DETAIL_REQUEST_CODE)
+            val ongoingDetailIntent = Intent(this, OngoingDetailActivity::class.java)
+            ongoingDetailIntent.putExtra(INTENT_ONGOING_KEY, ongoing)
+            startActivityForResult(ongoingDetailIntent, ONGOING_INFO_REQUEST_CODE)
         } else {
-            title = list.name
+            title = ongoing.originalName
 
-            ongoingFragment = OngoingDetailFragment.newInstance(list)
+            ongoingFragment = OngoingDetailFragment.newInstance(ongoing)
             ongoingFragment?.let {
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, it, getString(R.string.list_fragment_tag))
@@ -95,9 +96,11 @@ class OngoingListActivity
                     .commit()
             }
 
+            /*
             fab.setOnClickListener {
                 showCreateTaskDialog()
             }
+            */
         }
     }
 
@@ -118,16 +121,12 @@ class OngoingListActivity
         // It's called a support Fragment manager rather than just a Fragment manager because
         // some older versions of Android didn't include fragments
         ongoingSelectionFragment =
-            supportFragmentManager.findFragmentById(R.id.list_selection_fragment) as OngoingSelectionFragment
+            supportFragmentManager.findFragmentById(R.id.ongoing_selection_fragment) as OngoingSelectionFragment
         fragmentContainer = findViewById(R.id.fragment_container)
         largeScreen = (fragmentContainer != null)
 
         fab.setOnClickListener { /*view*/ _ ->
-            /*
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-             */
-            showCreateListDialog()
+            showAddOngoingDialog()
         }
     }
 
@@ -153,10 +152,10 @@ class OngoingListActivity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == LIST_DETAIL_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == ONGOING_INFO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             data?.let {
-                // FIXME: original `data.getParcelableExtra(INTENT_LIST_KEY) as TaskList` cause error
-                ongoingSelectionFragment.saveList(data.getParcelableExtra(INTENT_LIST_KEY)!!)
+                // FIXME: implement
+                //ongoingSelectionFragment.saveList(data.getParcelableExtra(INTENT_LIST_KEY)!!)
             }
         }
     }
@@ -166,9 +165,12 @@ class OngoingListActivity
         super.onBackPressed()
 
         title = resources.getString(R.string.app_name)
+        // FIXME: implement
+        /*
         ongoingFragment?.list?.let {
             ongoingSelectionFragment.listDataManager.saveList(it)
         }
+        */
         ongoingFragment?.let {
             supportFragmentManager
                 .beginTransaction()
@@ -178,13 +180,17 @@ class OngoingListActivity
         }
 
         fab.setOnClickListener {
-            showCreateListDialog()
+            showAddOngoingDialog()
         }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    override fun onListItemClicked(list: TaskList) {
-        showListDetail(list)
+    override fun onOngoingAdded(ongoing: Ongoing) {
+        showOngoingInfo(ongoing)
+    }
+
+    override fun onOngoingClicked(ongoing: Ongoing) {
+        showOngoingInfo(ongoing)
     }
 }

@@ -10,7 +10,7 @@
     tools:showIn="@layout/activity_main">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/list_selection_fragment"
+        android:id="@+id/ongoing_selection_fragment"
         android:name="name.eraxillan.ongoingschedule.ui.OngoingSelectionFragment"
         android:layout_width="300dp"
         android:layout_height="match_parent"
@@ -30,6 +30,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/list_selection_fragment"
+        app:layout_constraintStart_toEndOf="@+id/ongoing_selection_fragment"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

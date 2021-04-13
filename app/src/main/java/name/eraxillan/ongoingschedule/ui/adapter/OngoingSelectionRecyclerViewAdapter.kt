@@ -4,19 +4,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.ongoingschedule.R
-import name.eraxillan.ongoingschedule.TaskList
+import name.eraxillan.ongoingschedule.model.Ongoing
 import name.eraxillan.ongoingschedule.ui.holder.OngoingSelectionViewHolder
 
 class OngoingSelectionRecyclerViewAdapter(
-    private val lists : ArrayList<TaskList>,
-    private val clickListener: ListSelectionRecyclerViewClickListener
+    private val ongoings : ArrayList<Ongoing>,
+    private val clickListener: OngoingSelectionRecyclerViewClickListener
 )
     : RecyclerView.Adapter<OngoingSelectionViewHolder>() {
 
     private val TAG = OngoingSelectionRecyclerViewAdapter::class.java.simpleName
 
-    interface ListSelectionRecyclerViewClickListener {
-        fun listItemClicked(list: TaskList)
+    interface OngoingSelectionRecyclerViewClickListener {
+        fun ongoingClicked(ongoing: Ongoing)
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,20 +34,26 @@ class OngoingSelectionRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: OngoingSelectionViewHolder, position: Int) {
         holder.listPosition.text = (position + 1).toString()
-        holder.listTitle.text = lists[position].name
+        holder.listTitle.text = ongoings[position].originalName
         holder.itemView.setOnClickListener {
-            clickListener.listItemClicked(lists[position])
+            clickListener.ongoingClicked(ongoings[position])
         }
     }
 
     override fun getItemCount(): Int {
-        return lists.size
+        return ongoings.size
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun addList(list: TaskList) {
-        lists.add(list)
-        notifyItemInserted(lists.size - 1)
+    fun addOngoing(ongoing: Ongoing) {
+        ongoings.add(ongoing)
+        notifyItemInserted(ongoings.size - 1)
+    }
+
+    fun clearOngoings() {
+        val size = ongoings.size
+        ongoings.clear()
+        notifyItemRangeRemoved(0, size)
     }
 }

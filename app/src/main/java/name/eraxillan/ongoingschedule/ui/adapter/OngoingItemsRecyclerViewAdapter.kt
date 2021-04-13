@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.ongoingschedule.R
-import name.eraxillan.ongoingschedule.TaskList
+import name.eraxillan.ongoingschedule.model.Ongoing
 import name.eraxillan.ongoingschedule.ui.holder.OngoingItemViewHolder
 
-class OngoingItemsRecyclerViewAdapter(var list: TaskList)
+class OngoingItemsRecyclerViewAdapter(var ongoing: Ongoing)
     : RecyclerView.Adapter<OngoingItemViewHolder>() {
 
     private val TAG = OngoingItemsRecyclerViewAdapter::class.java.simpleName
@@ -24,11 +24,13 @@ class OngoingItemsRecyclerViewAdapter(var list: TaskList)
     }
 
     override fun onBindViewHolder(holder: OngoingItemViewHolder, position: Int) {
-        holder.taskTextView.text = list.tasks[position]
+        holder.taskTextView.text = ongoing.originalName
+        // FIXME: add other `Ongoing` fields
     }
 
     // Tells the `RecyclerView` how many items to display
     override fun getItemCount(): Int {
-        return list.tasks.size
+        // FIXME: return `Ongoing` field count instead
+        return 1
     }
 }

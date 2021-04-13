@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.ongoingschedule.ui.adapter.OngoingItemsRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.R
-import name.eraxillan.ongoingschedule.TaskList
+import name.eraxillan.ongoingschedule.model.Ongoing
 
 /**
  * A simple [Fragment] subclass.
@@ -18,8 +18,9 @@ import name.eraxillan.ongoingschedule.TaskList
  */
 class OngoingDetailFragment : Fragment() {
     lateinit var listItemsRecyclerView: RecyclerView
-    lateinit var list: TaskList
+    lateinit var ongoing: Ongoing
 
+    /*
     fun addTask(item: String) {
         list.tasks.add(item)
 
@@ -27,12 +28,13 @@ class OngoingDetailFragment : Fragment() {
         listRecyclerAdapter.list = list
         listRecyclerAdapter.notifyDataSetChanged()
     }
+    */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            list = it.getParcelable(OngoingListActivity.INTENT_LIST_KEY)!!
+            ongoing = it.getParcelable(OngoingListActivity.INTENT_ONGOING_KEY)!!
         }
     }
 
@@ -43,7 +45,7 @@ class OngoingDetailFragment : Fragment() {
 
         view?.let {
             listItemsRecyclerView = it.findViewById(R.id.lst_ongoing_info)
-            listItemsRecyclerView.adapter = OngoingItemsRecyclerViewAdapter(list)
+            listItemsRecyclerView.adapter = OngoingItemsRecyclerViewAdapter(ongoing)
             listItemsRecyclerView.layoutManager = LinearLayoutManager(context)
         }
 
@@ -51,7 +53,7 @@ class OngoingDetailFragment : Fragment() {
     }
 
     companion object {
-        private const val ARG_LIST = "list"
+        private const val ARG_ONGOING = "ongoing"
 
         /**
          * Use this factory method to create a new instance of
@@ -60,10 +62,10 @@ class OngoingDetailFragment : Fragment() {
          * @return A new instance of fragment OngoingDetailFragment.
          */
         @JvmStatic
-        fun newInstance(list: TaskList): OngoingDetailFragment {
+        fun newInstance(ongoing: Ongoing): OngoingDetailFragment {
             val fragment = OngoingDetailFragment()
             val arguments = Bundle()
-            arguments.putParcelable(ARG_LIST, list)
+            arguments.putParcelable(ARG_ONGOING, ongoing)
             fragment.arguments = arguments
             return fragment
         }

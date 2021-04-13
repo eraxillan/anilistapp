@@ -7,17 +7,18 @@ import android.text.InputType
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import name.eraxillan.ongoingschedule.ui.adapter.OngoingItemsRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.R
-import name.eraxillan.ongoingschedule.TaskList
+import name.eraxillan.ongoingschedule.model.Ongoing
 
 class OngoingDetailActivity : AppCompatActivity() {
     private val TAG = OngoingDetailActivity::class.java.simpleName
 
-    lateinit var list: TaskList
+    lateinit var ongoing: Ongoing
     lateinit var lstOngoingInfo: RecyclerView
     lateinit var btnAddTask: FloatingActionButton
 
@@ -25,19 +26,22 @@ class OngoingDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_detail)
 
-        list = intent.getParcelableExtra(OngoingListActivity.INTENT_LIST_KEY)!!
-        title = list.name
+        ongoing = intent.getParcelableExtra(OngoingListActivity.INTENT_ONGOING_KEY)!!
+        title = ongoing.originalName
 
         lstOngoingInfo = findViewById(R.id.lst_ongoing_info)
-        lstOngoingInfo.adapter = OngoingItemsRecyclerViewAdapter(list)
+        lstOngoingInfo.adapter = OngoingItemsRecyclerViewAdapter(ongoing)
         lstOngoingInfo.layoutManager = LinearLayoutManager(this)
 
+        // FIXME: disable the button
         btnAddTask = findViewById(R.id.btn_add_task)
         btnAddTask.setOnClickListener {
-            showCreateTaskDialog()
+            /* showCreateTaskDialog() */
         }
+        btnAddTask.isVisible = false
     }
 
+    /*
     private fun showCreateTaskDialog() {
         val taskEditText = EditText(this)
         taskEditText.inputType = InputType.TYPE_CLASS_TEXT
@@ -57,13 +61,14 @@ class OngoingDetailActivity : AppCompatActivity() {
             .create()
             .show()
     }
+    */
 
     // Called whenever the back button is tapped to get back to the List Activity
     override fun onBackPressed() {
         // Bundle up the list in its current state, then put it into an Intent
 
         val bundle = Bundle()
-        bundle.putParcelable(OngoingListActivity.INTENT_LIST_KEY, list)
+        bundle.putParcelable(OngoingListActivity.INTENT_ONGOING_KEY, ongoing)
 
         val intent = Intent()
         intent.putExtras(bundle)
