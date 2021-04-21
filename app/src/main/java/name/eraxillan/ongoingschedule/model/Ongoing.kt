@@ -4,59 +4,49 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-//import java.time.Year
-//import java.net.URL
+import name.eraxillan.ongoingschedule.db.ZonedScheduledTime
+import java.net.URL
+import java.time.LocalDate
 
-enum class OngoingType { TV, OVA, ONA }
 
-/*
- https://en.wikipedia.org/wiki/Motion_Picture_Association_film_rating_system
- https://www.kinopoisk.ru/mpaa/
+// Just for brevity in this module
+private typealias DMY = LocalDate
+private typealias ZST = ZonedScheduledTime
 
-enum class MpaaRating {
-    G,     // General audiences: all ages admitted
-    PG,    // Parental guidance suggested: some material may not be suitable for children
-    PG_13, // Parents strongly cautioned: some material may be inappropriate for children under 13
-    R,     // Restricted: under 17 requires accompanying parent or adult guardian
-    NC_17  // Adults only: no one 17 and under admitted
-}
- */
+// FIXME: implement custom App class and replace with string resource
+private val INVALID_URL = URL("https://www.invalid.com")
 
-// FIXME: add Kotlin documentation comments
+
 /**
- *
+ * An ongoing anime description
  */
-@Entity
+@Entity(tableName = "ongoings")
 data class Ongoing constructor(
     @PrimaryKey(autoGenerate = true)
     var id: Long? = null,             // Database primary key
-    var url: String = "",             // Wakanim/Crunchyroll URL (TODO: `java.net.URL`)
+    var url: URL = INVALID_URL,       // MyAnimeList/Wakanim/Crunchyroll/etc. URL
     var season: Int = -1,             // Season number
     var originalName: String = "",    // Original Japanese name in Romaji
-    var type: Int = -1,               // Type (TODO: `OngoingType`)
-    var year: Int = -1,               // Launch year (TODO: `java.time.Year`?)
     var latestEpisode: Int = -1,      // Latest episode number: e.g. 5, i.e. 5th from 12
     var totalEpisodes: Int = -1,      // Total episode count: e.g. 12
-    var nextEpisodeDate: Long = -1,   // Latest episode launch date as timestamp (TODO: `java.util.Date`)
-    // FIXME: cause Room compile error due to unsupported `List<String>` type, use TypeConverters
-//    var audioTracks: List<String> = emptyList(),    // "en", "ru"
-//    var audioSubtitles: List<String> = emptyList(), // "en", "ru"
+    var releaseDate: DMY? = null,     // Aired day+month+year
+    var nextEpisodeDate: ZST? = null, // Latest episode launch day+time with timezone
     var minAge: Int = -1,             // Minimal accepted age: e.g. 16 or 18
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
         /*Long? */ parcel.readValue(Long::class.java.classLoader) as? Long,
-        /*String*/ parcel.readString() ?: "",
+        /*URL   */ parcel.readValue(URL::class.java.classLoader) as URL,
         /*Int   */ parcel.readInt(),
         /*String*/ parcel.readString() ?: "",
         /*Int   */ parcel.readInt(),
         /*Int   */ parcel.readInt(),
-        /*Int   */ parcel.readInt(),
-        /*Int   */ parcel.readInt(),
-        /*Long  */ parcel.readLong(),
+        /*DMY   */ parcel.readValue(DMY::class.java.classLoader) as? DMY,
+        /*ZST   */ parcel.readValue(ZST::class.java.classLoader) as? ZST,
         /*Int   */ parcel.readInt()
-    ) {
-    }
+
+        // parcel.readSerializable() as? OffsetDateTime,
+    )
 
     override fun describeContents(): Int {
         return 0
@@ -64,15 +54,16 @@ data class Ongoing constructor(
 
     override fun writeToParcel(destination: Parcel, flags: Int) {
         /*Long? */ destination.writeValue(id)
-        /*String*/ destination.writeString(url)
+        /*URL   */ destination.writeValue(url)
         /*Int   */ destination.writeInt(season)
         /*String*/ destination.writeString(originalName)
-        /*Int   */ destination.writeInt(type)
-        /*Int   */ destination.writeInt(year)
         /*Int   */ destination.writeInt(latestEpisode)
         /*Int   */ destination.writeInt(totalEpisodes)
-        /*Long  */ destination.writeLong(nextEpisodeDate)
+        /*DMY   */ destination.writeValue(releaseDate)
+        /*ZST   */ destination.writeValue(nextEpisodeDate)
         /*Int   */ destination.writeInt(minAge)
+
+        // destination.writeSerializable(nextEpisodeDate)
     }
 
     companion object CREATOR : Parcelable.Creator<Ongoing> {
@@ -83,5 +74,16 @@ data class Ongoing constructor(
         override fun newArray(size: Int): Array<Ongoing?> {
             return arrayOfNulls(size)
         }
+    }
+
+    fun copyDataFields(other: Ongoing) {
+        // Ignore `id` and url `fields`, other filled by parser
+        season = other.season
+        originalName = other.originalName
+        latestEpisode = other.latestEpisode
+        totalEpisodes = other.totalEpisodes
+        releaseDate = other.releaseDate
+        nextEpisodeDate = other.nextEpisodeDate
+        minAge = other.minAge
     }
 }

@@ -20,14 +20,14 @@ import name.eraxillan.ongoingschedule.model.Ongoing
  */
 @Dao
 interface OngoingDao {
-    @Query("SELECT * FROM Ongoing")
+    @Query("SELECT * FROM ongoings")
     fun loadAll(): LiveData<List<Ongoing>>
 
-    @Query("SELECT * FROM Ongoing WHERE id = :ongoingId")
+    @Query("SELECT * FROM ongoings WHERE id = :ongoingId")
     fun loadOngoing(ongoingId: Long): Ongoing
 
     // Asynchronous version
-    @Query("SELECT * FROM Ongoing WHERE id = :ongoingId")
+    @Query("SELECT * FROM ongoings WHERE id = :ongoingId")
     fun loadLiveOngoing(ongoingId: Long): LiveData<Ongoing>
 
     @Insert(onConflict = IGNORE)

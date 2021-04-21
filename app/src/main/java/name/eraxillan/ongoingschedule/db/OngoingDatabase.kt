@@ -4,13 +4,14 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import name.eraxillan.ongoingschedule.model.Ongoing
 
 @Database(
     entities = [Ongoing::class],
     version = 1
 )
-//@TypeConverters(Converters::class)
+@TypeConverters(DatabaseTypeConverters::class)
 abstract class OngoingDatabase : RoomDatabase() {
     abstract fun ongoingDao(): OngoingDao
 

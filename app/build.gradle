@@ -33,6 +33,10 @@ android {
         }
     }
     compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+
+        // Sets Java compatibility to Java 8
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -54,6 +58,9 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     implementation 'androidx.cardview:cardview:1.0.0'
+
+    // Java 8+ API "desugaring" support: allow using new APIs on older versions of Android
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
     // Kotlin Coroutines library
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"

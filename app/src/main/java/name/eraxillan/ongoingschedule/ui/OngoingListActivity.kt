@@ -1,18 +1,29 @@
 package name.eraxillan.ongoingschedule.ui
 
-import android.os.Bundle
 import android.app.Activity
 import android.content.Intent
+import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
+import android.util.Log
+import android.util.Patterns
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
 import android.widget.FrameLayout
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import name.eraxillan.ongoingschedule.*
+import name.eraxillan.ongoingschedule.db.DowTimeParser
+import name.eraxillan.ongoingschedule.db.ZonedScheduledTime
 import name.eraxillan.ongoingschedule.model.Ongoing
+import java.net.MalformedURLException
+import java.net.URL
+import java.util.*
+
 
 /*
   Remember that splitting your code into individual, isolated Fragments makes them reusable.
@@ -43,19 +54,39 @@ class OngoingListActivity
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun showAddOngoingDialog() {
-        val dialogTitle = getString(R.string.name_of_list)
-        val positiveButtonTitle = getString(R.string.create_list)
+        val dialogTitle = getString(R.string.add_ongoing_dialog_title)
+        val positiveButtonTitle = getString(R.string.add_ongoing)
 
         val builder = AlertDialog.Builder(this)
         val ongoingUrlEditText = EditText(this)
-        ongoingUrlEditText.inputType = InputType.TYPE_CLASS_TEXT  // FIXME: TYPE_TEXT_VARIATION_URI ?
+        ongoingUrlEditText.hint = getString(R.string.add_ongoing_hint)
+        ongoingUrlEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+        ongoingUrlEditText.setText(getString(R.string.invalid_url))
+
+        val textWatcher = object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (!Patterns.WEB_URL.matcher(ongoingUrlEditText.text.toString()).matches())
+                    ongoingUrlEditText.error = getString(R.string.invalid_ongoing_url_msg)
+            }
+        }
+        ongoingUrlEditText.addTextChangedListener(textWatcher)
 
         builder.setTitle(dialogTitle)
         builder.setView(ongoingUrlEditText)
 
         builder.setPositiveButton(positiveButtonTitle) { dialog, _ ->
-            ongoingSelectionFragment.addOngoing(ongoingUrlEditText.text.toString())
-
+            val url: URL = try {
+                URL(ongoingUrlEditText.text.toString())
+            } catch (exc: MalformedURLException) {
+                Toast.makeText(
+                    applicationContext, getString(R.string.invalid_ongoing_url_msg), Toast.LENGTH_SHORT
+                ).show()
+                return@setPositiveButton
+            }
+            // Add ongoing to list view, db, and close dialog
+            ongoingSelectionFragment.addOngoing(url)
             dialog.dismiss()
         }
 
@@ -91,7 +122,7 @@ class OngoingListActivity
             ongoingFragment = OngoingDetailFragment.newInstance(ongoing)
             ongoingFragment?.let {
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, it, getString(R.string.list_fragment_tag))
+                    .replace(R.id.fragment_container, it, getString(R.string.ongoing_detail_fragment_tag))
                     .addToBackStack(null)
                     .commit()
             }
@@ -143,7 +174,9 @@ class OngoingListActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

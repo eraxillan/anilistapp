@@ -2,6 +2,7 @@ package name.eraxillan.ongoingschedule.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import name.eraxillan.ongoingschedule.ui.adapter.OngoingSelectionRecyclerViewAda
 import name.eraxillan.ongoingschedule.R
 import name.eraxillan.ongoingschedule.model.Ongoing
 import name.eraxillan.ongoingschedule.viewmodel.OngoingViewModel
+import java.net.URL
 
 /**
  * A simple [Fragment] (isolated view) subclass.
@@ -24,6 +26,8 @@ import name.eraxillan.ongoingschedule.viewmodel.OngoingViewModel
 class OngoingSelectionFragment
     : Fragment()
     , OngoingSelectionRecyclerViewAdapter.OngoingSelectionRecyclerViewClickListener {
+
+    private val TAG = OngoingSelectionFragment::class.java.simpleName
 
     private var listener: OnOngoingInfoFragmentInteractionListener? = null
     private lateinit var lstOngoings: RecyclerView
@@ -38,7 +42,7 @@ class OngoingSelectionFragment
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun addOngoing(url: String) {
+    fun addOngoing(url: URL) {
         /*val job =*/ GlobalScope.launch(Dispatchers.IO) {
             // 1) Parse ongoing data from website
             val ongoing = ongoingViewModel.parseOngoingFromUrl(url)

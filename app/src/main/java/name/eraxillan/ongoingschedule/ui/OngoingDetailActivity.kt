@@ -27,7 +27,7 @@ class OngoingDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_list_detail)
 
         ongoing = intent.getParcelableExtra(OngoingListActivity.INTENT_ONGOING_KEY)!!
-        title = ongoing.originalName
+        title = getString(R.string.ongoing_info)
 
         lstOngoingInfo = findViewById(R.id.lst_ongoing_info)
         lstOngoingInfo.adapter = OngoingItemsRecyclerViewAdapter(ongoing)

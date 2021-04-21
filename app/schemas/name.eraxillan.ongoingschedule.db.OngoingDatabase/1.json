@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ca0e465006c7c4b95020f2dea18e547a",
+    "identityHash": "af5cb161e506fbd873e0ec09ba1903e0",
     "entities": [
       {
-        "tableName": "Ongoing",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `url` TEXT NOT NULL, `season` INTEGER NOT NULL, `originalName` TEXT NOT NULL, `type` INTEGER NOT NULL, `year` INTEGER NOT NULL, `latestEpisode` INTEGER NOT NULL, `totalEpisodes` INTEGER NOT NULL, `nextEpisodeDate` INTEGER NOT NULL, `minAge` INTEGER NOT NULL)",
+        "tableName": "ongoings",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `url` TEXT NOT NULL, `season` INTEGER NOT NULL, `originalName` TEXT NOT NULL, `latestEpisode` INTEGER NOT NULL, `totalEpisodes` INTEGER NOT NULL, `releaseDate` TEXT, `nextEpisodeDate` TEXT, `minAge` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -33,18 +33,6 @@
             "notNull": true
           },
           {
-            "fieldPath": "type",
-            "columnName": "type",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "year",
-            "columnName": "year",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
             "fieldPath": "latestEpisode",
             "columnName": "latestEpisode",
             "affinity": "INTEGER",
@@ -57,10 +45,16 @@
             "notNull": true
           },
           {
+            "fieldPath": "releaseDate",
+            "columnName": "releaseDate",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
             "fieldPath": "nextEpisodeDate",
             "columnName": "nextEpisodeDate",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "minAge",
@@ -82,7 +76,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ca0e465006c7c4b95020f2dea18e547a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'af5cb161e506fbd873e0ec09ba1903e0')"
     ]
   }
 }

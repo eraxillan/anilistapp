@@ -24,13 +24,20 @@ class OngoingItemsRecyclerViewAdapter(var ongoing: Ongoing)
     }
 
     override fun onBindViewHolder(holder: OngoingItemViewHolder, position: Int) {
-        holder.taskTextView.text = ongoing.originalName
-        // FIXME: add other `Ongoing` fields
+        holder.taskTextView.text = when (position) {
+            0 -> "Season: ${ongoing.season}"
+            1 -> "Original name: ${ongoing.originalName}"
+            2 -> "Latest episode: ${ongoing.latestEpisode}"
+            3 -> "Total episodes: ${ongoing.totalEpisodes}"
+            4 -> "Release date: ${ongoing.releaseDate}"
+            5 -> "Next episode date: ${ongoing.nextEpisodeDate}"
+            6 -> "Minimum age: ${ongoing.minAge}"
+            else -> ""
+        }
     }
 
     // Tells the `RecyclerView` how many items to display
     override fun getItemCount(): Int {
-        // FIXME: return `Ongoing` field count instead
-        return 1
+        return 7
     }
 }
