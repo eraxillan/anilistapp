@@ -3,10 +3,11 @@ package name.eraxillan.ongoingschedule.db
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.Log
+import androidx.core.os.LocaleListCompat
 import java.time.*
-import java.time.format.DateTimeParseException
+import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.util.*
-import kotlin.math.abs
 
 
 /**
@@ -76,6 +77,15 @@ class ZonedScheduledTime private constructor(
      */
     fun getZone(): ZoneId = zone
 
+    fun getDisplayString(): String {
+        val dow = dayOfWeek.getDisplayName(TextStyle.FULL, getDefaultLocale())
+        val lt = localTime.toString()
+        val pattern = DateTimeFormatter.ofPattern("zzz", getDefaultLocale())
+        val tz = ZonedDateTime.now(zone).format(pattern)
+
+        return "$dow, $lt ($tz)"
+    }
+
     // `Any` methods customization
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -106,6 +116,8 @@ class ZonedScheduledTime private constructor(
     override fun describeContents(): Int {
         return 0
     }
+
+    private fun getDefaultLocale() = LocaleListCompat.getDefault()[0]
 
     companion object CREATOR : Parcelable.Creator<ZonedScheduledTime> {
         override fun createFromParcel(parcel: Parcel): ZonedScheduledTime {

@@ -30,7 +30,7 @@ class OngoingItemsRecyclerViewAdapter(var ongoing: Ongoing)
             2 -> "Latest episode: ${ongoing.latestEpisode}"
             3 -> "Total episodes: ${ongoing.totalEpisodes}"
             4 -> "Release date: ${ongoing.releaseDate}"
-            5 -> "Next episode date: ${ongoing.nextEpisodeDate}"
+            5 -> "Next episode date: ${ongoing.nextEpisodeDate?.getDisplayString() ?: "" }"
             6 -> "Minimum age: ${ongoing.minAge}"
             else -> ""
         }
