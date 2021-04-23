@@ -4,15 +4,10 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import name.eraxillan.ongoingschedule.model.Ongoing
 import name.eraxillan.ongoingschedule.parser.FakeParser
 import name.eraxillan.ongoingschedule.repository.OngoingRepo
-import name.eraxillan.ongoingschedule.ui.OngoingListActivity
 import java.net.URL
-import kotlin.coroutines.suspendCoroutine
 
 class OngoingViewModel(application: Application)
     : AndroidViewModel(application) {

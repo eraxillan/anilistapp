@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
-import android.util.Log
 import android.util.Patterns
 import android.view.Menu
 import android.view.MenuItem
@@ -17,8 +16,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import name.eraxillan.ongoingschedule.*
-import name.eraxillan.ongoingschedule.db.DowTimeParser
-import name.eraxillan.ongoingschedule.db.ZonedScheduledTime
 import name.eraxillan.ongoingschedule.model.Ongoing
 import java.net.MalformedURLException
 import java.net.URL
