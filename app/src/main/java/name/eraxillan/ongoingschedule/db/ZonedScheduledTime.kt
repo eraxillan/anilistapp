@@ -13,6 +13,7 @@ import java.util.*
 /**
  * Original: "2007-12-03T10:15:30+01:00[Europe/Paris]"
  * Final: "Mondays, 20:30 (MSK)" become "W-1T20:30:00.000000+03:00[Europe/Moscow]"
+ * @see https://medium.com/androiddevelopers/room-time-2b4cf9672b98
  */
 class ZonedScheduledTime private constructor(
     private var dayOfWeek: DayOfWeek,
