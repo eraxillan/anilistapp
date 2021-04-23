@@ -138,7 +138,7 @@ class OngoingSelectionFragment
     }
 
     private fun setupRecyclerView() {
-        val ongoings: ArrayList<Ongoing> = ArrayList()
+        val ongoings = mutableListOf<Ongoing>()
         val adapter = OngoingSelectionRecyclerViewAdapter(ongoings, this)
 
         view?.let {

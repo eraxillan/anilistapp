@@ -1,6 +1,7 @@
 package name.eraxillan.ongoingschedule.ui.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.ongoingschedule.R
@@ -8,10 +9,9 @@ import name.eraxillan.ongoingschedule.model.Ongoing
 import name.eraxillan.ongoingschedule.ui.ItemTouchHelperCallback
 import name.eraxillan.ongoingschedule.ui.holder.OngoingSelectionViewHolder
 import java.util.*
-import kotlin.collections.ArrayList
 
 class OngoingSelectionRecyclerViewAdapter(
-    private val ongoings : ArrayList<Ongoing>,
+    private val ongoings : MutableList<Ongoing>,
     private val clickListener: OngoingSelectionRecyclerViewClickListener
 )
     : RecyclerView.Adapter<OngoingSelectionViewHolder>()
@@ -25,15 +25,11 @@ class OngoingSelectionRecyclerViewAdapter(
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingSelectionViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(
-                R.layout.list_selection_view_holder,
-                parent,
-                false
-            )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingSelectionViewHolder =
+        OngoingSelectionViewHolder(parent.inflate(R.layout.list_selection_view_holder))
 
-        return OngoingSelectionViewHolder(view)
+    private fun ViewGroup.inflate(layoutRes: Int): View {
+        return LayoutInflater.from(context).inflate(layoutRes, this, false)
     }
 
     override fun onBindViewHolder(holder: OngoingSelectionViewHolder, position: Int) {
@@ -53,6 +49,10 @@ class OngoingSelectionRecyclerViewAdapter(
     override fun onItemMoved(fromPosition: Int, toPosition: Int) {}
 
     override fun onItemDismiss(position: Int) = deleteOngoing(position)
+
+    // Override to show header/footer
+    //override fun getItemViewType(position: Int): Int = 0
+    //override fun getItemViewType(position: Int): Int = 0
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     private fun deleteOngoing(position: Int) {
