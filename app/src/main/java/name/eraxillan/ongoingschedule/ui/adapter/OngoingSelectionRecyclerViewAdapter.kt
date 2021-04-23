@@ -5,13 +5,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.ongoingschedule.R
 import name.eraxillan.ongoingschedule.model.Ongoing
+import name.eraxillan.ongoingschedule.ui.ItemTouchHelperCallback
 import name.eraxillan.ongoingschedule.ui.holder.OngoingSelectionViewHolder
+import java.util.*
+import kotlin.collections.ArrayList
 
 class OngoingSelectionRecyclerViewAdapter(
     private val ongoings : ArrayList<Ongoing>,
     private val clickListener: OngoingSelectionRecyclerViewClickListener
 )
-    : RecyclerView.Adapter<OngoingSelectionViewHolder>() {
+    : RecyclerView.Adapter<OngoingSelectionViewHolder>()
+    , ItemTouchHelperCallback.ItemTouchHelperAdapter {
 
     private val TAG = OngoingSelectionRecyclerViewAdapter::class.java.simpleName
 
@@ -33,8 +37,8 @@ class OngoingSelectionRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: OngoingSelectionViewHolder, position: Int) {
-        holder.listPosition.text = (position + 1).toString()
-        holder.listTitle.text = ongoings[position].originalName
+        holder.bind(position, ongoings[position])
+
         holder.itemView.setOnClickListener {
             clickListener.ongoingClicked(ongoings[position])
         }
@@ -44,6 +48,23 @@ class OngoingSelectionRecyclerViewAdapter(
         return ongoings.size
     }
 
+    // TODO: uncomment to implement drag-and-drop for list view items
+    //override fun onItemMoved(fromPosition: Int, toPosition: Int) = swapItems(fromPosition, toPosition)
+    override fun onItemMoved(fromPosition: Int, toPosition: Int) {}
+
+    override fun onItemDismiss(position: Int) = deleteOngoing(position)
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    private fun deleteOngoing(position: Int) {
+        ongoings.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    /*private fun swapItems(positionFrom: Int, positionTo: Int) {
+        Collections.swap(ongoings, positionFrom, positionTo)
+        notifyItemMoved(positionFrom, positionTo)
+    }*/
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     fun addOngoing(ongoing: Ongoing) {
@@ -51,9 +72,14 @@ class OngoingSelectionRecyclerViewAdapter(
         notifyItemInserted(ongoings.size - 1)
     }
 
+    fun deleteOngoing(ongoing: Ongoing) {
+        val position = ongoings.indexOf(ongoing)
+        ongoings.remove(ongoing)
+        notifyItemRemoved(position)
+    }
+
     fun clearOngoings() {
-        val size = ongoings.size
         ongoings.clear()
-        notifyItemRangeRemoved(0, size)
+        notifyDataSetChanged()
     }
 }

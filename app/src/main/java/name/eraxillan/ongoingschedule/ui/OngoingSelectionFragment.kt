@@ -2,12 +2,12 @@ package name.eraxillan.ongoingschedule.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -115,15 +115,9 @@ class OngoingSelectionFragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val ongoings: ArrayList<Ongoing> = ArrayList()
         view.let {
-            lstOngoings = it.findViewById(R.id.lst_ongoings)
-            lstOngoings.layoutManager = LinearLayoutManager(activity)
-            lstOngoings.adapter = OngoingSelectionRecyclerViewAdapter(ongoings, this)
+            setupRecyclerView()
         }
-
-        // FIXME: implement Edit/Delete buttons first
-        //setRecyclerViewItemTouchListener()
 
         createOngoingObserver()
     }
@@ -143,26 +137,23 @@ class OngoingSelectionFragment
         listener?.onOngoingClicked(ongoing)
     }
 
-    private fun setRecyclerViewItemTouchListener() {
+    private fun setupRecyclerView() {
+        val ongoings: ArrayList<Ongoing> = ArrayList()
+        val adapter = OngoingSelectionRecyclerViewAdapter(ongoings, this)
 
-        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, viewHolder1: RecyclerView.ViewHolder): Boolean {
-                return false
-            }
+        view?.let {
+            lstOngoings = it.findViewById(R.id.lst_ongoings)
 
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
-                //val position = viewHolder.adapterPosition
-                //photosList.removeAt(position)
-                //recyclerView.adapter!!.notifyItemRemoved(position)
+            lstOngoings.layoutManager = LinearLayoutManager(activity)
+            lstOngoings.adapter = adapter
 
-                // FIXME: implement
-                //val recyclerAdapter = lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
-                //recyclerAdapter.removeList(list)
-            }
+            val divider = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
+            lstOngoings.addItemDecoration(divider)
+
+            val itemTouchHelperCallback = ItemTouchHelperCallback(adapter)
+            val touchHelper = ItemTouchHelper(itemTouchHelperCallback)
+            touchHelper.attachToRecyclerView(lstOngoings)
         }
-
-        val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
-        itemTouchHelper.attachToRecyclerView(lstOngoings)
     }
 
     private fun createOngoingObserver() {
