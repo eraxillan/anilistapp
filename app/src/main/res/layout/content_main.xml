@@ -9,7 +9,7 @@
     This is perfect for something like a Fragment that could
     take up an entire screen. -->
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/ongoing_selection_fragment"
+        android:id="@+id/fragment_ongoing_selection"
         android:name="name.eraxillan.ongoingschedule.ui.OngoingSelectionFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

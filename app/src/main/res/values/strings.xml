@@ -8,4 +8,5 @@
     <string name="invalid_ongoing_url_msg">Invalid ongoing URL!</string>
     <string name="ongoing_detail_fragment_tag">Ongoing Detail Fragment</string>
     <string name="ongoing_info">Ongoing info</string>
+    <string name="ongoing_logo_hint">Ongoing logo</string>
 </resources>

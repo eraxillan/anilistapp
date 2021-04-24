@@ -16,7 +16,7 @@ class OngoingItemsRecyclerViewAdapter(var ongoing: Ongoing)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingItemViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(
-                R.layout.task_view_holder,
+                R.layout.view_holder_ongoing_details,
                 parent,
                 false
             )
@@ -24,7 +24,7 @@ class OngoingItemsRecyclerViewAdapter(var ongoing: Ongoing)
     }
 
     override fun onBindViewHolder(holder: OngoingItemViewHolder, position: Int) {
-        holder.taskTextView.text = when (position) {
+        holder.tvOngoingInfo.text = when (position) {
             0 -> "Season: ${ongoing.season}"
             1 -> "Original name: ${ongoing.originalName}"
             2 -> "Latest episode: ${ongoing.latestEpisode}"

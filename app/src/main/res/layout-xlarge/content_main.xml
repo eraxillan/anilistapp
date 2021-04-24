@@ -7,10 +7,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.OngoingListActivity"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_ongoing_list">
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/ongoing_selection_fragment"
+        android:id="@+id/fragment_ongoing_selection"
         android:name="name.eraxillan.ongoingschedule.ui.OngoingSelectionFragment"
         android:layout_width="300dp"
         android:layout_height="match_parent"
@@ -30,6 +30,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/ongoing_selection_fragment"
+        app:layout_constraintStart_toEndOf="@+id/fragment_ongoing_selection"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

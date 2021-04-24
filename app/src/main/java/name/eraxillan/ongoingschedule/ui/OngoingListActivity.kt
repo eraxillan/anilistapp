@@ -137,10 +137,10 @@ class OngoingListActivity
     // Perform initialization of all fragments
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.toolbar))
+        setContentView(R.layout.activity_ongoing_list)
+        setSupportActionBar(findViewById(R.id.toolbar_main))
 
-        fab = findViewById(R.id.fab)
+        fab = findViewById(R.id.fab_add_ongoing)
         fragmentContainer = findViewById(R.id.fragment_container)
 
         // `FragmentManager` is an object that
@@ -149,7 +149,7 @@ class OngoingListActivity
         // It's called a support Fragment manager rather than just a Fragment manager because
         // some older versions of Android didn't include fragments
         ongoingSelectionFragment =
-            supportFragmentManager.findFragmentById(R.id.ongoing_selection_fragment) as OngoingSelectionFragment
+            supportFragmentManager.findFragmentById(R.id.fragment_ongoing_selection) as OngoingSelectionFragment
         fragmentContainer = findViewById(R.id.fragment_container)
         largeScreen = (fragmentContainer != null)
 

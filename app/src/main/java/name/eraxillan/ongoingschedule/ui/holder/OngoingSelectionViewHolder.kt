@@ -9,8 +9,8 @@ import name.eraxillan.ongoingschedule.model.Ongoing
 class OngoingSelectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val TAG = OngoingSelectionViewHolder::class.java.simpleName
 
-    val listPosition = itemView.findViewById(R.id.itemNumber) as TextView
-    val listTitle = itemView.findViewById(R.id.itemString) as TextView
+    val listPosition = itemView.findViewById(R.id.tvOngoingNumber) as TextView
+    val listTitle = itemView.findViewById(R.id.tvOngoingName) as TextView
 
     fun bind(position: Int, ongoing: Ongoing) {
         listPosition.text = (position + 1).toString()

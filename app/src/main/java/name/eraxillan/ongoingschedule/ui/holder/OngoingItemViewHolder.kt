@@ -8,5 +8,5 @@ import name.eraxillan.ongoingschedule.R
 class OngoingItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val TAG = OngoingItemViewHolder::class.java.simpleName
 
-    val taskTextView = itemView.findViewById(R.id.textview_task) as TextView
+    val tvOngoingInfo = itemView.findViewById(R.id.tv_ongoing_info) as TextView
 }

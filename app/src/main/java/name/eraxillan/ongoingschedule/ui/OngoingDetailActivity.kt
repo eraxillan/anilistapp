@@ -21,7 +21,7 @@ class OngoingDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_list_detail)
+        setContentView(R.layout.activity_ongoing_details)
 
         ongoing = intent.getParcelableExtra(OngoingListActivity.INTENT_ONGOING_KEY)!!
         title = getString(R.string.ongoing_info)
