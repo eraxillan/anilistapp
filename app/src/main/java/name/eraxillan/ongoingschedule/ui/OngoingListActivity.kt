@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
+import android.util.Log
 import android.util.Patterns
 import android.view.Menu
 import android.view.MenuItem
@@ -44,9 +45,9 @@ class OngoingListActivity
     // created sometime in the future
     private lateinit var fab: FloatingActionButton
     private var ongoingSelectionFragment: OngoingSelectionFragment = OngoingSelectionFragment.newInstance()
+    private var ongoingFragment: OngoingDetailFragment? = null
     private var fragmentContainer: FrameLayout? = null
     private var largeScreen = false
-    private var ongoingFragment: OngoingDetailFragment? = null
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -171,6 +172,16 @@ class OngoingListActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
+            // https://developer.android.com/training/swipe/respond-refresh-request
+            R.id.action_refresh -> {
+                Log.i(TAG, "Refresh menu item selected")
+
+                // Start the refresh background task.
+                // This method calls `setRefreshing(false)` when it's finished
+                ongoingSelectionFragment.updateOngoingList(true)
+
+                true
+            }
             R.id.action_settings -> {
                 true
             }

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Ongoing schedule</string>
     <string name="action_settings">Settings</string>
+    <string name="action_refresh">Refresh</string>
     <string name="invalid_url">https://www.invalid.com</string>
     <string name="add_ongoing_dialog_title">Add new ongoing by URL</string>
     <string name="add_ongoing_hint">Enter ongoing URL here</string>

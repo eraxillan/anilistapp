@@ -2,6 +2,7 @@ package name.eraxillan.ongoingschedule.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.coroutines.*
 import name.eraxillan.ongoingschedule.ui.adapter.OngoingSelectionRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.R
@@ -31,6 +33,7 @@ class OngoingSelectionFragment
 
     private var listener: OnOngoingInfoFragmentInteractionListener? = null
     private lateinit var lstOngoings: RecyclerView
+    private lateinit var strlLayout: SwipeRefreshLayout
 
     /**
      * `by viewModels<MainViewModel>()` is a lazy delegate that creates a new `mainViewModel`
@@ -77,6 +80,21 @@ class OngoingSelectionFragment
     }
     */
 
+    // See https://developer.android.com/training/swipe/add-swipe-interface
+    fun updateOngoingList(fromMenu: Boolean) {
+        // Signal SwipeRefreshLayout to start the progress indicator
+        // NOTE: required only when called explicitly, e.g. from a menu item
+        if (fromMenu)
+            strlLayout.isRefreshing = true
+
+        GlobalScope.launch {
+            // FIXME: implement ongoing list loading
+            delay(1000)
+
+            activity?.runOnUiThread { strlLayout.isRefreshing = false }
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Lifecycle method.
@@ -115,9 +133,8 @@ class OngoingSelectionFragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.let {
-            setupRecyclerView()
-        }
+        setupRecyclerView()
+        setupSwipeOnRefresh()
 
         createOngoingObserver()
     }
@@ -153,6 +170,23 @@ class OngoingSelectionFragment
             val itemTouchHelperCallback = ItemTouchHelperCallback(adapter)
             val touchHelper = ItemTouchHelper(itemTouchHelperCallback)
             touchHelper.attachToRecyclerView(lstOngoings)
+        }
+    }
+
+    // https://developer.android.com/training/swipe/respond-refresh-request
+    private fun setupSwipeOnRefresh() {
+        view?.let {
+            strlLayout = it.findViewById(R.id.swipe_refresh)
+
+            // Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked
+            // when the user performs a swipe-to-refresh gesture.
+            strlLayout.setOnRefreshListener {
+                Log.i(TAG, "onRefresh called from SwipeRefreshLayout")
+
+                // This method performs the actual data-refresh operation.
+                // The method calls `setRefreshing(false)` when it's finished
+                updateOngoingList(false)
+            }
         }
     }
 
