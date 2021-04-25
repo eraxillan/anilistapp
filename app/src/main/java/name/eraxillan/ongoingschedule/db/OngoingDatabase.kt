@@ -25,7 +25,7 @@ abstract class OngoingDatabase : RoomDatabase() {
                     context.applicationContext,
                     OngoingDatabase::class.java,
                     "ongoing_db"
-                ).build()
+                ).fallbackToDestructiveMigration().build()
             }
             return instance as OngoingDatabase
         }
