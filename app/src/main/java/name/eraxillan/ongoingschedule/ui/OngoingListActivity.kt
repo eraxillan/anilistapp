@@ -150,7 +150,7 @@ class OngoingListActivity
         // It's called a support Fragment manager rather than just a Fragment manager because
         // some older versions of Android didn't include fragments
         ongoingSelectionFragment =
-            supportFragmentManager.findFragmentById(R.id.fragment_ongoing_selection) as OngoingSelectionFragment
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container_view) as OngoingSelectionFragment
         fragmentContainer = findViewById(R.id.fragment_container)
         largeScreen = (fragmentContainer != null)
 
