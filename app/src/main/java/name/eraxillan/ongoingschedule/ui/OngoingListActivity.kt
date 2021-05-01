@@ -15,6 +15,9 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.children
+import androidx.core.view.isVisible
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import name.eraxillan.ongoingschedule.*
 import name.eraxillan.ongoingschedule.model.Ongoing
@@ -45,7 +48,7 @@ class OngoingListActivity
     // created sometime in the future
     private lateinit var fab: FloatingActionButton
     private var ongoingSelectionFragment: OngoingSelectionFragment = OngoingSelectionFragment.newInstance()
-    private var ongoingFragment: OngoingDetailFragment? = null
+    private var ongoingDetailsFragment: OngoingDetailFragment? = null
     private var fragmentContainer: FrameLayout? = null
     private var largeScreen = false
 
@@ -110,26 +113,37 @@ class OngoingListActivity
     */
 
     private fun showOngoingInfo(ongoing: Ongoing) {
-        if (!largeScreen) {
-            val ongoingDetailIntent = Intent(this, OngoingDetailActivity::class.java)
-            ongoingDetailIntent.putExtra(INTENT_ONGOING_KEY, ongoing)
-            startActivityForResult(ongoingDetailIntent, ONGOING_INFO_REQUEST_CODE)
-        } else {
-            title = ongoing.originalName
+        title = ongoing.originalName
 
-            ongoingFragment = OngoingDetailFragment.newInstance(ongoing)
-            ongoingFragment?.let {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, it, getString(R.string.ongoing_detail_fragment_tag))
+        if (!largeScreen) {
+            showListControls(false)
+
+            if (ongoingDetailsFragment == null)
+                ongoingDetailsFragment = OngoingDetailFragment.newInstance(ongoing)
+            else
+                ongoingDetailsFragment?.ongoing = ongoing
+
+            ongoingDetailsFragment?.let {
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(
+                        R.id.nav_host_fragment_container_view, it,
+                        getString(R.string.ongoing_detail_fragment_tag)
+                    )
                     .addToBackStack(null)
                     .commit()
             }
-
-            /*
-            fab.setOnClickListener {
-                showCreateTaskDialog()
+        } else {
+            ongoingDetailsFragment = OngoingDetailFragment.newInstance(ongoing)
+            ongoingDetailsFragment?.let {
+                supportFragmentManager.beginTransaction()
+                    .replace(
+                        R.id.fragment_container, it,
+                        getString(R.string.ongoing_detail_fragment_tag)
+                    )
+                    .addToBackStack(null)
+                    .commit()
             }
-            */
         }
     }
 
@@ -189,40 +203,39 @@ class OngoingListActivity
         }
     }
 
-    // Dispatch incoming result to the correct fragment
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == ONGOING_INFO_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            data?.let {
-                // FIXME: implement
-                //ongoingSelectionFragment.saveList(data.getParcelableExtra(INTENT_LIST_KEY)!!)
-            }
-        }
-    }
-
     // Called when the activity has detected the user's press of the back key
     override fun onBackPressed() {
         super.onBackPressed()
 
         title = resources.getString(R.string.app_name)
+
+        // Show "Add ongoing" button and activity menu
+        showListControls(true)
+
         // FIXME: implement
         /*
         ongoingFragment?.list?.let {
             ongoingSelectionFragment.listDataManager.saveList(it)
         }
         */
-        ongoingFragment?.let {
+        ongoingDetailsFragment?.let {
             supportFragmentManager
                 .beginTransaction()
                 .remove(it)
                 .commit()
-            ongoingFragment = null
+            ongoingDetailsFragment = null
         }
 
         fab.setOnClickListener {
             showAddOngoingDialog()
         }
+    }
+
+    private fun showListControls(show: Boolean) {
+        // Show/hide "Add ongoing" button and activity menu
+        fab.isVisible = show
+        val toolbar = findViewById<Toolbar>(R.id.toolbar_main)
+        toolbar.menu.children.forEach { it.isVisible = show }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
