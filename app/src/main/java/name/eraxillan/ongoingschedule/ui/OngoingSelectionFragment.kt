@@ -47,17 +47,11 @@ class OngoingSelectionFragment
 
     fun addOngoing(url: URL) {
         /*val job =*/ GlobalScope.launch(Dispatchers.IO) {
-            // 1) Parse ongoing data from website
+            // Parse ongoing data from website
             val ongoing = ongoingViewModel.parseOngoingFromUrl(url)
 
-            // 2) Save ongoing to database
+            // Save ongoing to database
             ongoingViewModel.addOngoing(ongoing)
-
-            // 3) Add ongoing to list view in UI
-            withContext(Dispatchers.Main) {
-                val recyclerAdapter = lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
-                recyclerAdapter.addOngoing(ongoing)
-            }
 
             listener?.onOngoingAdded(ongoing)
         }
