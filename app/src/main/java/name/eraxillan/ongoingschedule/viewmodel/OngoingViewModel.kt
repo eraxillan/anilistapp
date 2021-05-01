@@ -30,9 +30,13 @@ class OngoingViewModel(application: Application)
         return ongoing
     }
 
-    fun addOngoing(ongoing: Ongoing): Unit {
+    fun addOngoing(ongoing: Ongoing) {
         val newId = ongoingRepo.addOngoing(ongoing)
         Log.i(TAG, "New ongoing with id=$newId added to the SQLite database")
+    }
+
+    fun deleteOngoing(ongoing: Ongoing) {
+        ongoingRepo.deleteOngoing(ongoing)
     }
 
     fun getOngoings(): LiveData<List<Ongoing>>? {

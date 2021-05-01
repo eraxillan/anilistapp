@@ -53,7 +53,9 @@ class OngoingSelectionFragment
             // Save ongoing to database
             ongoingViewModel.addOngoing(ongoing)
 
-            listener?.onOngoingAdded(ongoing)
+            withContext(Dispatchers.Main) {
+                listener?.onOngoingAdded(ongoing)
+            }
         }
         //job.cancelAndJoin()
     }
@@ -150,7 +152,11 @@ class OngoingSelectionFragment
 
     private fun setupRecyclerView() {
         val ongoings = mutableListOf<Ongoing>()
-        val adapter = OngoingSelectionRecyclerViewAdapter(ongoings, this)
+        val adapter = OngoingSelectionRecyclerViewAdapter(ongoings, this) {
+            GlobalScope.launch {
+                ongoingViewModel.deleteOngoing(it)
+            }
+        }
 
         view?.let {
             lstOngoings = it.findViewById(R.id.lst_ongoings)

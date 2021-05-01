@@ -19,6 +19,10 @@ class OngoingRepo(context: Context) {
         return newId
     }
 
+    fun deleteOngoing(ongoing: Ongoing) {
+        ongoingDao.deleteOngoing(ongoing)
+    }
+
     fun createOngoing(): Ongoing {
         // TODO: add special initialization code if needed
         return Ongoing()

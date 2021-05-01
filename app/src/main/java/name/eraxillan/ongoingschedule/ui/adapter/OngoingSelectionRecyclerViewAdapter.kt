@@ -11,7 +11,8 @@ import name.eraxillan.ongoingschedule.ui.holder.OngoingSelectionViewHolder
 
 class OngoingSelectionRecyclerViewAdapter(
     private val ongoings : MutableList<Ongoing>,
-    private val clickListener: OngoingSelectionRecyclerViewClickListener
+    private val clickListener: OngoingSelectionRecyclerViewClickListener,
+    private val deleteDelegate: (Ongoing) -> Unit
 )
     : RecyclerView.Adapter<OngoingSelectionViewHolder>()
     , ItemTouchHelperCallback.ItemTouchHelperAdapter {
@@ -54,7 +55,9 @@ class OngoingSelectionRecyclerViewAdapter(
     //override fun getItemViewType(position: Int): Int = 0
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
     private fun deleteOngoing(position: Int) {
+        deleteDelegate(ongoings[position])
         ongoings.removeAt(position)
         notifyItemRemoved(position)
     }
