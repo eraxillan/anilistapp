@@ -37,19 +37,25 @@ class ItemTouchHelperCallback(private val adapter: ItemTouchHelperAdapter) : Ite
         return 0.4f
     }
 
-    override fun onChildDraw(canvas: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
-                             dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+    override fun onChildDraw(
+        canvas: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
+        dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean
+    ) {
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             val viewItem = viewHolder.itemView
 
             // TODO: check ic_trash
-            SwipeBackgroundHelper.paintDrawCommandToStart(canvas, viewItem, R.drawable.ic_baseline_delete_forever_24, dX)
+            SwipeBackgroundHelper.paintDrawCommandToStart(
+                canvas,
+                viewItem,
+                R.drawable.ic_baseline_delete_forever_24,
+                dX
+            )
         }
         super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
     interface ItemTouchHelperAdapter {
-
         /**
          * Called when one item is dragged and dropped into a different position
          */
@@ -59,7 +65,5 @@ class ItemTouchHelperCallback(private val adapter: ItemTouchHelperAdapter) : Ite
          * Called when one item is swiped away
          */
         fun onItemDismiss(position: Int)
-
     }
-
 }

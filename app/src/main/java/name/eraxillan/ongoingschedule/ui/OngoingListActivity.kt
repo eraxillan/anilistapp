@@ -24,13 +24,6 @@ import java.net.URL
 import java.util.*
 
 
-/*
-  Remember that splitting your code into individual, isolated Fragments makes them reusable.
-  It’s essential that the Fragment needs nothing inside the Activity.
-  Any app that wants to succeed across multiple devices and multiple size classes
-  need to use Fragments to ensure it provides the best experience for its users.
- */
-
 class OngoingListActivity
     : AppCompatActivity()
     , OngoingListFragment.OnOngoingInfoFragmentInteractionListener {
@@ -91,24 +84,6 @@ class OngoingListActivity
 
         builder.create().show()
     }
-
-    /*
-    private fun showCreateTaskDialog() {
-        val taskEditText = EditText(this)
-        taskEditText.inputType = InputType.TYPE_CLASS_TEXT
-
-        AlertDialog.Builder(this)
-            .setTitle(R.string.task_to_add)
-            .setView(taskEditText)
-            .setPositiveButton(R.string.add_task) { dialog, _ ->
-                val task = taskEditText.text.toString()
-                ongoingFragment?.addTask(task)
-                dialog.dismiss()
-            }
-            .create()
-            .show()
-    }
-    */
 
     private fun showOngoingInfo(ongoing: Ongoing) {
         title = ongoing.originalName
@@ -210,12 +185,6 @@ class OngoingListActivity
         // Show "Add ongoing" button and activity menu
         showListControls(true)
 
-        // FIXME: implement
-        /*
-        ongoingFragment?.list?.let {
-            ongoingListFragment.listDataManager.saveList(it)
-        }
-        */
         ongoingDetailsFragment?.let {
             supportFragmentManager
                 .beginTransaction()

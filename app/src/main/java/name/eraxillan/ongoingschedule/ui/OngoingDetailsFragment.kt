@@ -20,16 +20,6 @@ class OngoingDetailsFragment : Fragment() {
     lateinit var listItemsRecyclerView: RecyclerView
     lateinit var ongoing: Ongoing
 
-    /*
-    fun addTask(item: String) {
-        list.tasks.add(item)
-
-        val listRecyclerAdapter = listItemsRecyclerView.adapter as OngoingItemsRecyclerViewAdapter
-        listRecyclerAdapter.list = list
-        listRecyclerAdapter.notifyDataSetChanged()
-    }
-    */
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

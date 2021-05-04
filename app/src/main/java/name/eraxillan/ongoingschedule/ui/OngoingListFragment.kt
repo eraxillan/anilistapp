@@ -60,22 +60,6 @@ class OngoingListFragment
         //job.cancelAndJoin()
     }
 
-    /*
-    fun saveOngoing(ongoing: Ongoing) {
-        listDataManager.saveList(list)
-
-        updateOngoings()
-    }
-     */
-
-    /*
-    private fun updateOngoings() {
-        //val lists = listDataManager.readLists()
-        val ongoings: ArrayList<Ongoing> = ArrayList()
-        lstOngoings.adapter = OngoingSelectionRecyclerViewAdapter(ongoings, this)
-    }
-    */
-
     // See https://developer.android.com/training/swipe/add-swipe-interface
     fun updateOngoingList(fromMenu: Boolean) {
         // Signal SwipeRefreshLayout to start the progress indicator
