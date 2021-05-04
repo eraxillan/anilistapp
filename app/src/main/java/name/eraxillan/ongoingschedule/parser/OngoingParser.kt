@@ -5,7 +5,6 @@ import name.eraxillan.ongoingschedule.db.ZonedScheduledTime
 import java.time.*
 import kotlin.random.Random
 import name.eraxillan.ongoingschedule.model.Ongoing
-import name.eraxillan.ongoingschedule.ui.OngoingSelectionFragment
 import java.net.URL
 
 

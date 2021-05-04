@@ -10,7 +10,7 @@
     take up an entire screen. -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_container_view"
-        android:name="name.eraxillan.ongoingschedule.ui.OngoingSelectionFragment"
+        android:name="name.eraxillan.ongoingschedule.ui.OngoingListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="0dp"

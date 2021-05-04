@@ -1,7 +1,5 @@
 package name.eraxillan.ongoingschedule.ui
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -35,7 +33,7 @@ import java.util.*
 
 class OngoingListActivity
     : AppCompatActivity()
-    , OngoingSelectionFragment.OnOngoingInfoFragmentInteractionListener {
+    , OngoingListFragment.OnOngoingInfoFragmentInteractionListener {
 
     companion object {
         const val INTENT_ONGOING_KEY = "ongoing"
@@ -47,8 +45,8 @@ class OngoingListActivity
     // You use the `lateinit` keyword to tell the compiler that a `RecyclerView` will be
     // created sometime in the future
     private lateinit var fab: FloatingActionButton
-    private var ongoingSelectionFragment: OngoingSelectionFragment = OngoingSelectionFragment.newInstance()
-    private var ongoingDetailsFragment: OngoingDetailFragment? = null
+    private var ongoingListFragment: OngoingListFragment = OngoingListFragment.newInstance()
+    private var ongoingDetailsFragment: OngoingDetailsFragment? = null
     private var fragmentContainer: FrameLayout? = null
     private var largeScreen = false
 
@@ -87,7 +85,7 @@ class OngoingListActivity
                 return@setPositiveButton
             }
             // Add ongoing to list view, db, and close dialog
-            ongoingSelectionFragment.addOngoing(url)
+            ongoingListFragment.addOngoing(url)
             dialog.dismiss()
         }
 
@@ -119,7 +117,7 @@ class OngoingListActivity
             showListControls(false)
 
             if (ongoingDetailsFragment == null)
-                ongoingDetailsFragment = OngoingDetailFragment.newInstance(ongoing)
+                ongoingDetailsFragment = OngoingDetailsFragment.newInstance(ongoing)
             else
                 ongoingDetailsFragment?.ongoing = ongoing
 
@@ -134,7 +132,7 @@ class OngoingListActivity
                     .commit()
             }
         } else {
-            ongoingDetailsFragment = OngoingDetailFragment.newInstance(ongoing)
+            ongoingDetailsFragment = OngoingDetailsFragment.newInstance(ongoing)
             ongoingDetailsFragment?.let {
                 supportFragmentManager.beginTransaction()
                     .replace(
@@ -163,8 +161,8 @@ class OngoingListActivity
         // powerful tool to make the UI as flexible as possible across various screen sizes.
         // It's called a support Fragment manager rather than just a Fragment manager because
         // some older versions of Android didn't include fragments
-        ongoingSelectionFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container_view) as OngoingSelectionFragment
+        ongoingListFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container_view) as OngoingListFragment
         fragmentContainer = findViewById(R.id.fragment_container)
         largeScreen = (fragmentContainer != null)
 
@@ -192,7 +190,7 @@ class OngoingListActivity
 
                 // Start the refresh background task.
                 // This method calls `setRefreshing(false)` when it's finished
-                ongoingSelectionFragment.updateOngoingList(true)
+                ongoingListFragment.updateOngoingList(true)
 
                 true
             }
@@ -215,7 +213,7 @@ class OngoingListActivity
         // FIXME: implement
         /*
         ongoingFragment?.list?.let {
-            ongoingSelectionFragment.listDataManager.saveList(it)
+            ongoingListFragment.listDataManager.saveList(it)
         }
         */
         ongoingDetailsFragment?.let {

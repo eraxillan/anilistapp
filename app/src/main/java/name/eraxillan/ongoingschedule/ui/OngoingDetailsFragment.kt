@@ -13,10 +13,10 @@ import name.eraxillan.ongoingschedule.model.Ongoing
 
 /**
  * A simple [Fragment] subclass.
- * Use the [OngoingDetailFragment.newInstance] factory method to
+ * Use the [OngoingDetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class OngoingDetailFragment : Fragment() {
+class OngoingDetailsFragment : Fragment() {
     lateinit var listItemsRecyclerView: RecyclerView
     lateinit var ongoing: Ongoing
 
@@ -59,11 +59,11 @@ class OngoingDetailFragment : Fragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @return A new instance of fragment OngoingDetailFragment.
+         * @return A new instance of fragment OngoingDetailsFragment.
          */
         @JvmStatic
-        fun newInstance(ongoing: Ongoing): OngoingDetailFragment {
-            val fragment = OngoingDetailFragment()
+        fun newInstance(ongoing: Ongoing): OngoingDetailsFragment {
+            val fragment = OngoingDetailsFragment()
             val arguments = Bundle()
             arguments.putParcelable(ARG_ONGOING, ongoing)
             fragment.arguments = arguments

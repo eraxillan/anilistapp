@@ -22,14 +22,14 @@ import java.net.URL
 
 /**
  * A simple [Fragment] (isolated view) subclass.
- * Use the [OngoingSelectionFragment.newInstance] factory method to
+ * Use the [OngoingListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class OngoingSelectionFragment
+class OngoingListFragment
     : Fragment()
     , OngoingSelectionRecyclerViewAdapter.OngoingSelectionRecyclerViewClickListener {
 
-    private val TAG = OngoingSelectionFragment::class.java.simpleName
+    private val TAG = OngoingListFragment::class.java.simpleName
 
     private var listener: OnOngoingInfoFragmentInteractionListener? = null
     private lateinit var lstOngoings: RecyclerView
@@ -222,6 +222,6 @@ class OngoingSelectionFragment
 
     companion object {
         @JvmStatic
-        fun newInstance(): OngoingSelectionFragment = OngoingSelectionFragment()
+        fun newInstance(): OngoingListFragment = OngoingListFragment()
     }
 }
