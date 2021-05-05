@@ -24,7 +24,7 @@ class OngoingItemsRecyclerViewAdapter(var ongoing: Ongoing)
     }
 
     override fun onBindViewHolder(holder: OngoingItemViewHolder, position: Int) {
-        holder.tvOngoingInfo.text = when (position) {
+        val text = when (position) {
             0 -> "Season: ${ongoing.season}"
             1 -> "Original name: ${ongoing.originalName}"
             2 -> "Latest episode: ${ongoing.latestEpisode}"
@@ -34,6 +34,7 @@ class OngoingItemsRecyclerViewAdapter(var ongoing: Ongoing)
             6 -> "Minimum age: ${ongoing.minAge}"
             else -> ""
         }
+        holder.bind(text)
     }
 
     // Tells the `RecyclerView` how many items to display

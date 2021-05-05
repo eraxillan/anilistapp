@@ -27,6 +27,13 @@ android {
         }
     }
 
+    buildFeatures {
+        // Part of Android Jetpack: View Binding library
+        // Allow to get rid of `findViewById` calls and achieve null/type safety
+        // Documentation: https://developer.android.com/topic/libraries/view-binding
+        viewBinding = true
+    }
+
     buildTypes {
         release {
             minifyEnabled false

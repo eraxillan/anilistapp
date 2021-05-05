@@ -9,15 +9,13 @@ import android.util.Patterns
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.children
 import androidx.core.view.isVisible
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import name.eraxillan.ongoingschedule.*
+import name.eraxillan.ongoingschedule.databinding.ActivityOngoingListBinding
 import name.eraxillan.ongoingschedule.model.Ongoing
 import java.net.MalformedURLException
 import java.net.URL
@@ -30,17 +28,12 @@ class OngoingListActivity
 
     companion object {
         const val INTENT_ONGOING_KEY = "ongoing"
-        const val ONGOING_INFO_REQUEST_CODE = 123
+        private val TAG = OngoingListActivity::class.java.simpleName
     }
 
-    private val TAG = OngoingListActivity::class.java.simpleName
-
-    // You use the `lateinit` keyword to tell the compiler that a `RecyclerView` will be
-    // created sometime in the future
-    private lateinit var fab: FloatingActionButton
+    private lateinit var binding: ActivityOngoingListBinding
     private var ongoingListFragment: OngoingListFragment = OngoingListFragment.newInstance()
     private var ongoingDetailsFragment: OngoingDetailsFragment? = null
-    private var fragmentContainer: FrameLayout? = null
     private var largeScreen = false
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,24 +117,26 @@ class OngoingListActivity
 
     // Perform initialization of all fragments
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_ongoing_list)
-        setSupportActionBar(findViewById(R.id.toolbar_main))
+        // TODO: do we need this call?
+        //setTheme(R.style.AppTheme)
 
-        fab = findViewById(R.id.fab_add_ongoing)
-        fragmentContainer = findViewById(R.id.fragment_container)
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityOngoingListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbarMain)
 
         // `FragmentManager` is an object that
         // lets you dynamically add and remove Fragments at runtime. This gives you a
         // powerful tool to make the UI as flexible as possible across various screen sizes.
         // It's called a support Fragment manager rather than just a Fragment manager because
         // some older versions of Android didn't include fragments
-        ongoingListFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_container_view) as OngoingListFragment
-        fragmentContainer = findViewById(R.id.fragment_container)
-        largeScreen = (fragmentContainer != null)
+        ongoingListFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment_container_view) as OngoingListFragment
+        largeScreen = (binding.contentMain.fragmentContainer != null)
 
-        fab.setOnClickListener { /*view*/ _ ->
+        binding.fabAddOngoing.setOnClickListener { /*view*/ _ ->
             showAddOngoingDialog()
         }
     }
@@ -193,16 +188,15 @@ class OngoingListActivity
             ongoingDetailsFragment = null
         }
 
-        fab.setOnClickListener {
+        binding.fabAddOngoing.setOnClickListener {
             showAddOngoingDialog()
         }
     }
 
     private fun showListControls(show: Boolean) {
         // Show/hide "Add ongoing" button and activity menu
-        fab.isVisible = show
-        val toolbar = findViewById<Toolbar>(R.id.toolbar_main)
-        toolbar.menu.children.forEach { it.isVisible = show }
+        binding.fabAddOngoing.isVisible = show
+        binding.toolbarMain.menu.children.forEach { it.isVisible = show }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,12 +1,19 @@
 package name.eraxillan.ongoingschedule.ui.holder
 
 import android.view.View
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import name.eraxillan.ongoingschedule.R
+import name.eraxillan.ongoingschedule.databinding.ViewHolderOngoingDetailsBinding
 
 class OngoingItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val TAG = OngoingItemViewHolder::class.java.simpleName
+    private val binding = ViewHolderOngoingDetailsBinding.bind(itemView)
 
-    val tvOngoingInfo = itemView.findViewById(R.id.tv_ongoing_info) as TextView
+    companion object {
+        private val TAG = OngoingItemViewHolder::class.java.simpleName
+    }
+
+    fun bind(text: String) {
+        with (binding) {
+            tvOngoingInfo.text = text
+        }
+    }
 }

@@ -1,14 +1,14 @@
 package name.eraxillan.ongoingschedule.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.ongoingschedule.ui.adapter.OngoingItemsRecyclerViewAdapter
-import name.eraxillan.ongoingschedule.R
+import name.eraxillan.ongoingschedule.databinding.FragmentOngoingDetailsBinding
 import name.eraxillan.ongoingschedule.model.Ongoing
 
 /**
@@ -17,7 +17,12 @@ import name.eraxillan.ongoingschedule.model.Ongoing
  * create an instance of this fragment.
  */
 class OngoingDetailsFragment : Fragment() {
-    lateinit var listItemsRecyclerView: RecyclerView
+    private val LOG_TAG = OngoingDetailsFragment::class.java.simpleName
+
+    private var _binding: FragmentOngoingDetailsBinding? = null
+    // This property is only valid between `onCreateView` and `onDestroyView`
+    private val binding get() = _binding!!
+
     lateinit var ongoing: Ongoing
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,17 +34,21 @@ class OngoingDetailsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_ongoing_details, container, false)
+        _binding = FragmentOngoingDetailsBinding.inflate(inflater, container, false)
+        setupRecyclerView()
+        return binding.root
+    }
 
-        view?.let {
-            listItemsRecyclerView = it.findViewById(R.id.lst_ongoing_info)
-            listItemsRecyclerView.adapter = OngoingItemsRecyclerViewAdapter(ongoing)
-            listItemsRecyclerView.layoutManager = LinearLayoutManager(context)
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
-        return view
+    private fun setupRecyclerView() {
+        binding.lstOngoingInfo.adapter = OngoingItemsRecyclerViewAdapter(ongoing)
+        binding.lstOngoingInfo.layoutManager = LinearLayoutManager(context)
     }
 
     companion object {

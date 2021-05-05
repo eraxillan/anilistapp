@@ -11,20 +11,15 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.coroutines.*
 import name.eraxillan.ongoingschedule.ui.adapter.OngoingSelectionRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.R
+import name.eraxillan.ongoingschedule.databinding.FragmentOngoingListBinding
 import name.eraxillan.ongoingschedule.model.Ongoing
 import name.eraxillan.ongoingschedule.viewmodel.OngoingViewModel
 import java.net.URL
 
-/**
- * A simple [Fragment] (isolated view) subclass.
- * Use the [OngoingListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class OngoingListFragment
     : Fragment()
     , OngoingSelectionRecyclerViewAdapter.OngoingSelectionRecyclerViewClickListener {
@@ -32,8 +27,10 @@ class OngoingListFragment
     private val TAG = OngoingListFragment::class.java.simpleName
 
     private var listener: OnOngoingInfoFragmentInteractionListener? = null
-    private lateinit var lstOngoings: RecyclerView
-    private lateinit var strlLayout: SwipeRefreshLayout
+
+    private var _binding: FragmentOngoingListBinding? = null
+    // This property is only valid between `onCreateView` and `onDestroyView`
+    private val binding get() = _binding!!
 
     /**
      * `by viewModels<MainViewModel>()` is a lazy delegate that creates a new `mainViewModel`
@@ -65,13 +62,15 @@ class OngoingListFragment
         // Signal SwipeRefreshLayout to start the progress indicator
         // NOTE: required only when called explicitly, e.g. from a menu item
         if (fromMenu)
-            strlLayout.isRefreshing = true
+            binding.swipeRefresh.isRefreshing = true
 
         GlobalScope.launch {
             // FIXME: implement ongoing list loading
             delay(1000)
 
-            activity?.runOnUiThread { strlLayout.isRefreshing = false }
+            activity?.runOnUiThread {
+                binding.swipeRefresh.isRefreshing = false
+            }
         }
     }
 
@@ -90,24 +89,18 @@ class OngoingListFragment
         }
     }
 
-    // Lifecycle method.
-    // `onCreate` is run when the `Fragment` is in the process of being created.
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ongoing_list, container, false)
+        _binding = FragmentOngoingListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    // Lifecycle method.
-    // `onActivityCreated` is the when the `Activity` to which the `Fragment` is attached
-    // has finished running its lifecycle method `onCreate`.
-    // This ensures you have an `Activity` to work with and something to show your widgets
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    // NOTE: fragments outlive their views!
+    //       One must clean up any references to the binging class instance here
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -115,7 +108,6 @@ class OngoingListFragment
 
         setupRecyclerView()
         setupSwipeOnRefresh()
-
         createOngoingObserver()
     }
 
@@ -142,29 +134,27 @@ class OngoingListFragment
             }
         }
 
-        view?.let {
-            lstOngoings = it.findViewById(R.id.lst_ongoings)
+        val divider = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
 
-            lstOngoings.layoutManager = LinearLayoutManager(activity)
-            lstOngoings.adapter = adapter
+        val itemTouchHelperCallback = ItemTouchHelperCallback(adapter)
+        val touchHelper = ItemTouchHelper(itemTouchHelperCallback)
 
-            val divider = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
-            lstOngoings.addItemDecoration(divider)
+        with (binding.lstOngoings) {
+            this.adapter = adapter
+            this.layoutManager = LinearLayoutManager(requireContext())
+            this.addItemDecoration(divider)
+            this.setHasFixedSize(true)
 
-            val itemTouchHelperCallback = ItemTouchHelperCallback(adapter)
-            val touchHelper = ItemTouchHelper(itemTouchHelperCallback)
-            touchHelper.attachToRecyclerView(lstOngoings)
+            touchHelper.attachToRecyclerView(this)
         }
     }
 
     // https://developer.android.com/training/swipe/respond-refresh-request
     private fun setupSwipeOnRefresh() {
-        view?.let {
-            strlLayout = it.findViewById(R.id.swipe_refresh)
-
+        with (binding.swipeRefresh) {
             // Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked
             // when the user performs a swipe-to-refresh gesture.
-            strlLayout.setOnRefreshListener {
+            this.setOnRefreshListener {
                 Log.i(TAG, "onRefresh called from SwipeRefreshLayout")
 
                 // This method performs the actual data-refresh operation.
@@ -178,8 +168,7 @@ class OngoingListFragment
         ongoingViewModel.getOngoings()?.observe(
             viewLifecycleOwner, {
                 // Clean old ongoing list
-                val recyclerAdapter = lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
-                recyclerAdapter.clearOngoings()
+                getAdapter().clearOngoings()
 
                 // Add new ongoing list
                 it?.let {
@@ -190,12 +179,12 @@ class OngoingListFragment
     }
 
     private fun displayAllOngoings(ongoings: List<Ongoing>) {
-        val recyclerAdapter = lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
-        ongoings.forEach { recyclerAdapter.addOngoing(it) }
+        ongoings.forEach { getAdapter().addOngoing(it) }
     }
 
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    private fun getAdapter() = binding.lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
+    
+////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Inform objects that a list has been tapped.
     // `OngoingListActivity` will implement this interface
