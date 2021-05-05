@@ -1,25 +1,14 @@
 package name.eraxillan.ongoingschedule.ui
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.InputType
-import android.text.TextWatcher
 import android.util.Log
-import android.util.Patterns
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.EditText
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
-import androidx.core.view.isVisible
 import name.eraxillan.ongoingschedule.*
 import name.eraxillan.ongoingschedule.databinding.ActivityOngoingListBinding
 import name.eraxillan.ongoingschedule.model.Ongoing
-import java.net.MalformedURLException
-import java.net.URL
-import java.util.*
 
 
 class OngoingListActivity
@@ -37,46 +26,6 @@ class OngoingListActivity
     private var largeScreen = false
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private fun showAddOngoingDialog() {
-        val dialogTitle = getString(R.string.add_ongoing_dialog_title)
-        val positiveButtonTitle = getString(R.string.add_ongoing)
-
-        val builder = AlertDialog.Builder(this)
-        val ongoingUrlEditText = EditText(this)
-        ongoingUrlEditText.hint = getString(R.string.add_ongoing_hint)
-        ongoingUrlEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
-        ongoingUrlEditText.setText(getString(R.string.invalid_url))
-
-        val textWatcher = object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (!Patterns.WEB_URL.matcher(ongoingUrlEditText.text.toString()).matches())
-                    ongoingUrlEditText.error = getString(R.string.invalid_ongoing_url_msg)
-            }
-        }
-        ongoingUrlEditText.addTextChangedListener(textWatcher)
-
-        builder.setTitle(dialogTitle)
-        builder.setView(ongoingUrlEditText)
-
-        builder.setPositiveButton(positiveButtonTitle) { dialog, _ ->
-            val url: URL = try {
-                URL(ongoingUrlEditText.text.toString())
-            } catch (exc: MalformedURLException) {
-                Toast.makeText(
-                    applicationContext, getString(R.string.invalid_ongoing_url_msg), Toast.LENGTH_SHORT
-                ).show()
-                return@setPositiveButton
-            }
-            // Add ongoing to list view, db, and close dialog
-            ongoingListFragment.addOngoing(url)
-            dialog.dismiss()
-        }
-
-        builder.create().show()
-    }
 
     private fun showOngoingInfo(ongoing: Ongoing) {
         title = ongoing.originalName
@@ -135,10 +84,6 @@ class OngoingListActivity
         ongoingListFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment_container_view) as OngoingListFragment
         largeScreen = (binding.contentMain.fragmentContainer != null)
-
-        binding.fabAddOngoing.setOnClickListener { /*view*/ _ ->
-            showAddOngoingDialog()
-        }
     }
 
     // Initialize the contents of the Activity's standard options menu
@@ -187,15 +132,11 @@ class OngoingListActivity
                 .commit()
             ongoingDetailsFragment = null
         }
-
-        binding.fabAddOngoing.setOnClickListener {
-            showAddOngoingDialog()
-        }
     }
 
     private fun showListControls(show: Boolean) {
         // Show/hide "Add ongoing" button and activity menu
-        binding.fabAddOngoing.isVisible = show
+        //binding.fabAddOngoing.isVisible = show
         binding.toolbarMain.menu.children.forEach { it.isVisible = show }
     }
 

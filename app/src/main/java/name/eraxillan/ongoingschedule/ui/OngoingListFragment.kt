@@ -2,21 +2,27 @@ package name.eraxillan.ongoingschedule.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputType
+import android.text.TextWatcher
 import android.util.Log
+import android.util.Patterns
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.*
-import name.eraxillan.ongoingschedule.ui.adapter.OngoingSelectionRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.R
+import name.eraxillan.ongoingschedule.ui.adapter.OngoingSelectionRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.databinding.FragmentOngoingListBinding
 import name.eraxillan.ongoingschedule.model.Ongoing
 import name.eraxillan.ongoingschedule.viewmodel.OngoingViewModel
+import java.net.MalformedURLException
 import java.net.URL
 
 
@@ -41,6 +47,46 @@ class OngoingListFragment
     private val ongoingViewModel by viewModels<OngoingViewModel>()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private fun showAddOngoingDialog() {
+        val dialogTitle = getString(R.string.add_ongoing_dialog_title)
+        val positiveButtonTitle = getString(R.string.add_ongoing)
+
+        val builder = AlertDialog.Builder(requireContext())
+        val ongoingUrlEditText = EditText(requireContext())
+        ongoingUrlEditText.hint = getString(R.string.add_ongoing_hint)
+        ongoingUrlEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+        ongoingUrlEditText.setText(getString(R.string.invalid_url))
+
+        val textWatcher = object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (!Patterns.WEB_URL.matcher(ongoingUrlEditText.text.toString()).matches())
+                    ongoingUrlEditText.error = getString(R.string.invalid_ongoing_url_msg)
+            }
+        }
+        ongoingUrlEditText.addTextChangedListener(textWatcher)
+
+        builder.setTitle(dialogTitle)
+        builder.setView(ongoingUrlEditText)
+
+        builder.setPositiveButton(positiveButtonTitle) { dialog, _ ->
+            val url: URL = try {
+                URL(ongoingUrlEditText.text.toString())
+            } catch (exc: MalformedURLException) {
+                Toast.makeText(
+                    requireContext(), getString(R.string.invalid_ongoing_url_msg), Toast.LENGTH_SHORT
+                ).show()
+                return@setPositiveButton
+            }
+            // Add ongoing to list view, db, and close dialog
+            addOngoing(url)
+            dialog.dismiss()
+        }
+
+        builder.create().show()
+    }
 
     fun addOngoing(url: URL) {
         /*val job =*/ GlobalScope.launch(Dispatchers.IO) {
@@ -109,6 +155,10 @@ class OngoingListFragment
         setupRecyclerView()
         setupSwipeOnRefresh()
         createOngoingObserver()
+
+        binding.fabAddOngoing.setOnClickListener { /*view*/ _ ->
+            showAddOngoingDialog()
+        }
     }
 
     // Lifecycle method.
@@ -128,6 +178,7 @@ class OngoingListFragment
 
     private fun setupRecyclerView() {
         val ongoings = mutableListOf<Ongoing>()
+
         val adapter = OngoingSelectionRecyclerViewAdapter(ongoings, this) {
             GlobalScope.launch {
                 ongoingViewModel.deleteOngoing(it)
