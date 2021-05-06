@@ -76,7 +76,7 @@ dependencies {
     //implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.lifecycleVersion"
     //implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.lifecycleVersion"
     // Main Lifecycle classes along with extensions such as LiveData
-    implementation 'androidx.activity:activity-ktx:1.2.2'
+    implementation 'androidx.activity:activity-ktx:1.2.3'
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycle_version"
     // Room library
     implementation "androidx.room:room-runtime:$rootProject.room_version"
