@@ -32,7 +32,7 @@ class DowTimeParser {
 
             val sctString = baseTokens[0]
             val sctTokens = sctString
-                .toUpperCase(Locale.US)
+                .uppercase(Locale.US)
                 .split("W-", "T")
                 .filter { it.isNotEmpty() }
             if (sctTokens.size != 2) {
