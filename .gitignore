@@ -60,6 +60,7 @@ captures/
 .idea/vcs.xml
 .idea/codeStyles/Project.xml
 .idea/codeStyles/codeStyleConfig.xml
+.idea/runConfigurations.xml
 *.iml
 # NOTE: added by me
 .idea/.gitignore
