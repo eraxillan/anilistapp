@@ -17,7 +17,6 @@ class OngoingListActivity
     }
 
     private lateinit var binding: ActivityOngoingListBinding
-    private var ongoingListFragment: OngoingListFragment = OngoingListFragment.newInstance()
     private var ongoingDetailsFragment: OngoingDetailsFragment? = null
     private var largeScreen = false
 
@@ -26,33 +25,19 @@ class OngoingListActivity
     private fun showOngoingInfo(ongoing: Ongoing) {
         title = ongoing.originalName
 
-        if (!largeScreen) {
-            if (ongoingDetailsFragment == null)
-                ongoingDetailsFragment = OngoingDetailsFragment.newInstance(ongoing)
-            else
-                ongoingDetailsFragment?.ongoing = ongoing
+        val id = if (largeScreen) R.id.fragment_container else R.id.nav_host_fragment_container_view
 
-            ongoingDetailsFragment?.let {
-                supportFragmentManager
-                    .beginTransaction()
-                    .replace(
-                        R.id.nav_host_fragment_container_view, it,
-                        getString(R.string.ongoing_detail_fragment_tag)
-                    )
-                    .addToBackStack(null)
-                    .commit()
-            }
-        } else {
-            ongoingDetailsFragment = OngoingDetailsFragment.newInstance(ongoing)
-            ongoingDetailsFragment?.let {
-                supportFragmentManager.beginTransaction()
-                    .replace(
-                        R.id.fragment_container, it,
-                        getString(R.string.ongoing_detail_fragment_tag)
-                    )
-                    .addToBackStack(null)
-                    .commit()
-            }
+        ongoingDetailsFragment = OngoingDetailsFragment.newInstance(ongoing)
+
+        ongoingDetailsFragment?.let {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(
+                    id, it,
+                    getString(R.string.ongoing_detail_fragment_tag)
+                )
+                .addToBackStack(null)
+                .commit()
         }
     }
 
@@ -75,8 +60,6 @@ class OngoingListActivity
         // powerful tool to make the UI as flexible as possible across various screen sizes.
         // It's called a support Fragment manager rather than just a Fragment manager because
         // some older versions of Android didn't include fragments
-        ongoingListFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment_container_view) as OngoingListFragment
         largeScreen = (binding.contentMain.fragmentContainer != null)
     }
 
