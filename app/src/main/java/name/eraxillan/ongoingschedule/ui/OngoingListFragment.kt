@@ -30,7 +30,7 @@ class OngoingListFragment
     : Fragment()
     , OngoingSelectionRecyclerViewAdapter.OngoingSelectionRecyclerViewClickListener {
 
-    private val TAG = OngoingListFragment::class.java.simpleName
+    private val LOG_TAG = OngoingListFragment::class.java.simpleName
 
     private var listener: OnOngoingInfoFragmentInteractionListener? = null
 
@@ -88,7 +88,7 @@ class OngoingListFragment
         builder.create().show()
     }
 
-    fun addOngoing(url: URL) {
+    private fun addOngoing(url: URL) {
         /*val job =*/ GlobalScope.launch(Dispatchers.IO) {
             // Parse ongoing data from website
             val ongoing = ongoingViewModel.parseOngoingFromUrl(url)
@@ -104,7 +104,7 @@ class OngoingListFragment
     }
 
     // See https://developer.android.com/training/swipe/add-swipe-interface
-    fun updateOngoingList(fromMenu: Boolean) {
+    private fun updateOngoingList(fromMenu: Boolean) {
         // Signal SwipeRefreshLayout to start the progress indicator
         // NOTE: required only when called explicitly, e.g. from a menu item
         if (fromMenu)
@@ -121,6 +121,11 @@ class OngoingListFragment
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     // Lifecycle method.
     // `onAttach` is run when the `Fragment` is first associated with an `Activity`,
@@ -156,7 +161,7 @@ class OngoingListFragment
         setupSwipeOnRefresh()
         createOngoingObserver()
 
-        binding.fabAddOngoing.setOnClickListener { /*view*/ _ ->
+        binding.fabAddOngoing.setOnClickListener {
             showAddOngoingDialog()
         }
     }
@@ -170,6 +175,38 @@ class OngoingListFragment
 
         listener = null
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.menu_main, menu)
+
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    // This hook is called whenever an item in your options menu is selected
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        return when (item.itemId) {
+            // https://developer.android.com/training/swipe/respond-refresh-request
+            R.id.action_refresh -> {
+                Log.i(LOG_TAG, "Refresh menu item selected")
+
+                // Start the refresh background task.
+                // This method calls `setRefreshing(false)` when it's finished
+                updateOngoingList(true)
+
+                true
+            }
+            R.id.action_settings -> {
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     // `OngoingSelectionRecyclerViewAdapter.OngoingSelectionRecyclerViewClickListener` implementation
     override fun ongoingClicked(ongoing: Ongoing) {
@@ -206,7 +243,7 @@ class OngoingListFragment
             // Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked
             // when the user performs a swipe-to-refresh gesture.
             this.setOnRefreshListener {
-                Log.i(TAG, "onRefresh called from SwipeRefreshLayout")
+                Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout")
 
                 // This method performs the actual data-refresh operation.
                 // The method calls `setRefreshing(false)` when it's finished

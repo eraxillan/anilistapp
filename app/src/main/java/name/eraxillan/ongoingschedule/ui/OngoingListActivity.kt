@@ -1,11 +1,7 @@
 package name.eraxillan.ongoingschedule.ui
 
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.children
 import name.eraxillan.ongoingschedule.*
 import name.eraxillan.ongoingschedule.databinding.ActivityOngoingListBinding
 import name.eraxillan.ongoingschedule.model.Ongoing
@@ -17,7 +13,7 @@ class OngoingListActivity
 
     companion object {
         const val INTENT_ONGOING_KEY = "ongoing"
-        private val TAG = OngoingListActivity::class.java.simpleName
+        private val LOG_TAG = OngoingListActivity::class.java.simpleName
     }
 
     private lateinit var binding: ActivityOngoingListBinding
@@ -31,8 +27,6 @@ class OngoingListActivity
         title = ongoing.originalName
 
         if (!largeScreen) {
-            showListControls(false)
-
             if (ongoingDetailsFragment == null)
                 ongoingDetailsFragment = OngoingDetailsFragment.newInstance(ongoing)
             else
@@ -86,44 +80,11 @@ class OngoingListActivity
         largeScreen = (binding.contentMain.fragmentContainer != null)
     }
 
-    // Initialize the contents of the Activity's standard options menu
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
-
-    // This hook is called whenever an item in your options menu is selected
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            // https://developer.android.com/training/swipe/respond-refresh-request
-            R.id.action_refresh -> {
-                Log.i(TAG, "Refresh menu item selected")
-
-                // Start the refresh background task.
-                // This method calls `setRefreshing(false)` when it's finished
-                ongoingListFragment.updateOngoingList(true)
-
-                true
-            }
-            R.id.action_settings -> {
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     // Called when the activity has detected the user's press of the back key
     override fun onBackPressed() {
         super.onBackPressed()
 
         title = resources.getString(R.string.app_name)
-
-        // Show "Add ongoing" button and activity menu
-        showListControls(true)
 
         ongoingDetailsFragment?.let {
             supportFragmentManager
@@ -132,12 +93,6 @@ class OngoingListActivity
                 .commit()
             ongoingDetailsFragment = null
         }
-    }
-
-    private fun showListControls(show: Boolean) {
-        // Show/hide "Add ongoing" button and activity menu
-        //binding.fabAddOngoing.isVisible = show
-        binding.toolbarMain.menu.children.forEach { it.isVisible = show }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
