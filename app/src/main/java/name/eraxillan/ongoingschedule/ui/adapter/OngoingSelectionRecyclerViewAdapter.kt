@@ -26,7 +26,7 @@ class OngoingSelectionRecyclerViewAdapter(
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingSelectionViewHolder =
-        OngoingSelectionViewHolder(parent.inflate(R.layout.view_holder_ongoing_item))
+        OngoingSelectionViewHolder(parent.inflate(R.layout.list_item_ongoing))
 
     private fun ViewGroup.inflate(layoutRes: Int): View {
         return LayoutInflater.from(context).inflate(layoutRes, this, false)
