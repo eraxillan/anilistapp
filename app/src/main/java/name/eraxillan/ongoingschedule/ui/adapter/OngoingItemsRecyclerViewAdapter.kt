@@ -16,7 +16,7 @@ class OngoingItemsRecyclerViewAdapter(var ongoing: Ongoing)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingItemViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(
-                R.layout.view_holder_ongoing_details,
+                R.layout.list_item_ongoing_details,
                 parent,
                 false
             )
