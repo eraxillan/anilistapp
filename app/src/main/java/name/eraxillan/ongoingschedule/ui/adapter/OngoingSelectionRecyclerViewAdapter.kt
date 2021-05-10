@@ -17,7 +17,9 @@ class OngoingSelectionRecyclerViewAdapter(
     : RecyclerView.Adapter<OngoingSelectionViewHolder>()
     , ItemTouchHelperCallback.ItemTouchHelperAdapter {
 
-    private val TAG = OngoingSelectionRecyclerViewAdapter::class.java.simpleName
+    companion object {
+        private val LOG_TAG = OngoingSelectionRecyclerViewAdapter::class.java.simpleName
+    }
 
     interface OngoingSelectionRecyclerViewClickListener {
         fun ongoingClicked(ongoing: Ongoing)

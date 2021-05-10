@@ -30,8 +30,6 @@ class OngoingListFragment
     : Fragment()
     , OngoingSelectionRecyclerViewAdapter.OngoingSelectionRecyclerViewClickListener {
 
-    private val LOG_TAG = OngoingListFragment::class.java.simpleName
-
     private var listener: OnOngoingInfoFragmentInteractionListener? = null
 
     private var _binding: FragmentOngoingListBinding? = null
@@ -282,6 +280,8 @@ class OngoingListFragment
     }
 
     companion object {
+        private val LOG_TAG = OngoingListFragment::class.java.simpleName
+
         @JvmStatic
         fun newInstance(): OngoingListFragment = OngoingListFragment()
     }

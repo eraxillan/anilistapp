@@ -9,7 +9,7 @@ class OngoingSelectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemV
     private val binding = ListItemOngoingBinding.bind(itemView)
 
     companion object {
-        private val TAG = OngoingSelectionViewHolder::class.java.simpleName
+        private val LOG_TAG = OngoingSelectionViewHolder::class.java.simpleName
     }
 
     fun bind(position: Int, ongoing: Ongoing) {

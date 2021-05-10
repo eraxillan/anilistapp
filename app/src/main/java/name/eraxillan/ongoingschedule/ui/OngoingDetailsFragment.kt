@@ -17,7 +17,6 @@ import name.eraxillan.ongoingschedule.model.Ongoing
  * create an instance of this fragment.
  */
 class OngoingDetailsFragment : Fragment() {
-    private val LOG_TAG = OngoingDetailsFragment::class.java.simpleName
 
     private var _binding: FragmentOngoingDetailsBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
@@ -52,6 +51,7 @@ class OngoingDetailsFragment : Fragment() {
     }
 
     companion object {
+        private val LOG_TAG = OngoingDetailsFragment::class.java.simpleName
         private const val ARG_ONGOING = "ongoing"
 
         /**

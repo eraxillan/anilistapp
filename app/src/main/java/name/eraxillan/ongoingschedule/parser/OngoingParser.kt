@@ -15,7 +15,6 @@ interface OngoingParser {
 
 
 class FakeParser: OngoingParser {
-    private val TAG = FakeParser::class.java.simpleName
 
     private val predefinedOngoings = listOf(
         Ongoing(
@@ -105,7 +104,7 @@ class FakeParser: OngoingParser {
         // Return next ongoing from predefined list
         val nextOngoing = predefinedOngoings[index++]
         if (index == predefinedOngoings.size) index = 0
-        Log.e(TAG, "ONGOING INDEX: $index")
+        Log.e(LOG_TAG, "ONGOING INDEX: $index")
 
         ongoing.copyDataFields(nextOngoing)
         nextOngoing.url = url
@@ -113,6 +112,7 @@ class FakeParser: OngoingParser {
     }
 
     companion object {
+        private val LOG_TAG = FakeParser::class.java.simpleName
         private var index = 0
     }
 }

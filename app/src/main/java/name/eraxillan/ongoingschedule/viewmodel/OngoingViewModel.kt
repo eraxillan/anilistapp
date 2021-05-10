@@ -12,7 +12,9 @@ import java.net.URL
 class OngoingViewModel(application: Application)
     : AndroidViewModel(application) {
 
-    private val TAG = OngoingViewModel::class.java.simpleName
+    companion object {
+        private val LOG_TAG = OngoingViewModel::class.java.simpleName
+    }
 
     private var ongoingRepo: OngoingRepo = OngoingRepo(getApplication())
     private var ongoings: LiveData<List<Ongoing>>? = null
@@ -24,7 +26,7 @@ class OngoingViewModel(application: Application)
         // FIXME IMPLEMENT: parse website using JSoup and fill all `ongoing` fields
         val parser = FakeParser()
         if (!parser.parse(url, ongoing)) {
-            Log.e(TAG, "Unable to fetch ongoing data from URL='$url'!")
+            Log.e(LOG_TAG, "Unable to fetch ongoing data from URL='$url'!")
         }
 
         return ongoing
@@ -32,7 +34,7 @@ class OngoingViewModel(application: Application)
 
     fun addOngoing(ongoing: Ongoing) {
         val newId = ongoingRepo.addOngoing(ongoing)
-        Log.i(TAG, "New ongoing with id=$newId added to the SQLite database")
+        Log.i(LOG_TAG, "New ongoing with id=$newId added to the SQLite database")
     }
 
     fun deleteOngoing(ongoing: Ongoing) {

@@ -10,7 +10,9 @@ import name.eraxillan.ongoingschedule.ui.holder.OngoingItemViewHolder
 class OngoingItemsRecyclerViewAdapter(var ongoing: Ongoing)
     : RecyclerView.Adapter<OngoingItemViewHolder>() {
 
-    private val TAG = OngoingItemsRecyclerViewAdapter::class.java.simpleName
+    companion object {
+        private val LOG_TAG = OngoingItemsRecyclerViewAdapter::class.java.simpleName
+    }
 
     // Create a `View` from the `Layout`
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingItemViewHolder {

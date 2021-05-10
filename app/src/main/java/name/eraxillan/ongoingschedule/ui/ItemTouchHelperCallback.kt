@@ -7,6 +7,10 @@ import name.eraxillan.ongoingschedule.R
 
 class ItemTouchHelperCallback(private val adapter: ItemTouchHelperAdapter) : ItemTouchHelper.Callback() {
 
+    companion object {
+        private val LOG_TAG = ItemTouchHelperCallback::class.java.simpleName
+    }
+
     override fun getMovementFlags(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
