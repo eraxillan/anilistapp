@@ -227,7 +227,7 @@ class OngoingListFragment
 
         with (binding.lstOngoings) {
             this.adapter = adapter
-            this.layoutManager = LinearLayoutManager(requireContext())
+            //this.layoutManager = LinearLayoutManager(requireContext())
             this.addItemDecoration(divider)
             this.setHasFixedSize(true)
 
@@ -257,9 +257,10 @@ class OngoingListFragment
                 getAdapter().clearOngoings()
 
                 // Add new ongoing list
-                it?.let {
-                    displayAllOngoings(it)
-                }
+                displayAllOngoings(it)
+
+                // Notify listener about ongoing list reload
+                listener?.onOngoingListReloaded(it[0])
             }
         )
     }
@@ -277,11 +278,18 @@ class OngoingListFragment
     interface OnOngoingInfoFragmentInteractionListener {
         fun onOngoingAdded(ongoing: Ongoing)
         fun onOngoingClicked(ongoing: Ongoing)
+        fun onOngoingListReloaded(firstOngoing: Ongoing)
     }
 
     companion object {
         private val LOG_TAG = OngoingListFragment::class.java.simpleName
 
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @return A new instance of fragment OngoingListFragment.
+         */
         @JvmStatic
         fun newInstance(): OngoingListFragment = OngoingListFragment()
     }

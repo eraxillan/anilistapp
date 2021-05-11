@@ -87,4 +87,9 @@ class OngoingListActivity
     override fun onOngoingClicked(ongoing: Ongoing) {
         showOngoingInfo(ongoing)
     }
+
+    override fun onOngoingListReloaded(firstOngoing: Ongoing) {
+        if (largeScreen)
+            showOngoingInfo(firstOngoing)
+    }
 }

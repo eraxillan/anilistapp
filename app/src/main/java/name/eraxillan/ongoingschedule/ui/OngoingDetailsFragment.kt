@@ -47,7 +47,7 @@ class OngoingDetailsFragment : Fragment() {
 
     private fun setupRecyclerView() {
         binding.lstOngoingInfo.adapter = OngoingItemsRecyclerViewAdapter(ongoing)
-        binding.lstOngoingInfo.layoutManager = LinearLayoutManager(context)
+        //binding.lstOngoingInfo.layoutManager = LinearLayoutManager(context)
     }
 
     companion object {
