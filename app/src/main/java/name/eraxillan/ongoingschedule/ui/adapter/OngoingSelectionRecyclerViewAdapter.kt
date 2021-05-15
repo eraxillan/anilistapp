@@ -1,17 +1,15 @@
 package name.eraxillan.ongoingschedule.ui.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import name.eraxillan.ongoingschedule.R
+import name.eraxillan.ongoingschedule.databinding.ListItemOngoingBinding
 import name.eraxillan.ongoingschedule.model.Ongoing
 import name.eraxillan.ongoingschedule.ui.ItemTouchHelperCallback
 import name.eraxillan.ongoingschedule.ui.holder.OngoingSelectionViewHolder
 
 class OngoingSelectionRecyclerViewAdapter(
     private val ongoings : MutableList<Ongoing>,
-    private val clickListener: OngoingSelectionRecyclerViewClickListener,
     private val deleteDelegate: (Ongoing) -> Unit
 )
     : RecyclerView.Adapter<OngoingSelectionViewHolder>()
@@ -21,25 +19,18 @@ class OngoingSelectionRecyclerViewAdapter(
         private val LOG_TAG = OngoingSelectionRecyclerViewAdapter::class.java.simpleName
     }
 
-    interface OngoingSelectionRecyclerViewClickListener {
-        fun ongoingClicked(ongoing: Ongoing)
-    }
-
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingSelectionViewHolder =
-        OngoingSelectionViewHolder(parent.inflate(R.layout.list_item_ongoing))
-
-    private fun ViewGroup.inflate(layoutRes: Int): View {
-        return LayoutInflater.from(context).inflate(layoutRes, this, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingSelectionViewHolder {
+        return OngoingSelectionViewHolder(
+            ListItemOngoingBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: OngoingSelectionViewHolder, position: Int) {
         holder.bind(position, ongoings[position])
-
-        holder.itemView.setOnClickListener {
-            clickListener.ongoingClicked(ongoings[position])
-        }
     }
 
     override fun getItemCount(): Int {

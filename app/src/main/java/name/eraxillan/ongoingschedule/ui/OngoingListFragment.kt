@@ -1,6 +1,5 @@
 package name.eraxillan.ongoingschedule.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -13,9 +12,9 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.*
 import name.eraxillan.ongoingschedule.R
 import name.eraxillan.ongoingschedule.ui.adapter.OngoingSelectionRecyclerViewAdapter
@@ -26,11 +25,10 @@ import java.net.MalformedURLException
 import java.net.URL
 
 
-class OngoingListFragment
-    : Fragment()
-    , OngoingSelectionRecyclerViewAdapter.OngoingSelectionRecyclerViewClickListener {
-
-    private var listener: OnOngoingInfoFragmentInteractionListener? = null
+class OngoingListFragment : Fragment() {
+    companion object {
+        private val LOG_TAG = OngoingListFragment::class.java.simpleName
+    }
 
     private var _binding: FragmentOngoingListBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
@@ -95,7 +93,7 @@ class OngoingListFragment
             ongoingViewModel.addOngoing(ongoing)
 
             withContext(Dispatchers.Main) {
-                listener?.onOngoingAdded(ongoing)
+                showOngoingInfo(ongoing, findNavController())
             }
         }
         //job.cancelAndJoin()
@@ -125,19 +123,6 @@ class OngoingListFragment
         setHasOptionsMenu(true)
     }
 
-    // Lifecycle method.
-    // `onAttach` is run when the `Fragment` is first associated with an `Activity`,
-    // giving a chance to set up anything required before `Fragment` is created
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        if (context is OnOngoingInfoFragmentInteractionListener) {
-            listener = context
-        } else {
-            throw RuntimeException("$context must implement OnOngoingInfoFragmentInteractionListener")
-        }
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
@@ -159,19 +144,9 @@ class OngoingListFragment
         setupSwipeOnRefresh()
         createOngoingObserver()
 
-        binding.fabAddOngoing.setOnClickListener {
+        binding.addOngoingFab.setOnClickListener {
             showAddOngoingDialog()
         }
-    }
-
-    // Lifecycle method.
-    // `onDetach` is run when the `Fragment` is no longer attached to an `Activity`.
-    // This happens when the `Activity` containing the `Fragment` is destroyed,
-    // or the `Fragment` is removed
-    override fun onDetach() {
-        super.onDetach()
-
-        listener = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -206,15 +181,10 @@ class OngoingListFragment
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // `OngoingSelectionRecyclerViewAdapter.OngoingSelectionRecyclerViewClickListener` implementation
-    override fun ongoingClicked(ongoing: Ongoing) {
-        listener?.onOngoingClicked(ongoing)
-    }
-
     private fun setupRecyclerView() {
         val ongoings = mutableListOf<Ongoing>()
 
-        val adapter = OngoingSelectionRecyclerViewAdapter(ongoings, this) {
+        val adapter = OngoingSelectionRecyclerViewAdapter(ongoings) {
             GlobalScope.launch {
                 ongoingViewModel.deleteOngoing(it)
             }
@@ -225,9 +195,8 @@ class OngoingListFragment
         val itemTouchHelperCallback = ItemTouchHelperCallback(adapter)
         val touchHelper = ItemTouchHelper(itemTouchHelperCallback)
 
-        with (binding.lstOngoings) {
+        with (binding.ongoingList) {
             this.adapter = adapter
-            //this.layoutManager = LinearLayoutManager(requireContext())
             this.addItemDecoration(divider)
             this.setHasFixedSize(true)
 
@@ -259,8 +228,6 @@ class OngoingListFragment
                 // Add new ongoing list
                 displayAllOngoings(it)
 
-                // Notify listener about ongoing list reload
-                listener?.onOngoingListReloaded(it[0])
             }
         )
     }
@@ -269,28 +236,5 @@ class OngoingListFragment
         ongoings.forEach { getAdapter().addOngoing(it) }
     }
 
-    private fun getAdapter() = binding.lstOngoings.adapter as OngoingSelectionRecyclerViewAdapter
-    
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // Inform objects that a list has been tapped.
-    // `OngoingListActivity` will implement this interface
-    interface OnOngoingInfoFragmentInteractionListener {
-        fun onOngoingAdded(ongoing: Ongoing)
-        fun onOngoingClicked(ongoing: Ongoing)
-        fun onOngoingListReloaded(firstOngoing: Ongoing)
-    }
-
-    companion object {
-        private val LOG_TAG = OngoingListFragment::class.java.simpleName
-
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @return A new instance of fragment OngoingListFragment.
-         */
-        @JvmStatic
-        fun newInstance(): OngoingListFragment = OngoingListFragment()
-    }
+    private fun getAdapter() = binding.ongoingList.adapter as OngoingSelectionRecyclerViewAdapter
 }

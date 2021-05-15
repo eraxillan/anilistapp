@@ -1,28 +1,30 @@
 package name.eraxillan.ongoingschedule.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import name.eraxillan.ongoingschedule.R
+import name.eraxillan.ongoingschedule.databinding.ListItemOngoingDetailsBinding
 import name.eraxillan.ongoingschedule.model.Ongoing
 import name.eraxillan.ongoingschedule.ui.holder.OngoingItemViewHolder
 
-class OngoingItemsRecyclerViewAdapter(var ongoing: Ongoing)
+class OngoingItemsRecyclerViewAdapter(
+    var ongoing: Ongoing
+)
     : RecyclerView.Adapter<OngoingItemViewHolder>() {
 
     companion object {
         private val LOG_TAG = OngoingItemsRecyclerViewAdapter::class.java.simpleName
+        private const val fieldCount = 7
     }
 
     // Create a `View` from the `Layout`
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingItemViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(
-                R.layout.list_item_ongoing_details,
-                parent,
-                false
+        return OngoingItemViewHolder(
+            ListItemOngoingDetailsBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
             )
-        return OngoingItemViewHolder(view)
+        )
     }
 
     override fun onBindViewHolder(holder: OngoingItemViewHolder, position: Int) {
@@ -41,6 +43,6 @@ class OngoingItemsRecyclerViewAdapter(var ongoing: Ongoing)
 
     // Tells the `RecyclerView` how many items to display
     override fun getItemCount(): Int {
-        return 7
+        return fieldCount
     }
 }
