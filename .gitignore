@@ -68,6 +68,7 @@ captures/
 .idea/gradle.xml
 .idea/jarRepositories.xml
 .idea/navEditor.xml
+.idea/assetWizardSettings.xml
 
 # Keystore files
 # Uncomment the following lines if you do not want to check your keystore files in.

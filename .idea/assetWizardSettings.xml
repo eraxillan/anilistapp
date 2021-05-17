@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/opt/Android/Sdk/icons/material/materialicons/image_not_supported/baseline_image_not_supported_24.xml" />
+                                      <entry key="url" value="file:/opt/Android/Sdk/icons/material/materialicons/list/baseline_list_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,7 +28,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_baseline_image_not_supported_24" />
+                            <entry key="outputName" value="ic_baseline_list_24" />
                           </map>
                         </option>
                       </PersistentState>
