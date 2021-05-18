@@ -1,0 +1,41 @@
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="@string/preferences_messages_header">
+
+        <EditTextPreference
+            android:id="@+id/signature_preference_text"
+            app:key="signature"
+            app:title="@string/preferences_signature_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:id="@+id/reply_preference_list"
+            app:key="reply"
+            app:defaultValue="reply"
+            app:entries="@array/reply_entries"
+            app:entryValues="@array/reply_values"
+            app:title="@string/preferences_reply_title"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/preferences_sync_header">
+
+        <SwitchPreferenceCompat
+            android:id="@+id/sync_preference_switch"
+            app:key="sync"
+            app:title="@string/preferences_sync_title" />
+
+        <SwitchPreferenceCompat
+            android:id="@+id/attachment_preference_switch"
+            app:key="attachment"
+            app:dependency="sync"
+            app:summaryOff="@string/preferences_attachment_summary_off"
+            app:summaryOn="@string/preferences_attachment_summary_on"
+            app:title="@string/preferences_attachment_title" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -10,4 +10,25 @@
     <string name="ongoing_detail_fragment_tag">Ongoing Detail Fragment</string>
     <string name="ongoing_info">Ongoing info</string>
     <string name="ongoing_logo_hint">Ongoing logo</string>
+
+    <!-- About fragment -->
+    <string name="about_fragment_title">About</string>
+    <string name="about_fragment_description">
+        This app allows you to watch currently airing anime list,
+        manage your personal list, and save your watch progress.
+        All data are persisted.
+    </string>
+
+    <!-- Preferences screen -->
+    <!-- Preference Titles -->
+    <string name="preferences_messages_header">Messages</string>
+    <string name="preferences_sync_header">Sync</string>
+    <!-- Messages Preferences -->
+    <string name="preferences_signature_title">Your signature</string>
+    <string name="preferences_reply_title">Default reply action</string>
+    <!-- Sync Preferences -->
+    <string name="preferences_sync_title">Sync email periodically</string>
+    <string name="preferences_attachment_title">Download incoming attachments</string>
+    <string name="preferences_attachment_summary_on">Automatically download attachments for incoming emails</string>
+    <string name="preferences_attachment_summary_off">Only download attachments when manually requested</string>
 </resources>
