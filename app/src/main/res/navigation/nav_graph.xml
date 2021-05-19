@@ -33,4 +33,15 @@
             android:defaultValue="" />
     </fragment>
 
+    <fragment
+        android:id="@+id/aboutScreen"
+        android:name="name.eraxillan.ongoingschedule.ui.AboutFragment"
+        android:label="@string/nav_drawer_about"
+        tools:layout="@layout/fragment_about" />
+
+    <fragment
+        android:id="@+id/preferenceScreen"
+        android:name="name.eraxillan.ongoingschedule.ui.PreferenceFragment"
+        android:label="@string/nav_drawer_preferences" />
+
 </navigation>

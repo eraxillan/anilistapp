@@ -46,7 +46,7 @@ class OngoingListFragment : Fragment() {
 
     private fun showAddOngoingDialog() {
         val dialogTitle = getString(R.string.add_ongoing_dialog_title)
-        val positiveButtonTitle = getString(R.string.add_ongoing)
+        val positiveButtonTitle = getString(R.string.add_ongoing_button_hint)
 
         val builder = AlertDialog.Builder(requireContext())
         val ongoingUrlEditText = EditText(requireContext())

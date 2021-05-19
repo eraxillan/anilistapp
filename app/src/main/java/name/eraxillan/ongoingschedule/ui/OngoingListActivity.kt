@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI
-import name.eraxillan.ongoingschedule.*
+import androidx.navigation.ui.*
+import name.eraxillan.ongoingschedule.R
 import name.eraxillan.ongoingschedule.databinding.ActivityOngoingListBinding
 
 
@@ -14,6 +14,8 @@ class OngoingListActivity : AppCompatActivity() {
     companion object {
         private val LOG_TAG = OngoingListActivity::class.java.simpleName
     }
+
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,18 +29,24 @@ class OngoingListActivity : AppCompatActivity() {
         val binding = ActivityOngoingListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbarMain)
-
-        // Setup toolbar for using with Navigation Component
-        NavigationUI.setupActionBarWithNavController(this, findNavController())
+        setupActionBar(binding)
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        // return currentNavController?.value?.navigateUp() ?: false
-        return findNavController().navigateUp()
+        return findNavController().navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private fun setupActionBar(binding: ActivityOngoingListBinding) {
+        // NOTE: see https://developer.android.com/guide/navigation/navigation-ui#action_bar
+
+        setSupportActionBar(binding.toolbarMain)
+
+        appBarConfiguration = AppBarConfiguration(findNavController().graph, binding.drawerLayout)
+        setupActionBarWithNavController(findNavController(), appBarConfiguration)
+        binding.navView.setupWithNavController(findNavController())
+    }
 
     private fun findNavController(): NavController {
         val navHostFragment = supportFragmentManager

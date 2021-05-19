@@ -74,6 +74,7 @@ dependencies {
 
     implementation "androidx.cardview:cardview:$card_view_version"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swipe_refresh_layout_version"
+    implementation "androidx.preference:preference-ktx:$preference_ktx_version"
 
     // Java 8+ API "desugaring" support: allow using new APIs on older versions of Android
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugar_jdk_libs_version"
