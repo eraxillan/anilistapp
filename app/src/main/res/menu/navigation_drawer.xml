@@ -6,7 +6,7 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/ongoingListFragment"
+            android:id="@+id/airingAnimeListFragment"
             android:icon="@android:drawable/ic_menu_camera"
             android:title="@string/nav_drawer_main" />
         <item

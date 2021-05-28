@@ -3,7 +3,7 @@ package name.eraxillan.ongoingschedule.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import name.eraxillan.ongoingschedule.databinding.ListItemOngoingBinding
+import name.eraxillan.ongoingschedule.databinding.ListItemAiringAnimeBinding
 import name.eraxillan.ongoingschedule.model.AiringAnime
 import name.eraxillan.ongoingschedule.ui.ItemTouchHelperCallback
 import name.eraxillan.ongoingschedule.ui.holder.OngoingSelectionViewHolder
@@ -24,7 +24,7 @@ class OngoingSelectionRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingSelectionViewHolder {
         return OngoingSelectionViewHolder(
-            ListItemOngoingBinding.inflate(
+            ListItemAiringAnimeBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )
@@ -79,8 +79,3 @@ class OngoingSelectionRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 }
-
-
-// FIXME: получается нужно две БД, или как минимум две таблицы.
-//        Первая со списком избранных аниме, за которыми следит пользователь.
-//        Вторая со списком всех выходящих сейчас аниме, по сути сетевой кэш.

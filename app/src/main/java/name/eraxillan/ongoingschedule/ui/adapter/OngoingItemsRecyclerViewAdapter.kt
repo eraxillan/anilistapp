@@ -3,7 +3,7 @@ package name.eraxillan.ongoingschedule.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import name.eraxillan.ongoingschedule.databinding.ListItemOngoingDetailsBinding
+import name.eraxillan.ongoingschedule.databinding.ListItemAiringAnimeDetailBinding
 import name.eraxillan.ongoingschedule.model.AiringAnime
 import name.eraxillan.ongoingschedule.ui.holder.OngoingItemViewHolder
 
@@ -20,7 +20,7 @@ class OngoingItemsRecyclerViewAdapter(
     // Create a `View` from the `Layout`
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingItemViewHolder {
         return OngoingItemViewHolder(
-            ListItemOngoingDetailsBinding.inflate(
+            ListItemAiringAnimeDetailBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )

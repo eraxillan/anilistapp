@@ -2,10 +2,10 @@ package name.eraxillan.ongoingschedule.ui.holder
 
 import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
-import name.eraxillan.ongoingschedule.databinding.ListItemOngoingDetailsBinding
+import name.eraxillan.ongoingschedule.databinding.ListItemAiringAnimeDetailBinding
 
 class OngoingItemViewHolder(
-    private val binding: ListItemOngoingDetailsBinding
+    private val binding: ListItemAiringAnimeDetailBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
     companion object {

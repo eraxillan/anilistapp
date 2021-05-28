@@ -18,19 +18,19 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import kotlinx.coroutines.*
 import name.eraxillan.ongoingschedule.R
 import name.eraxillan.ongoingschedule.ui.adapter.OngoingSelectionRecyclerViewAdapter
-import name.eraxillan.ongoingschedule.databinding.FragmentOngoingListBinding
+import name.eraxillan.ongoingschedule.databinding.FragmentAiringAnimeListBinding
 import name.eraxillan.ongoingschedule.model.AiringAnime
 import name.eraxillan.ongoingschedule.viewmodel.OngoingViewModel
 import java.net.MalformedURLException
 import java.net.URL
 
 
-class OngoingListFragment : Fragment() {
+class AiringAnimeListFragment : Fragment() {
     companion object {
-        private val LOG_TAG = OngoingListFragment::class.java.simpleName
+        private val LOG_TAG = AiringAnimeListFragment::class.java.simpleName
     }
 
-    private var _binding: FragmentOngoingListBinding? = null
+    private var _binding: FragmentAiringAnimeListBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!
 
@@ -46,7 +46,7 @@ class OngoingListFragment : Fragment() {
 
     private fun showAddOngoingDialog() {
         val dialogTitle = getString(R.string.add_ongoing_dialog_title)
-        val positiveButtonTitle = getString(R.string.add_ongoing_button_hint)
+        val positiveButtonTitle = getString(R.string.add_airing_anime_button_hint)
 
         val builder = AlertDialog.Builder(requireContext())
         val ongoingUrlEditText = EditText(requireContext())
@@ -126,7 +126,7 @@ class OngoingListFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-        _binding = FragmentOngoingListBinding.inflate(inflater, container, false)
+        _binding = FragmentAiringAnimeListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -144,7 +144,7 @@ class OngoingListFragment : Fragment() {
         setupSwipeOnRefresh()
         createOngoingObserver()
 
-        binding.addOngoingFab.setOnClickListener {
+        binding.addAiringAnimeFab.setOnClickListener {
             showAddOngoingDialog()
         }
     }
@@ -193,7 +193,7 @@ class OngoingListFragment : Fragment() {
         val itemTouchHelperCallback = ItemTouchHelperCallback(adapter)
         val touchHelper = ItemTouchHelper(itemTouchHelperCallback)
 
-        with (binding.ongoingList) {
+        with (binding.airingAnimeList) {
             this.adapter = adapter
             this.addItemDecoration(divider)
             this.setHasFixedSize(true)
@@ -234,5 +234,5 @@ class OngoingListFragment : Fragment() {
         anime.forEach { getAdapter().addOngoing(it) }
     }
 
-    private fun getAdapter() = binding.ongoingList.adapter as OngoingSelectionRecyclerViewAdapter
+    private fun getAdapter() = binding.airingAnimeList.adapter as OngoingSelectionRecyclerViewAdapter
 }

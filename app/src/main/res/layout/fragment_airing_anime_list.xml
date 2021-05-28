@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.OngoingListFragment">
+    tools:context=".ui.AiringAnimeListFragment">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
@@ -14,22 +14,22 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/ongoing_list"
+            android:id="@+id/airing_anime_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/list_item_ongoing"
-            tools:context=".ui.OngoingListActivity" />
+            tools:listitem="@layout/list_item_airing_anime"
+            tools:context=".ui.AiringAnimeListActivity" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_ongoing_fab"
+        android:id="@+id/add_airing_anime_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_menu_add"
-        android:contentDescription="@string/add_ongoing_button_hint" />
+        android:contentDescription="@string/add_airing_anime_button_hint" />
 
 </FrameLayout>

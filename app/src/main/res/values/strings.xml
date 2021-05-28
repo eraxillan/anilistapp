@@ -20,12 +20,12 @@
     <string name="nav_header_desc">Navigation header</string>
 
     <!-- Anime list item -->
-    <string name="ongoing_logo_hint">Airing anime logo</string>
+    <string name="airing_anime_logo_hint">Airing anime logo</string>
 
     <!-- Anime details item -->
 
     <!-- Anime list fragment -->
-    <string name="add_ongoing_button_hint">Add airing anime</string>
+    <string name="add_airing_anime_button_hint">Add airing anime</string>
 
     <!-- Anime details fragment -->
 

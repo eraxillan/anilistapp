@@ -2,12 +2,12 @@ package name.eraxillan.ongoingschedule.ui.holder
 
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import name.eraxillan.ongoingschedule.databinding.ListItemOngoingBinding
+import name.eraxillan.ongoingschedule.databinding.ListItemAiringAnimeBinding
 import name.eraxillan.ongoingschedule.model.AiringAnime
 import name.eraxillan.ongoingschedule.ui.showOngoingInfo
 
 class OngoingSelectionViewHolder(
-    private val binding: ListItemOngoingBinding
+    private val binding: ListItemAiringAnimeBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
     companion object {

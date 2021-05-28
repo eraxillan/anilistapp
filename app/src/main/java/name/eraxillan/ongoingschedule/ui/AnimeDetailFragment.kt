@@ -8,19 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.navArgs
 import name.eraxillan.ongoingschedule.ui.adapter.OngoingItemsRecyclerViewAdapter
-import name.eraxillan.ongoingschedule.databinding.FragmentOngoingDetailsBinding
+import name.eraxillan.ongoingschedule.databinding.FragmentAnimeDetailBinding
 
 
-class OngoingDetailsFragment : Fragment() {
+class AnimeDetailFragment : Fragment() {
     companion object {
-        private val LOG_TAG = OngoingDetailsFragment::class.java.simpleName
+        private val LOG_TAG = AnimeDetailFragment::class.java.simpleName
     }
 
-    private var _binding: FragmentOngoingDetailsBinding? = null
+    private var _binding: FragmentAnimeDetailBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!
 
-    private val args: OngoingDetailsFragmentArgs by navArgs()
+    private val args: AnimeDetailFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,10 +28,10 @@ class OngoingDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentOngoingDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentAnimeDetailBinding.inflate(inflater, container, false)
         context ?: return binding.root
 
-        binding.ongoingInfoList.adapter = OngoingItemsRecyclerViewAdapter(args.anime!!)
+        binding.animeFieldList.adapter = OngoingItemsRecyclerViewAdapter(args.anime!!)
 
         return binding.root
     }

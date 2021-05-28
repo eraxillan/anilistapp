@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import name.eraxillan.ongoingschedule.model.AiringAnime
 
 fun showOngoingInfo(anime: AiringAnime, navController: NavController) {
-    val direction = OngoingListFragmentDirections.actionOngoingDetails(
+    val direction = AiringAnimeListFragmentDirections.actionAiringAnimeDetails(
         anime, anime.originalName
     )
     navController.navigate(direction)

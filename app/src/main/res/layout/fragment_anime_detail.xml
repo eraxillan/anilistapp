@@ -5,14 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.OngoingDetailsFragment" >
+    tools:context=".ui.AnimeDetailFragment" >
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/ongoing_info_list"
+        android:id="@+id/anime_field_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/list_item_ongoing_details"
+        tools:listitem="@layout/list_item_airing_anime_detail"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
 </FrameLayout>

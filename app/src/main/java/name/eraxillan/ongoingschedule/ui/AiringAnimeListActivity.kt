@@ -9,10 +9,10 @@ import name.eraxillan.ongoingschedule.R
 import name.eraxillan.ongoingschedule.databinding.ActivityOngoingListBinding
 
 
-class OngoingListActivity : AppCompatActivity() {
+class AiringAnimeListActivity : AppCompatActivity() {
 
     companion object {
-        private val LOG_TAG = OngoingListActivity::class.java.simpleName
+        private val LOG_TAG = AiringAnimeListActivity::class.java.simpleName
     }
 
     private lateinit var appBarConfiguration: AppBarConfiguration
