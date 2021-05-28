@@ -9,9 +9,9 @@ import java.time.zone.ZoneRulesException
 import java.util.*
 
 
-class DowTimeParser {
+class DayOfWeekTimeParser {
     companion object {
-        private val LOG_TAG = DowTimeParser::class.java.simpleName
+        private val LOG_TAG = DayOfWeekTimeParser::class.java.simpleName
 
         data class DowTime(
             val dow: DayOfWeek,
