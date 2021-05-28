@@ -31,7 +31,7 @@ class OngoingDetailsFragment : Fragment() {
         _binding = FragmentOngoingDetailsBinding.inflate(inflater, container, false)
         context ?: return binding.root
 
-        binding.ongoingInfoList.adapter = OngoingItemsRecyclerViewAdapter(args.ongoing!!)
+        binding.ongoingInfoList.adapter = OngoingItemsRecyclerViewAdapter(args.anime!!)
 
         return binding.root
     }

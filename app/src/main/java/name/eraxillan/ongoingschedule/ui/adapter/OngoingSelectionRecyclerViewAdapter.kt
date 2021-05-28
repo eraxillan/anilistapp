@@ -4,13 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.ongoingschedule.databinding.ListItemOngoingBinding
-import name.eraxillan.ongoingschedule.model.Ongoing
+import name.eraxillan.ongoingschedule.model.AiringAnime
 import name.eraxillan.ongoingschedule.ui.ItemTouchHelperCallback
 import name.eraxillan.ongoingschedule.ui.holder.OngoingSelectionViewHolder
 
 class OngoingSelectionRecyclerViewAdapter(
-    private val ongoings : MutableList<Ongoing>,
-    private val deleteDelegate: (Ongoing) -> Unit
+    private val deleteDelegate: (AiringAnime) -> Unit
 )
     : RecyclerView.Adapter<OngoingSelectionViewHolder>()
     , ItemTouchHelperCallback.ItemTouchHelperAdapter {
@@ -18,6 +17,8 @@ class OngoingSelectionRecyclerViewAdapter(
     companion object {
         private val LOG_TAG = OngoingSelectionRecyclerViewAdapter::class.java.simpleName
     }
+
+    private val animeList : MutableList<AiringAnime> = mutableListOf()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,11 +31,11 @@ class OngoingSelectionRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: OngoingSelectionViewHolder, position: Int) {
-        holder.bind(position, ongoings[position])
+        holder.bind(position, animeList[position])
     }
 
     override fun getItemCount(): Int {
-        return ongoings.size
+        return animeList.size
     }
 
     // TODO: uncomment to implement drag-and-drop for list view items
@@ -50,31 +51,36 @@ class OngoingSelectionRecyclerViewAdapter(
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun deleteOngoing(position: Int) {
-        deleteDelegate(ongoings[position])
-        ongoings.removeAt(position)
+        deleteDelegate(animeList[position])
+        animeList.removeAt(position)
         notifyItemRemoved(position)
     }
 
     /*private fun swapItems(positionFrom: Int, positionTo: Int) {
-        Collections.swap(ongoings, positionFrom, positionTo)
+        Collections.swap(animeList, positionFrom, positionTo)
         notifyItemMoved(positionFrom, positionTo)
     }*/
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun addOngoing(ongoing: Ongoing) {
-        ongoings.add(ongoing)
-        notifyItemInserted(ongoings.size - 1)
+    fun addOngoing(anime: AiringAnime) {
+        animeList.add(anime)
+        notifyItemInserted(animeList.size - 1)
     }
 
-    fun deleteOngoing(ongoing: Ongoing) {
-        val position = ongoings.indexOf(ongoing)
-        ongoings.remove(ongoing)
+    fun deleteOngoing(anime: AiringAnime) {
+        val position = animeList.indexOf(anime)
+        animeList.remove(anime)
         notifyItemRemoved(position)
     }
 
     fun clearOngoings() {
-        ongoings.clear()
+        animeList.clear()
         notifyDataSetChanged()
     }
 }
+
+
+// FIXME: получается нужно две БД, или как минимум две таблицы.
+//        Первая со списком избранных аниме, за которыми следит пользователь.
+//        Вторая со списком всех выходящих сейчас аниме, по сути сетевой кэш.

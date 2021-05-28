@@ -1,11 +1,11 @@
 package name.eraxillan.ongoingschedule.ui
 
 import androidx.navigation.NavController
-import name.eraxillan.ongoingschedule.model.Ongoing
+import name.eraxillan.ongoingschedule.model.AiringAnime
 
-fun showOngoingInfo(ongoing: Ongoing, navController: NavController) {
+fun showOngoingInfo(anime: AiringAnime, navController: NavController) {
     val direction = OngoingListFragmentDirections.actionOngoingDetails(
-        ongoing, ongoing.originalName
+        anime, anime.originalName
     )
     navController.navigate(direction)
 }

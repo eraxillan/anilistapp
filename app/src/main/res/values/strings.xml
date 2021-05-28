@@ -1,11 +1,11 @@
 <resources>
-    <string name="app_name">Ongoing schedule</string>
+    <string name="app_name">Airing anime schedule</string>
 
-    <!-- Add ongoing dialog -->
+    <!-- Add anime dialog -->
     <string name="invalid_url">https://www.invalid.com</string>
-    <string name="add_ongoing_dialog_title">Add new ongoing by URL</string>
-    <string name="add_ongoing_hint">Enter ongoing URL here</string>
-    <string name="invalid_ongoing_url_msg">Invalid ongoing URL!</string>
+    <string name="add_ongoing_dialog_title">Add new airing anime by URL</string>
+    <string name="add_ongoing_hint">Enter airing anime URL here</string>
+    <string name="invalid_ongoing_url_msg">Invalid airing anime URL!</string>
 
     <!-- Menu actions -->
     <string name="action_settings">Settings</string>
@@ -19,15 +19,15 @@
     <string name="nav_header_subtitle">ivan.petrov@gmail.com</string>
     <string name="nav_header_desc">Navigation header</string>
 
-    <!-- Ongoing list item -->
-    <string name="ongoing_logo_hint">Ongoing logo</string>
+    <!-- Anime list item -->
+    <string name="ongoing_logo_hint">Airing anime logo</string>
 
-    <!-- Ongoing details item -->
+    <!-- Anime details item -->
 
-    <!-- Ongoing list fragment -->
-    <string name="add_ongoing_button_hint">Add ongoing</string>
+    <!-- Anime list fragment -->
+    <string name="add_ongoing_button_hint">Add airing anime</string>
 
-    <!-- Ongoing details fragment -->
+    <!-- Anime details fragment -->
 
     <!-- About fragment -->
     <string name="about_fragment_title">About</string>

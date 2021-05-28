@@ -4,7 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import name.eraxillan.ongoingschedule.model.Ongoing
+import name.eraxillan.ongoingschedule.model.AiringAnime
 import name.eraxillan.ongoingschedule.parser.FakeParser
 import name.eraxillan.ongoingschedule.repository.OngoingRepo
 import java.net.URL
@@ -17,31 +17,31 @@ class OngoingViewModel(application: Application)
     }
 
     private var ongoingRepo: OngoingRepo = OngoingRepo(getApplication())
-    private var ongoings: LiveData<List<Ongoing>>? = null
+    private var ongoings: LiveData<List<AiringAnime>>? = null
 
-    fun parseOngoingFromUrl(url: URL): Ongoing {
-        val ongoing = ongoingRepo.createOngoing()
+    fun parseOngoingFromUrl(url: URL): AiringAnime {
+        val anime = ongoingRepo.createOngoing()
 
-        ongoing.url = url
-        // FIXME IMPLEMENT: parse website using JSoup and fill all `ongoing` fields
+        anime.url = url
+        // FIXME IMPLEMENT: parse website using JSoup and fill all `anime` fields
         val parser = FakeParser()
-        if (!parser.parse(url, ongoing)) {
-            Log.e(LOG_TAG, "Unable to fetch ongoing data from URL='$url'!")
+        if (!parser.parse(url, anime)) {
+            Log.e(LOG_TAG, "Unable to fetch anime data from URL='$url'!")
         }
 
-        return ongoing
+        return anime
     }
 
-    fun addOngoing(ongoing: Ongoing) {
-        val newId = ongoingRepo.addOngoing(ongoing)
-        Log.i(LOG_TAG, "New ongoing with id=$newId added to the SQLite database")
+    fun addOngoing(anime: AiringAnime) {
+        val newId = ongoingRepo.addOngoing(anime)
+        Log.i(LOG_TAG, "New anime with id=$newId added to the SQLite database")
     }
 
-    fun deleteOngoing(ongoing: Ongoing) {
-        ongoingRepo.deleteOngoing(ongoing)
+    fun deleteOngoing(anime: AiringAnime) {
+        ongoingRepo.deleteOngoing(anime)
     }
 
-    fun getOngoings(): LiveData<List<Ongoing>>? {
+    fun getOngoings(): LiveData<List<AiringAnime>>? {
         if (ongoings == null) {
             ongoings = ongoingRepo.allOngoings
         }

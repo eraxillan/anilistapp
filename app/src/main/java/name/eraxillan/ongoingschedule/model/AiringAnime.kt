@@ -18,14 +18,14 @@ private val INVALID_URL = URL("https://www.invalid.com")
 
 
 /**
- * An ongoing anime description
+ * An anime description
  */
-@Entity(tableName = "ongoings")
+@Entity(tableName = "airing_animes")
 @Parcelize
-data class Ongoing constructor(
+data class AiringAnime constructor(
     @PrimaryKey(autoGenerate = true)
     var id: Long? = null,             // Database primary key
-    var url: URL = INVALID_URL,       // MyAnimeList/Wakanim/Crunchyroll/etc. URL
+    var url: URL = INVALID_URL,       // Anilist/MyAnimeList/Wakanim/Crunchyroll/etc. URL
     var season: Int = -1,             // Season number
     var originalName: String = "",    // Original Japanese name in Romaji
     var latestEpisode: Int = -1,      // Latest episode number: e.g. 5, i.e. 5th from 12
@@ -35,7 +35,7 @@ data class Ongoing constructor(
     var minAge: Int = -1,             // Minimal accepted age: e.g. 16 or 18
 ) : Parcelable {
 
-    fun copyDataFields(other: Ongoing) {
+    fun copyDataFields(other: AiringAnime) {
         // Ignore `id` and url `fields`, other filled by parser
         season = other.season
         originalName = other.originalName

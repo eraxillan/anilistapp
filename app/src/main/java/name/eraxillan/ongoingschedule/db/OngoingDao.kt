@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.OnConflictStrategy.REPLACE
-import name.eraxillan.ongoingschedule.model.Ongoing
+import name.eraxillan.ongoingschedule.model.AiringAnime
 
 /**
- * Ongoing database CRUD: create-read-update-delete
+ * Airing anime database CRUD: create-read-update-delete
  *
  * LiveData objects can be observed by another object.
  * LiveData notifies any observers when the data changes.
@@ -20,22 +20,22 @@ import name.eraxillan.ongoingschedule.model.Ongoing
  */
 @Dao
 interface OngoingDao {
-    @Query("SELECT * FROM ongoings")
-    fun loadAll(): LiveData<List<Ongoing>>
+    @Query("SELECT * FROM airing_animes")
+    fun loadAll(): LiveData<List<AiringAnime>>
 
-    @Query("SELECT * FROM ongoings WHERE id = :ongoingId")
-    fun loadOngoing(ongoingId: Long): Ongoing
+    @Query("SELECT * FROM airing_animes WHERE id = :animeId")
+    fun loadOngoing(animeId: Long): AiringAnime
 
     // Asynchronous version
-    @Query("SELECT * FROM ongoings WHERE id = :ongoingId")
-    fun loadLiveOngoing(ongoingId: Long): LiveData<Ongoing>
+    @Query("SELECT * FROM airing_animes WHERE id = :animeId")
+    fun loadLiveOngoing(animeId: Long): LiveData<AiringAnime>
 
     @Insert(onConflict = IGNORE)
-    fun insertOngoing(ongoing: Ongoing): Long
+    fun insertOngoing(anime: AiringAnime): Long
 
     @Update(onConflict = REPLACE)
-    fun updateOngoing(ongoing: Ongoing)
+    fun updateOngoing(anime: AiringAnime)
 
     @Delete
-    fun deleteOngoing(ongoing: Ongoing)
+    fun deleteOngoing(anime: AiringAnime)
 }

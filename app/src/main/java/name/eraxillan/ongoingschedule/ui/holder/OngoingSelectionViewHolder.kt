@@ -1,10 +1,9 @@
 package name.eraxillan.ongoingschedule.ui.holder
 
-import android.util.Log
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.ongoingschedule.databinding.ListItemOngoingBinding
-import name.eraxillan.ongoingschedule.model.Ongoing
+import name.eraxillan.ongoingschedule.model.AiringAnime
 import name.eraxillan.ongoingschedule.ui.showOngoingInfo
 
 class OngoingSelectionViewHolder(
@@ -17,16 +16,16 @@ class OngoingSelectionViewHolder(
 
     init {
         binding.setClickListener {
-            binding.ongoing?.let { ongoing ->
-                showOngoingInfo(ongoing, it.findNavController())
+            binding.anime?.let { anime ->
+                showOngoingInfo(anime, it.findNavController())
             }
         }
     }
 
-    fun bind(position: Int, ongoing: Ongoing) {
+    fun bind(position: Int, anime: AiringAnime) {
         binding.apply {
             setPosition((position + 1).toString())
-            setOngoing(ongoing)
+            setAnime(anime)
             executePendingBindings()
         }
     }

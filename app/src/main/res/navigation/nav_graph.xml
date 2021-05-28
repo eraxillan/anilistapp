@@ -22,8 +22,8 @@
         android:label="{title}"
         tools:layout="@layout/fragment_ongoing_details" >
         <argument
-            android:name="ongoing"
-            app:argType="name.eraxillan.ongoingschedule.model.Ongoing"
+            android:name="anime"
+            app:argType="name.eraxillan.ongoingschedule.model.AiringAnime"
             app:nullable="true"
             android:defaultValue="@null" />
         <argument

@@ -1,15 +1,14 @@
 package name.eraxillan.ongoingschedule.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.ongoingschedule.databinding.ListItemOngoingDetailsBinding
-import name.eraxillan.ongoingschedule.model.Ongoing
+import name.eraxillan.ongoingschedule.model.AiringAnime
 import name.eraxillan.ongoingschedule.ui.holder.OngoingItemViewHolder
 
 class OngoingItemsRecyclerViewAdapter(
-    var ongoing: Ongoing
+    var anime: AiringAnime
 )
     : RecyclerView.Adapter<OngoingItemViewHolder>() {
 
@@ -29,13 +28,13 @@ class OngoingItemsRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: OngoingItemViewHolder, position: Int) {
         val text = when (position) {
-            0 -> "Season: ${ongoing.season}"
-            1 -> "Original name: ${ongoing.originalName}"
-            2 -> "Latest episode: ${ongoing.latestEpisode}"
-            3 -> "Total episodes: ${ongoing.totalEpisodes}"
-            4 -> "Release date: ${ongoing.releaseDate}"
-            5 -> "Next episode date: ${ongoing.nextEpisodeDate?.getDisplayString() ?: "" }"
-            6 -> "Minimum age: ${ongoing.minAge}"
+            0 -> "Season: ${anime.season}"
+            1 -> "Original name: ${anime.originalName}"
+            2 -> "Latest episode: ${anime.latestEpisode}"
+            3 -> "Total episodes: ${anime.totalEpisodes}"
+            4 -> "Release date: ${anime.releaseDate}"
+            5 -> "Next episode date: ${anime.nextEpisodeDate?.getDisplayString() ?: "" }"
+            6 -> "Minimum age: ${anime.minAge}"
             else -> ""
         }
         holder.bind(text)

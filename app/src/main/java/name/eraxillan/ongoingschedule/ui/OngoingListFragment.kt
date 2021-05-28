@@ -19,7 +19,7 @@ import kotlinx.coroutines.*
 import name.eraxillan.ongoingschedule.R
 import name.eraxillan.ongoingschedule.ui.adapter.OngoingSelectionRecyclerViewAdapter
 import name.eraxillan.ongoingschedule.databinding.FragmentOngoingListBinding
-import name.eraxillan.ongoingschedule.model.Ongoing
+import name.eraxillan.ongoingschedule.model.AiringAnime
 import name.eraxillan.ongoingschedule.viewmodel.OngoingViewModel
 import java.net.MalformedURLException
 import java.net.URL
@@ -76,7 +76,7 @@ class OngoingListFragment : Fragment() {
                 ).show()
                 return@setPositiveButton
             }
-            // Add ongoing to list view, db, and close dialog
+            // Add airing anime to list view, db, and close dialog
             addOngoing(url)
             dialog.dismiss()
         }
@@ -86,14 +86,14 @@ class OngoingListFragment : Fragment() {
 
     private fun addOngoing(url: URL) {
         /*val job =*/ GlobalScope.launch(Dispatchers.IO) {
-            // Parse ongoing data from website
-            val ongoing = ongoingViewModel.parseOngoingFromUrl(url)
+            // Parse airing anime data from website
+            val anime = ongoingViewModel.parseOngoingFromUrl(url)
 
-            // Save ongoing to database
-            ongoingViewModel.addOngoing(ongoing)
+            // Save airing anime to database
+            ongoingViewModel.addOngoing(anime)
 
             withContext(Dispatchers.Main) {
-                showOngoingInfo(ongoing, findNavController())
+                showOngoingInfo(anime, findNavController())
             }
         }
         //job.cancelAndJoin()
@@ -107,7 +107,7 @@ class OngoingListFragment : Fragment() {
             binding.swipeRefresh.isRefreshing = true
 
         GlobalScope.launch {
-            // FIXME: implement ongoing list loading
+            // FIXME: implement airing anime list loading
             delay(1000)
 
             activity?.runOnUiThread {
@@ -182,9 +182,7 @@ class OngoingListFragment : Fragment() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun setupRecyclerView() {
-        val ongoings = mutableListOf<Ongoing>()
-
-        val adapter = OngoingSelectionRecyclerViewAdapter(ongoings) {
+        val adapter = OngoingSelectionRecyclerViewAdapter() {
             GlobalScope.launch {
                 ongoingViewModel.deleteOngoing(it)
             }
@@ -222,18 +220,18 @@ class OngoingListFragment : Fragment() {
     private fun createOngoingObserver() {
         ongoingViewModel.getOngoings()?.observe(
             viewLifecycleOwner, {
-                // Clean old ongoing list
+                // Clean old anime list
                 getAdapter().clearOngoings()
 
-                // Add new ongoing list
+                // Add new anime list
                 displayAllOngoings(it)
 
             }
         )
     }
 
-    private fun displayAllOngoings(ongoings: List<Ongoing>) {
-        ongoings.forEach { getAdapter().addOngoing(it) }
+    private fun displayAllOngoings(anime: List<AiringAnime>) {
+        anime.forEach { getAdapter().addOngoing(it) }
     }
 
     private fun getAdapter() = binding.ongoingList.adapter as OngoingSelectionRecyclerViewAdapter

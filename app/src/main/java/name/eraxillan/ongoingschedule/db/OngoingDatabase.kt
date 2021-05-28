@@ -5,11 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import name.eraxillan.ongoingschedule.model.Ongoing
+import name.eraxillan.ongoingschedule.model.AiringAnime
 
 @Database(
-    entities = [Ongoing::class],
-    version = 1
+    entities = [AiringAnime::class],
+    version = 2
 )
 @TypeConverters(DatabaseTypeConverters::class)
 abstract class OngoingDatabase : RoomDatabase() {
@@ -24,7 +24,7 @@ abstract class OngoingDatabase : RoomDatabase() {
                 instance = Room.databaseBuilder(
                     context.applicationContext,
                     OngoingDatabase::class.java,
-                    "ongoing_db"
+                    "airing_anime_db"
                 ).fallbackToDestructiveMigration().build()
             }
             return instance as OngoingDatabase

@@ -4,20 +4,20 @@ import android.util.Log
 import name.eraxillan.ongoingschedule.db.ZonedScheduledTime
 import java.time.*
 import kotlin.random.Random
-import name.eraxillan.ongoingschedule.model.Ongoing
+import name.eraxillan.ongoingschedule.model.AiringAnime
 import java.net.URL
 
 
-// Strategy pattern: get ongoing info from several websites that have appropriate backend
+// Strategy pattern: get airing anime info from several websites that have appropriate backend
 interface OngoingParser {
-    fun parse(url: URL, ongoing: Ongoing): Boolean
+    fun parse(url: URL, anime: AiringAnime): Boolean
 }
 
 
 class FakeParser: OngoingParser {
 
     private val predefinedOngoings = listOf(
-        Ongoing(
+        AiringAnime(
             1,
             URL("https://www.wakanim.tv/ru/v2/catalogue/show/1251/kombatanty-budut-vyslany"),
             1, "Combatants Will Be Dispatched!",
@@ -27,7 +27,7 @@ class FakeParser: OngoingParser {
                 ZoneOffset.of("+3"), ZoneId.of("Europe/Moscow")), // Sundays 15:00 (MSK)
             18
         ),
-        Ongoing(
+        AiringAnime(
             2,
             URL("https://www.wakanim.tv/ru/v2/catalogue/show/484/korzinka-fruktov-fruits-basket"),
             3, "Fruits Basket",
@@ -37,7 +37,7 @@ class FakeParser: OngoingParser {
                 ZoneOffset.of("+3"), ZoneId.of("Europe/Moscow")), // Mondays 20:30 (MSK)
             16
         ),
-        Ongoing(
+        AiringAnime(
             3,
             URL("https://www.wakanim.tv/ru/v2/catalogue/show/1294/polnoe-pogruzhenie-chto-yesli-luchshaya-rpg-s-polnym-pogruzheniem-budet-khuzhe-realnosti"),
             1, "Full Dive: This Ultimate Next-Gen Full Dive RPG Is Even Shittier than Real Life!",
@@ -47,7 +47,7 @@ class FakeParser: OngoingParser {
                 ZoneOffset.of("+3"), ZoneId.of("Europe/Moscow")), // Wednesdays 17:30 (MSK)
             18
         ),
-        Ongoing(
+        AiringAnime(
             4,
             URL("https://www.wakanim.tv/ru/v2/catalogue/show/1303/super-cub"),
             1, "Super Cub",
@@ -57,7 +57,7 @@ class FakeParser: OngoingParser {
                 ZoneOffset.of("+3"), ZoneId.of("Europe/Moscow")), // Wednesdays 18:00 (MSK)
             12
         ),
-        Ongoing(
+        AiringAnime(
             5,
             URL("https://www.wakanim.tv/ru/v2/catalogue/show/1300/sinee-otrazhenie-luch-blue-reflection-ray"),
             1, "Blue Reflection Ray",
@@ -67,7 +67,7 @@ class FakeParser: OngoingParser {
                 ZoneOffset.of("+3"), ZoneId.of("Europe/Moscow")), // Fridays 20:55 (MSK)
             18
         ),
-        Ongoing(
+        AiringAnime(
             6,
             URL("https://www.wakanim.tv/ru/v2/catalogue/show/1212/bek-arrou-back-arrow"),
             1, "BACK ARROW",
@@ -77,7 +77,7 @@ class FakeParser: OngoingParser {
                 ZoneOffset.of("+3"), ZoneId.of("Europe/Moscow")), // Fridays 19:30 (MSK)
             18
         ),
-        Ongoing(
+        AiringAnime(
             7,
             URL("https://www.wakanim.tv/ru/v2/catalogue/show/1310/dom-teney-shadows-house"),
             1, "SHADOWS HOUSE",
@@ -96,17 +96,17 @@ class FakeParser: OngoingParser {
     )*/
     private fun randomIndex(): Int = Random.nextInt(0, predefinedOngoings.size)
 
-    override fun parse(url: URL, ongoing: Ongoing): Boolean {
-        // Just randomly return one of predefined ongoing objects
-        //val randomOngoing = predefinedOngoings[randomIndex()]
-        //ongoing.copyDataFields(randomOngoing)
+    override fun parse(url: URL, anime: AiringAnime): Boolean {
+        // Just randomly return one of predefined anime objects
+        //val randomAnime = predefinedOngoings[randomIndex()]
+        //anime.copyDataFields(randomAnime)
 
-        // Return next ongoing from predefined list
+        // Return next anime from predefined list
         val nextOngoing = predefinedOngoings[index++]
         if (index == predefinedOngoings.size) index = 0
-        Log.e(LOG_TAG, "ONGOING INDEX: $index")
+        Log.e(LOG_TAG, "Airing anime index: $index")
 
-        ongoing.copyDataFields(nextOngoing)
+        anime.copyDataFields(nextOngoing)
         nextOngoing.url = url
         return true
     }
