@@ -11,16 +11,16 @@ import name.eraxillan.airinganimeschedule.ui.adapter.OngoingItemsRecyclerViewAda
 import name.eraxillan.airinganimeschedule.databinding.FragmentAnimeDetailBinding
 
 
-class AnimeDetailFragment : Fragment() {
+class AiringAnimeDetailFragment : Fragment() {
     companion object {
-        private val LOG_TAG = AnimeDetailFragment::class.java.simpleName
+        private val LOG_TAG = AiringAnimeDetailFragment::class.java.simpleName
     }
 
     private var _binding: FragmentAnimeDetailBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!
 
-    private val args: AnimeDetailFragmentArgs by navArgs()
+    private val args: AiringAnimeDetailFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,

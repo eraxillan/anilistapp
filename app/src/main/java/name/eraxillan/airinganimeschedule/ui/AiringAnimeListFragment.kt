@@ -20,7 +20,7 @@ import name.eraxillan.airinganimeschedule.R
 import name.eraxillan.airinganimeschedule.ui.adapter.OngoingSelectionRecyclerViewAdapter
 import name.eraxillan.airinganimeschedule.databinding.FragmentAiringAnimeListBinding
 import name.eraxillan.airinganimeschedule.model.AiringAnime
-import name.eraxillan.airinganimeschedule.viewmodel.OngoingViewModel
+import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
 import java.net.MalformedURLException
 import java.net.URL
 
@@ -40,17 +40,17 @@ class AiringAnimeListFragment : Fragment() {
      * If a configuration change happens, such as a screen rotation,
      * it returns the previously created `MainViewModel`
      */
-    private val ongoingViewModel by viewModels<OngoingViewModel>()
+    private val ongoingViewModel by viewModels<AiringAnimeViewModel>()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun showAddOngoingDialog() {
-        val dialogTitle = getString(R.string.add_ongoing_dialog_title)
+        val dialogTitle = getString(R.string.add_airing_anime_dialog_title)
         val positiveButtonTitle = getString(R.string.add_airing_anime_button_hint)
 
         val builder = AlertDialog.Builder(requireContext())
         val ongoingUrlEditText = EditText(requireContext())
-        ongoingUrlEditText.hint = getString(R.string.add_ongoing_hint)
+        ongoingUrlEditText.hint = getString(R.string.add_airing_anime_hint)
         ongoingUrlEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
         ongoingUrlEditText.setText(getString(R.string.invalid_url))
 
@@ -59,7 +59,7 @@ class AiringAnimeListFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (!Patterns.WEB_URL.matcher(ongoingUrlEditText.text.toString()).matches())
-                    ongoingUrlEditText.error = getString(R.string.invalid_ongoing_url_msg)
+                    ongoingUrlEditText.error = getString(R.string.invalid_airing_anime_url_msg)
             }
         }
         ongoingUrlEditText.addTextChangedListener(textWatcher)
@@ -72,7 +72,7 @@ class AiringAnimeListFragment : Fragment() {
                 URL(ongoingUrlEditText.text.toString())
             } catch (exc: MalformedURLException) {
                 Toast.makeText(
-                    requireContext(), getString(R.string.invalid_ongoing_url_msg), Toast.LENGTH_SHORT
+                    requireContext(), getString(R.string.invalid_airing_anime_url_msg), Toast.LENGTH_SHORT
                 ).show()
                 return@setPositiveButton
             }

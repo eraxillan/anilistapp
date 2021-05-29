@@ -12,22 +12,22 @@ import name.eraxillan.airinganimeschedule.model.AiringAnime
     version = 2
 )
 @TypeConverters(DatabaseTypeConverters::class)
-abstract class OngoingDatabase : RoomDatabase() {
-    abstract fun ongoingDao(): OngoingDao
+abstract class AiringAnimeDatabase : RoomDatabase() {
+    abstract fun ongoingDao(): AiringAnimeDao
 
     // Singleton object
     companion object {
-        private var instance: OngoingDatabase? = null
+        private var instance: AiringAnimeDatabase? = null
 
-        fun getInstance(context: Context): OngoingDatabase {
+        fun getInstance(context: Context): AiringAnimeDatabase {
             if (instance == null) {
                 instance = Room.databaseBuilder(
                     context.applicationContext,
-                    OngoingDatabase::class.java,
+                    AiringAnimeDatabase::class.java,
                     "airing_anime_db"
                 ).fallbackToDestructiveMigration().build()
             }
-            return instance as OngoingDatabase
+            return instance as AiringAnimeDatabase
         }
     }
 }

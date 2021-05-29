@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/animeDetailFragment"
-        android:name="name.eraxillan.airinganimeschedule.ui.AnimeDetailFragment"
+        android:name="name.eraxillan.airinganimeschedule.ui.AiringAnimeDetailFragment"
         android:label="{title}"
         tools:layout="@layout/fragment_anime_detail" >
         <argument

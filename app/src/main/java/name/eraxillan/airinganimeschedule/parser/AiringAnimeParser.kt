@@ -9,12 +9,12 @@ import java.net.URL
 
 
 // Strategy pattern: get airing anime info from several websites that have appropriate backend
-interface OngoingParser {
+interface AiringAnimeParser {
     fun parse(url: URL, anime: AiringAnime): Boolean
 }
 
 
-class FakeParser: OngoingParser {
+class FakeParser: AiringAnimeParser {
 
     private val predefinedOngoings = listOf(
         AiringAnime(

@@ -19,7 +19,7 @@ import name.eraxillan.airinganimeschedule.model.AiringAnime
  * calling it from the main thread.
  */
 @Dao
-interface OngoingDao {
+interface AiringAnimeDao {
     @Query("SELECT * FROM airing_animes")
     fun loadAll(): LiveData<List<AiringAnime>>
 
