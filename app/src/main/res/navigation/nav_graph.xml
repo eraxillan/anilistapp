@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/airingAnimeListFragment"
-        android:name="name.eraxillan.ongoingschedule.ui.AiringAnimeListFragment"
+        android:name="name.eraxillan.airinganimeschedule.ui.AiringAnimeListFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_airing_anime_list">
         <action
@@ -18,12 +18,12 @@
 
     <fragment
         android:id="@+id/animeDetailFragment"
-        android:name="name.eraxillan.ongoingschedule.ui.AnimeDetailFragment"
+        android:name="name.eraxillan.airinganimeschedule.ui.AnimeDetailFragment"
         android:label="{title}"
         tools:layout="@layout/fragment_anime_detail" >
         <argument
             android:name="anime"
-            app:argType="name.eraxillan.ongoingschedule.model.AiringAnime"
+            app:argType="name.eraxillan.airinganimeschedule.model.AiringAnime"
             app:nullable="true"
             android:defaultValue="@null" />
         <argument
@@ -35,13 +35,13 @@
 
     <fragment
         android:id="@+id/aboutScreen"
-        android:name="name.eraxillan.ongoingschedule.ui.AboutFragment"
+        android:name="name.eraxillan.airinganimeschedule.ui.AboutFragment"
         android:label="@string/nav_drawer_about"
         tools:layout="@layout/fragment_about" />
 
     <fragment
         android:id="@+id/preferenceScreen"
-        android:name="name.eraxillan.ongoingschedule.ui.PreferenceFragment"
+        android:name="name.eraxillan.airinganimeschedule.ui.PreferenceFragment"
         android:label="@string/nav_drawer_preferences" />
 
 </navigation>

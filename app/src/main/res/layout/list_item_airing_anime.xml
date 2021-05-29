@@ -9,7 +9,7 @@
             type="android.view.View.OnClickListener" />
         <variable
             name="anime"
-            type="name.eraxillan.ongoingschedule.model.AiringAnime" />
+            type="name.eraxillan.airinganimeschedule.model.AiringAnime" />
         <variable
             name="position"
             type="String" />
