@@ -93,8 +93,9 @@ class FakeParser: AiringAnimeParser {
     /* ThreadLocalRandom.current().nextInt(
         0,
         predefinedAiringAnimes.size + 1
-    )*/
+    )
     private fun randomIndex(): Int = Random.nextInt(0, predefinedAiringAnimes.size)
+    */
 
     override fun parse(url: URL, anime: AiringAnime): Boolean {
         // Just randomly return one of predefined anime objects
