@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import kotlinx.coroutines.*
 import name.eraxillan.airinganimeschedule.R
-import name.eraxillan.airinganimeschedule.ui.adapter.OngoingSelectionRecyclerViewAdapter
+import name.eraxillan.airinganimeschedule.ui.adapter.AiringAnimeListAdapter
 import name.eraxillan.airinganimeschedule.databinding.FragmentAiringAnimeListBinding
 import name.eraxillan.airinganimeschedule.model.AiringAnime
 import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
@@ -40,36 +40,36 @@ class AiringAnimeListFragment : Fragment() {
      * If a configuration change happens, such as a screen rotation,
      * it returns the previously created `MainViewModel`
      */
-    private val ongoingViewModel by viewModels<AiringAnimeViewModel>()
+    private val viewModel by viewModels<AiringAnimeViewModel>()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private fun showAddOngoingDialog() {
+    private fun showAddAiringAnimeDialog() {
         val dialogTitle = getString(R.string.add_airing_anime_dialog_title)
         val positiveButtonTitle = getString(R.string.add_airing_anime_button_hint)
 
         val builder = AlertDialog.Builder(requireContext())
-        val ongoingUrlEditText = EditText(requireContext())
-        ongoingUrlEditText.hint = getString(R.string.add_airing_anime_hint)
-        ongoingUrlEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
-        ongoingUrlEditText.setText(getString(R.string.invalid_url))
+        val airingAnimeUrlEditText = EditText(requireContext())
+        airingAnimeUrlEditText.hint = getString(R.string.add_airing_anime_hint)
+        airingAnimeUrlEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+        airingAnimeUrlEditText.setText(getString(R.string.invalid_url))
 
         val textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (!Patterns.WEB_URL.matcher(ongoingUrlEditText.text.toString()).matches())
-                    ongoingUrlEditText.error = getString(R.string.invalid_airing_anime_url_msg)
+                if (!Patterns.WEB_URL.matcher(airingAnimeUrlEditText.text.toString()).matches())
+                    airingAnimeUrlEditText.error = getString(R.string.invalid_airing_anime_url_msg)
             }
         }
-        ongoingUrlEditText.addTextChangedListener(textWatcher)
+        airingAnimeUrlEditText.addTextChangedListener(textWatcher)
 
         builder.setTitle(dialogTitle)
-        builder.setView(ongoingUrlEditText)
+        builder.setView(airingAnimeUrlEditText)
 
         builder.setPositiveButton(positiveButtonTitle) { dialog, _ ->
             val url: URL = try {
-                URL(ongoingUrlEditText.text.toString())
+                URL(airingAnimeUrlEditText.text.toString())
             } catch (exc: MalformedURLException) {
                 Toast.makeText(
                     requireContext(), getString(R.string.invalid_airing_anime_url_msg), Toast.LENGTH_SHORT
@@ -77,30 +77,30 @@ class AiringAnimeListFragment : Fragment() {
                 return@setPositiveButton
             }
             // Add airing anime to list view, db, and close dialog
-            addOngoing(url)
+            addAiringAnime(url)
             dialog.dismiss()
         }
 
         builder.create().show()
     }
 
-    private fun addOngoing(url: URL) {
+    private fun addAiringAnime(url: URL) {
         /*val job =*/ GlobalScope.launch(Dispatchers.IO) {
             // Parse airing anime data from website
-            val anime = ongoingViewModel.parseOngoingFromUrl(url)
+            val anime = viewModel.parseAiringAnimeFromUrl(url)
 
             // Save airing anime to database
-            ongoingViewModel.addOngoing(anime)
+            viewModel.addAiringAnime(anime)
 
             withContext(Dispatchers.Main) {
-                showOngoingInfo(anime, findNavController())
+                showAiringAnimeInfo(anime, findNavController())
             }
         }
         //job.cancelAndJoin()
     }
 
     // See https://developer.android.com/training/swipe/add-swipe-interface
-    private fun updateOngoingList(fromMenu: Boolean) {
+    private fun updateAiringAnimeList(fromMenu: Boolean) {
         // Signal SwipeRefreshLayout to start the progress indicator
         // NOTE: required only when called explicitly, e.g. from a menu item
         if (fromMenu)
@@ -142,10 +142,10 @@ class AiringAnimeListFragment : Fragment() {
 
         setupRecyclerView()
         setupSwipeOnRefresh()
-        createOngoingObserver()
+        createAiringAnimeObserver()
 
         binding.addAiringAnimeFab.setOnClickListener {
-            showAddOngoingDialog()
+            showAddAiringAnimeDialog()
         }
     }
 
@@ -168,7 +168,7 @@ class AiringAnimeListFragment : Fragment() {
 
                 // Start the refresh background task.
                 // This method calls `setRefreshing(false)` when it's finished
-                updateOngoingList(true)
+                updateAiringAnimeList(true)
 
                 true
             }
@@ -182,9 +182,9 @@ class AiringAnimeListFragment : Fragment() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun setupRecyclerView() {
-        val adapter = OngoingSelectionRecyclerViewAdapter() {
+        val adapter = AiringAnimeListAdapter() {
             GlobalScope.launch {
-                ongoingViewModel.deleteOngoing(it)
+                viewModel.deleteAiringAnime(it)
             }
         }
 
@@ -212,27 +212,26 @@ class AiringAnimeListFragment : Fragment() {
 
                 // This method performs the actual data-refresh operation.
                 // The method calls `setRefreshing(false)` when it's finished
-                updateOngoingList(false)
+                updateAiringAnimeList(false)
             }
         }
     }
 
-    private fun createOngoingObserver() {
-        ongoingViewModel.getOngoings()?.observe(
+    private fun createAiringAnimeObserver() {
+        viewModel.getAiringAnimes()?.observe(
             viewLifecycleOwner, {
                 // Clean old anime list
-                getAdapter().clearOngoings()
+                getAdapter().clearAiringAnimes()
 
                 // Add new anime list
-                displayAllOngoings(it)
-
+                displayAllAiringAnimes(it)
             }
         )
     }
 
-    private fun displayAllOngoings(anime: List<AiringAnime>) {
-        anime.forEach { getAdapter().addOngoing(it) }
+    private fun displayAllAiringAnimes(anime: List<AiringAnime>) {
+        anime.forEach { getAdapter().addAiringAnime(it) }
     }
 
-    private fun getAdapter() = binding.airingAnimeList.adapter as OngoingSelectionRecyclerViewAdapter
+    private fun getAdapter() = binding.airingAnimeList.adapter as AiringAnimeListAdapter
 }

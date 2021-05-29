@@ -13,7 +13,7 @@ import name.eraxillan.airinganimeschedule.model.AiringAnime
 )
 @TypeConverters(DatabaseTypeConverters::class)
 abstract class AiringAnimeDatabase : RoomDatabase() {
-    abstract fun ongoingDao(): AiringAnimeDao
+    abstract fun airingAnimeDao(): AiringAnimeDao
 
     // Singleton object
     companion object {

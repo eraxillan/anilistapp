@@ -24,18 +24,18 @@ interface AiringAnimeDao {
     fun loadAll(): LiveData<List<AiringAnime>>
 
     @Query("SELECT * FROM airing_animes WHERE id = :animeId")
-    fun loadOngoing(animeId: Long): AiringAnime
+    fun loadAiringAnime(animeId: Long): AiringAnime
 
     // Asynchronous version
     @Query("SELECT * FROM airing_animes WHERE id = :animeId")
-    fun loadLiveOngoing(animeId: Long): LiveData<AiringAnime>
+    fun loadLiveAiringAnime(animeId: Long): LiveData<AiringAnime>
 
     @Insert(onConflict = IGNORE)
-    fun insertOngoing(anime: AiringAnime): Long
+    fun insertAiringAnime(anime: AiringAnime): Long
 
     @Update(onConflict = REPLACE)
-    fun updateOngoing(anime: AiringAnime)
+    fun updateAiringAnime(anime: AiringAnime)
 
     @Delete
-    fun deleteOngoing(anime: AiringAnime)
+    fun deleteAiringAnime(anime: AiringAnime)
 }

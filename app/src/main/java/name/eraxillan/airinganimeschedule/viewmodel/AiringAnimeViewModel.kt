@@ -17,10 +17,10 @@ class AiringAnimeViewModel(application: Application)
     }
 
     private var airingAnimeRepo: AiringAnimeRepo = AiringAnimeRepo(getApplication())
-    private var ongoings: LiveData<List<AiringAnime>>? = null
+    private var airingAnimes: LiveData<List<AiringAnime>>? = null
 
-    fun parseOngoingFromUrl(url: URL): AiringAnime {
-        val anime = airingAnimeRepo.createOngoing()
+    fun parseAiringAnimeFromUrl(url: URL): AiringAnime {
+        val anime = airingAnimeRepo.createAiringAnime()
 
         anime.url = url
         // FIXME IMPLEMENT: parse website using JSoup and fill all `anime` fields
@@ -32,19 +32,19 @@ class AiringAnimeViewModel(application: Application)
         return anime
     }
 
-    fun addOngoing(anime: AiringAnime) {
-        val newId = airingAnimeRepo.addOngoing(anime)
+    fun addAiringAnime(anime: AiringAnime) {
+        val newId = airingAnimeRepo.addAiringAnime(anime)
         Log.i(LOG_TAG, "New anime with id=$newId added to the SQLite database")
     }
 
-    fun deleteOngoing(anime: AiringAnime) {
-        airingAnimeRepo.deleteOngoing(anime)
+    fun deleteAiringAnime(anime: AiringAnime) {
+        airingAnimeRepo.deleteAiringAnime(anime)
     }
 
-    fun getOngoings(): LiveData<List<AiringAnime>>? {
-        if (ongoings == null) {
-            ongoings = airingAnimeRepo.allOngoings
+    fun getAiringAnimes(): LiveData<List<AiringAnime>>? {
+        if (airingAnimes == null) {
+            airingAnimes = airingAnimeRepo.allAiringAnimes
         }
-        return ongoings
+        return airingAnimes
     }
 }

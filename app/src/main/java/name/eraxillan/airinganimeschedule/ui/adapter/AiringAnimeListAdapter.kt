@@ -6,31 +6,31 @@ import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeBinding
 import name.eraxillan.airinganimeschedule.model.AiringAnime
 import name.eraxillan.airinganimeschedule.ui.ItemTouchHelperCallback
-import name.eraxillan.airinganimeschedule.ui.holder.OngoingSelectionViewHolder
+import name.eraxillan.airinganimeschedule.ui.holder.AiringAnimeListHolder
 
-class OngoingSelectionRecyclerViewAdapter(
+class AiringAnimeListAdapter(
     private val deleteDelegate: (AiringAnime) -> Unit
 )
-    : RecyclerView.Adapter<OngoingSelectionViewHolder>()
+    : RecyclerView.Adapter<AiringAnimeListHolder>()
     , ItemTouchHelperCallback.ItemTouchHelperAdapter {
 
     companion object {
-        private val LOG_TAG = OngoingSelectionRecyclerViewAdapter::class.java.simpleName
+        private val LOG_TAG = AiringAnimeListAdapter::class.java.simpleName
     }
 
     private val animeList : MutableList<AiringAnime> = mutableListOf()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingSelectionViewHolder {
-        return OngoingSelectionViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AiringAnimeListHolder {
+        return AiringAnimeListHolder(
             ListItemAiringAnimeBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )
     }
 
-    override fun onBindViewHolder(holder: OngoingSelectionViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AiringAnimeListHolder, position: Int) {
         holder.bind(position, animeList[position])
     }
 
@@ -42,7 +42,7 @@ class OngoingSelectionRecyclerViewAdapter(
     //override fun onItemMoved(fromPosition: Int, toPosition: Int) = swapItems(fromPosition, toPosition)
     override fun onItemMoved(fromPosition: Int, toPosition: Int) {}
 
-    override fun onItemDismiss(position: Int) = deleteOngoing(position)
+    override fun onItemDismiss(position: Int) = deleteAiringAnime(position)
 
     // Override to show header/footer
     //override fun getItemViewType(position: Int): Int = 0
@@ -50,7 +50,7 @@ class OngoingSelectionRecyclerViewAdapter(
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private fun deleteOngoing(position: Int) {
+    private fun deleteAiringAnime(position: Int) {
         deleteDelegate(animeList[position])
         animeList.removeAt(position)
         notifyItemRemoved(position)
@@ -63,18 +63,18 @@ class OngoingSelectionRecyclerViewAdapter(
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun addOngoing(anime: AiringAnime) {
+    fun addAiringAnime(anime: AiringAnime) {
         animeList.add(anime)
         notifyItemInserted(animeList.size - 1)
     }
 
-    fun deleteOngoing(anime: AiringAnime) {
+    fun deleteAiringAnime(anime: AiringAnime) {
         val position = animeList.indexOf(anime)
         animeList.remove(anime)
         notifyItemRemoved(position)
     }
 
-    fun clearOngoings() {
+    fun clearAiringAnimes() {
         animeList.clear()
         notifyDataSetChanged()
     }

@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.navArgs
-import name.eraxillan.airinganimeschedule.ui.adapter.OngoingItemsRecyclerViewAdapter
+import name.eraxillan.airinganimeschedule.ui.adapter.AiringAnimeDetailAdapter
 import name.eraxillan.airinganimeschedule.databinding.FragmentAnimeDetailBinding
 
 
@@ -31,7 +31,7 @@ class AiringAnimeDetailFragment : Fragment() {
         _binding = FragmentAnimeDetailBinding.inflate(inflater, container, false)
         context ?: return binding.root
 
-        binding.animeFieldList.adapter = OngoingItemsRecyclerViewAdapter(args.anime!!)
+        binding.animeFieldList.adapter = AiringAnimeDetailAdapter(args.anime!!)
 
         return binding.root
     }

@@ -5,28 +5,28 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeDetailBinding
 import name.eraxillan.airinganimeschedule.model.AiringAnime
-import name.eraxillan.airinganimeschedule.ui.holder.OngoingItemViewHolder
+import name.eraxillan.airinganimeschedule.ui.holder.AiringAnimeDetailHolder
 
-class OngoingItemsRecyclerViewAdapter(
+class AiringAnimeDetailAdapter(
     var anime: AiringAnime
 )
-    : RecyclerView.Adapter<OngoingItemViewHolder>() {
+    : RecyclerView.Adapter<AiringAnimeDetailHolder>() {
 
     companion object {
-        private val LOG_TAG = OngoingItemsRecyclerViewAdapter::class.java.simpleName
+        private val LOG_TAG = AiringAnimeDetailAdapter::class.java.simpleName
         private const val fieldCount = 7
     }
 
     // Create a `View` from the `Layout`
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OngoingItemViewHolder {
-        return OngoingItemViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AiringAnimeDetailHolder {
+        return AiringAnimeDetailHolder(
             ListItemAiringAnimeDetailBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )
     }
 
-    override fun onBindViewHolder(holder: OngoingItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AiringAnimeDetailHolder, position: Int) {
         val text = when (position) {
             0 -> "Season: ${anime.season}"
             1 -> "Original name: ${anime.originalName}"

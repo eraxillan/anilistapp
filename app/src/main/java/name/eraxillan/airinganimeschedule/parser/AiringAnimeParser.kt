@@ -16,7 +16,7 @@ interface AiringAnimeParser {
 
 class FakeParser: AiringAnimeParser {
 
-    private val predefinedOngoings = listOf(
+    private val predefinedAiringAnimes = listOf(
         AiringAnime(
             1,
             URL("https://www.wakanim.tv/ru/v2/catalogue/show/1251/kombatanty-budut-vyslany"),
@@ -92,22 +92,22 @@ class FakeParser: AiringAnimeParser {
     // https://stackoverflow.com/a/363692
     /* ThreadLocalRandom.current().nextInt(
         0,
-        predefinedOngoings.size + 1
+        predefinedAiringAnimes.size + 1
     )*/
-    private fun randomIndex(): Int = Random.nextInt(0, predefinedOngoings.size)
+    private fun randomIndex(): Int = Random.nextInt(0, predefinedAiringAnimes.size)
 
     override fun parse(url: URL, anime: AiringAnime): Boolean {
         // Just randomly return one of predefined anime objects
-        //val randomAnime = predefinedOngoings[randomIndex()]
+        //val randomAnime = predefinedAiringAnimes[randomIndex()]
         //anime.copyDataFields(randomAnime)
 
         // Return next anime from predefined list
-        val nextOngoing = predefinedOngoings[index++]
-        if (index == predefinedOngoings.size) index = 0
+        val nextAiringAnime = predefinedAiringAnimes[index++]
+        if (index == predefinedAiringAnimes.size) index = 0
         Log.e(LOG_TAG, "Airing anime index: $index")
 
-        anime.copyDataFields(nextOngoing)
-        nextOngoing.url = url
+        anime.copyDataFields(nextAiringAnime)
+        nextAiringAnime.url = url
         return true
     }
 
