@@ -21,21 +21,24 @@ import name.eraxillan.airinganimeschedule.model.AiringAnime
 @Dao
 interface AiringAnimeDao {
     @Query("SELECT * FROM airing_animes")
-    fun loadAll(): LiveData<List<AiringAnime>>
+    fun getAiringAnimeList(): LiveData<List<AiringAnime>>
 
     @Query("SELECT * FROM airing_animes WHERE id = :animeId")
-    fun loadAiringAnime(animeId: Long): AiringAnime
+    fun getAiringAnime(animeId: Long): AiringAnime
 
     // Asynchronous version
     @Query("SELECT * FROM airing_animes WHERE id = :animeId")
-    fun loadLiveAiringAnime(animeId: Long): LiveData<AiringAnime>
+    fun getLiveAiringAnime(animeId: Long): LiveData<AiringAnime>
 
-    @Insert(onConflict = IGNORE)
-    fun insertAiringAnime(anime: AiringAnime): Long
+    @Insert(onConflict = REPLACE)
+    suspend fun insertAiringAnime(anime: AiringAnime): Long
+
+    @Insert(onConflict = REPLACE)
+    suspend fun insertAll(animeList: List<AiringAnime>)
 
     @Update(onConflict = REPLACE)
-    fun updateAiringAnime(anime: AiringAnime)
+    suspend fun updateAiringAnime(anime: AiringAnime)
 
     @Delete
-    fun deleteAiringAnime(anime: AiringAnime)
+    suspend fun deleteAiringAnime(anime: AiringAnime)
 }

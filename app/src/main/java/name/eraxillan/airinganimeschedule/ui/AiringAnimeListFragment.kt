@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.google.gson.*
 import kotlinx.coroutines.*
 import name.eraxillan.airinganimeschedule.R
 import name.eraxillan.airinganimeschedule.ui.adapter.AiringAnimeListAdapter
@@ -23,6 +24,7 @@ import name.eraxillan.airinganimeschedule.model.AiringAnime
 import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
 import java.net.MalformedURLException
 import java.net.URL
+import java.time.*
 
 
 class AiringAnimeListFragment : Fragment() {
@@ -85,18 +87,7 @@ class AiringAnimeListFragment : Fragment() {
     }
 
     private fun addAiringAnime(url: URL) {
-        /*val job =*/ GlobalScope.launch(Dispatchers.IO) {
-            // Parse airing anime data from website
-            val anime = viewModel.parseAiringAnimeFromUrl(url)
-
-            // Save airing anime to database
-            viewModel.addAiringAnime(anime)
-
-            withContext(Dispatchers.Main) {
-                showAiringAnimeInfo(anime, findNavController())
-            }
-        }
-        //job.cancelAndJoin()
+        viewModel.addAiringAnime(url, findNavController())
     }
 
     // See https://developer.android.com/training/swipe/add-swipe-interface
@@ -183,9 +174,7 @@ class AiringAnimeListFragment : Fragment() {
 
     private fun setupRecyclerView() {
         val adapter = AiringAnimeListAdapter() {
-            GlobalScope.launch {
-                viewModel.deleteAiringAnime(it)
-            }
+            viewModel.deleteAiringAnime(it)
         }
 
         val divider = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)

@@ -45,4 +45,7 @@ data class AiringAnime constructor(
         nextEpisodeDate = other.nextEpisodeDate
         minAge = other.minAge
     }
+
+    // Required for static extension functions
+    companion object
 }

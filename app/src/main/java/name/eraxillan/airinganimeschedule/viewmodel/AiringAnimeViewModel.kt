@@ -4,9 +4,18 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import name.eraxillan.airinganimeschedule.model.AiringAnime
 import name.eraxillan.airinganimeschedule.parser.FakeParser
 import name.eraxillan.airinganimeschedule.repository.AiringAnimeRepo
+import name.eraxillan.airinganimeschedule.ui.showAiringAnimeInfo
+import java.lang.Thread.currentThread
 import java.net.URL
 
 class AiringAnimeViewModel(application: Application)
@@ -19,7 +28,7 @@ class AiringAnimeViewModel(application: Application)
     private var airingAnimeRepo: AiringAnimeRepo = AiringAnimeRepo(getApplication())
     private var airingAnimes: LiveData<List<AiringAnime>>? = null
 
-    fun parseAiringAnimeFromUrl(url: URL): AiringAnime {
+    private fun parseAiringAnimeFromUrl(url: URL): AiringAnime {
         val anime = airingAnimeRepo.createAiringAnime()
 
         anime.url = url
@@ -32,18 +41,32 @@ class AiringAnimeViewModel(application: Application)
         return anime
     }
 
-    fun addAiringAnime(anime: AiringAnime) {
-        val newId = airingAnimeRepo.addAiringAnime(anime)
-        Log.i(LOG_TAG, "New anime with id=$newId added to the SQLite database")
+    fun addAiringAnime(url: URL, navController: NavController) {
+        /*val job =*/ viewModelScope.launch {
+            // Parse airing anime data from website
+            val anime = parseAiringAnimeFromUrl(url)
+
+            // Save airing anime to database
+            val newId = airingAnimeRepo.addAiringAnime(anime)
+            Log.i(LOG_TAG, "New anime with id=$newId added to the SQLite database")
+
+            withContext(Dispatchers.Main) {
+                showAiringAnimeInfo(anime, navController)
+            }
+        }
+        //job.cancelAndJoin()
     }
 
     fun deleteAiringAnime(anime: AiringAnime) {
-        airingAnimeRepo.deleteAiringAnime(anime)
+        /*val job =*/ viewModelScope.launch {
+            airingAnimeRepo.deleteAiringAnime(anime)
+        }
+        //job.cancelAndJoin()
     }
 
     fun getAiringAnimes(): LiveData<List<AiringAnime>>? {
         if (airingAnimes == null) {
-            airingAnimes = airingAnimeRepo.allAiringAnimes
+            airingAnimes = airingAnimeRepo.airingAnimeList
         }
         return airingAnimes
     }

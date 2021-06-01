@@ -13,13 +13,13 @@ class AiringAnimeRepo(context: Context) {
     private var db = AiringAnimeDatabase.getInstance(context)
     private var airingAnimeDao: AiringAnimeDao = db.airingAnimeDao()
 
-    fun addAiringAnime(anime: AiringAnime): Long? {
+    suspend fun addAiringAnime(anime: AiringAnime): Long {
         val newId = airingAnimeDao.insertAiringAnime(anime)
         anime.id = newId
         return newId
     }
 
-    fun deleteAiringAnime(anime: AiringAnime) {
+    suspend fun deleteAiringAnime(anime: AiringAnime) {
         airingAnimeDao.deleteAiringAnime(anime)
     }
 
@@ -28,8 +28,8 @@ class AiringAnimeRepo(context: Context) {
         return AiringAnime()
     }
 
-    val allAiringAnimes: LiveData<List<AiringAnime>>
+    val airingAnimeList: LiveData<List<AiringAnime>>
         get() {
-            return airingAnimeDao.loadAll()
+            return airingAnimeDao.getAiringAnimeList()
         }
 }

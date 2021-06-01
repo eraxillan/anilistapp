@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "url": "https://www.wakanim.tv/ru/v2/catalogue/show/1251/kombatanty-budut-vyslany",
+    "season": 1,
+    "originalName": "Combatants Will Be Dispatched!",
+    "latestEpisode": 9,
+    "totalEpisodes": 12,
+    "releaseDate": "2021-04-04",
+    "nextEpisodeDate": "W-7T15:00+03:00[Europe/Moscow]",
+    "minAge": 18
+  },
+  {
+    "id": 2,
+    "url": "https://www.wakanim.tv/ru/v2/catalogue/show/484/korzinka-fruktov-fruits-basket",
+    "season": 3,
+    "originalName": "Fruits Basket",
+    "latestEpisode": 8,
+    "totalEpisodes": 13,
+    "releaseDate": "2021-04-06",
+    "nextEpisodeDate": "W-1T20:30+03:00[Europe/Moscow]",
+    "minAge": 16
+  },
+  {
+    "id": 3,
+    "url": "https://www.wakanim.tv/ru/v2/catalogue/show/1294/polnoe-pogruzhenie-chto-yesli-luchshaya-rpg-s-polnym-pogruzheniem-budet-khuzhe-realnosti",
+    "season": 1,
+    "originalName": "Full Dive: This Ultimate Next-Gen Full Dive RPG Is Even Shittier than Real Life!",
+    "latestEpisode": 8,
+    "totalEpisodes": 12,
+    "releaseDate": "2021-04-07",
+    "nextEpisodeDate": "W-3T17:30+03:00[Europe/Moscow]",
+    "minAge": 18
+  },
+  {
+    "id": 4,
+    "url": "https://www.wakanim.tv/ru/v2/catalogue/show/1303/super-cub",
+    "season": 1,
+    "originalName": "Super Cub",
+    "latestEpisode": 8,
+    "totalEpisodes": 12,
+    "releaseDate": "2021-04-07",
+    "nextEpisodeDate": "W-3T18:00+03:00[Europe/Moscow]",
+    "minAge": 12
+  },
+  {
+    "id": 5,
+    "url": "https://www.wakanim.tv/ru/v2/catalogue/show/1300/sinee-otrazhenie-luch-blue-reflection-ray",
+    "season": 1,
+    "originalName": "Blue Reflection Ray",
+    "latestEpisode": 8,
+    "totalEpisodes": 24,
+    "releaseDate": "2021-04-09",
+    "nextEpisodeDate": "W-5T20:55+03:00[Europe/Moscow]",
+    "minAge": 12
+  },
+  {
+    "id": 6,
+    "url": "https://www.wakanim.tv/ru/v2/catalogue/show/1212/bek-arrou-back-arrow",
+    "season": 1,
+    "originalName": "BACK ARROW",
+    "latestEpisode": 21,
+    "totalEpisodes": 24,
+    "releaseDate": "2021-01-08",
+    "nextEpisodeDate": "W-5T19:30+03:00[Europe/Moscow]",
+    "minAge": 18
+  },
+  {
+    "id": 7,
+    "url": "https://www.wakanim.tv/ru/v2/catalogue/show/1310/dom-teney-shadows-house",
+    "season": 1,
+    "originalName": "SHADOWS HOUSE",
+    "latestEpisode": 8,
+    "totalEpisodes": 13,
+    "releaseDate": "2021-04-10",
+    "nextEpisodeDate": "W-6T20:00+03:00[Europe/Moscow]",
+    "minAge": 12
+  },
+  {
+    "id": 8,
+    "url": "https://www.wakanim.tv/ru/v2/catalogue/show/789/krasnyy-mars-mars-red",
+    "season": 1,
+    "originalName": "MARS RED",
+    "latestEpisode": 8,
+    "totalEpisodes": 13,
+    "releaseDate": "2021-04-05",
+    "nextEpisodeDate": "W-1T21:00+03:00[Europe/Moscow]",
+    "minAge": 18
+  },
+  {
+    "id": 9,
+    "url": "https://www.wakanim.tv/ru/v2/catalogue/show/1273/magiya-svyatoy-vsemogushcha-the-saints-magic-power-is-omnipotent",
+    "season": 1,
+    "originalName": "The Saint's Magic Power is Omnipotent",
+    "latestEpisode": 8,
+    "totalEpisodes": 12,
+    "releaseDate": "2021-04-06",
+    "nextEpisodeDate": "W-2T18:30+03:00[Europe/Moscow]",
+    "minAge": 12
+  },
+  {
+    "id": 10,
+    "url": "https://www.wakanim.tv/ru/v2/catalogue/show/1292/vivi-pesn-flyuoritovogo-glaza-vivy-fluorite-eyes-song",
+    "season": 1,
+    "originalName": "Vivy: Fluorite Eye's Song",
+    "latestEpisode": 10,
+    "totalEpisodes": 13,
+    "releaseDate": "2021-04-03",
+    "nextEpisodeDate": "W-6T19:00+03:00[Europe/Moscow]",
+    "minAge": 18
+  }
+]
