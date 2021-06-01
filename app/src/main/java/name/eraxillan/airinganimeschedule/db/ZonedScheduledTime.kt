@@ -136,8 +136,8 @@ class ZonedScheduledTime private constructor(
         }
 
         // This text output invented here in this method is styled to follow the designs of ISO 8601,
-        // but is most certainly *not* defined in the standard.
-        fun parse(input: String): ZonedScheduledTime? {
+        // but is most certainly *not* defined in the standard
+        fun parse(input: CharSequence): ZonedScheduledTime? {
             val dt = DayOfWeekTimeParser.parse(input)
             if (dt == null) {
                 Log.e(TAG, "Invalid zoned scheduled format!")

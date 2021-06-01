@@ -23,7 +23,7 @@ class DayOfWeekTimeParser {
         /**
          * "W-1T20:30:00.000000+03:00[Europe/Moscow]"
          */
-        fun parse(input: String): DowTime? {
+        fun parse(input: CharSequence): DowTime? {
             // Time zone can contain 'w' and 't' chars, so first of all extract it
             val baseTokens = input.split("[", "]").filter { it.isNotEmpty() }
             if (baseTokens.size != 2) {
