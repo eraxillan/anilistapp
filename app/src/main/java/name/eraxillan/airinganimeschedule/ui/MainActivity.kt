@@ -9,10 +9,10 @@ import name.eraxillan.airinganimeschedule.R
 import name.eraxillan.airinganimeschedule.databinding.ActivityAiringAnimeListBinding
 
 
-class AiringAnimeListActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     companion object {
-        private const val LOG_TAG = "54BE6C87_AALA" // AiringAnimeListActivity
+        private const val LOG_TAG = "54BE6C87_MA" // MainActivity
     }
 
     private lateinit var appBarConfiguration: AppBarConfiguration

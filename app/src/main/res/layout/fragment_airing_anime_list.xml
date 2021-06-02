@@ -20,7 +20,7 @@
             android:scrollbars="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/list_item_airing_anime"
-            tools:context=".ui.AiringAnimeListActivity" />
+            tools:context=".ui.MainActivity" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

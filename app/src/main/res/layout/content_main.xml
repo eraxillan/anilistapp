@@ -21,6 +21,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph"
-        tools:context=".ui.AiringAnimeListActivity" />
+        tools:context=".ui.MainActivity" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
