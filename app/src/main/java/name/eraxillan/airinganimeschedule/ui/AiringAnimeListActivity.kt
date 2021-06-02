@@ -21,8 +21,9 @@ class AiringAnimeListActivity : AppCompatActivity() {
 
     // Perform initialization of all fragments
     override fun onCreate(savedInstanceState: Bundle?) {
-        // TODO: do we need this call?
-        //setTheme(R.style.AppTheme)
+        // NOTE: return to basic app theme from splash screen one;
+        //       see https://medium.com/android-news/launch-screen-in-android-the-right-way-aca7e8c31f52
+        setTheme(R.style.AppTheme_NoActionBar)
 
         super.onCreate(savedInstanceState)
 
