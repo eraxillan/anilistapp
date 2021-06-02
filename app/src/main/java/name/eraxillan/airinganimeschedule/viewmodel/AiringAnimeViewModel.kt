@@ -66,7 +66,9 @@ class AiringAnimeViewModel(application: Application)
 
     fun getAiringAnimes(): LiveData<List<AiringAnime>>? {
         if (airingAnimes == null) {
-            airingAnimes = airingAnimeRepo.airingAnimeList
+            /*val job =*/ viewModelScope.launch {
+                airingAnimes = airingAnimeRepo.airingAnimeList
+            }
         }
         return airingAnimes
     }
