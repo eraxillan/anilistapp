@@ -11,7 +11,7 @@ import java.util.*
 
 class DayOfWeekTimeParser {
     companion object {
-        private val LOG_TAG = DayOfWeekTimeParser::class.java.simpleName
+        private const val LOG_TAG = "54BE6C87_DoWTP" // DoWTP = DayOfWeekTimeParser
 
         data class DowTime(
             val dow: DayOfWeek,

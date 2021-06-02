@@ -13,7 +13,7 @@ import java.net.URL
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
 
-private const val LOG_TAG = "JsonSerializer"
+private const val LOG_TAG = "54BE6C87_JSD" // JSD = JsonSerializerDeserializer
 
 private const val AA_ID = "id"
 private const val AA_URL = "url"

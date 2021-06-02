@@ -112,7 +112,7 @@ class FakeParser: AiringAnimeParser {
     }
 
     companion object {
-        private val LOG_TAG = FakeParser::class.java.simpleName
+        private val LOG_TAG = "54BE6C87_FP" // FP = FakeParser
         private var index = 0
     }
 }

@@ -11,7 +11,7 @@ class AiringAnimeListHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     companion object {
-        private val LOG_TAG = AiringAnimeListHolder::class.java.simpleName
+        private const val LOG_TAG = "54BE6C87_AALH" // AALH = AiringAnimeListHolder
     }
 
     init {

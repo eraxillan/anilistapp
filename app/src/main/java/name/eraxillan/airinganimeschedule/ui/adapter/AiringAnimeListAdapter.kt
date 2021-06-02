@@ -15,7 +15,7 @@ class AiringAnimeListAdapter(
     , ItemTouchHelperCallback.ItemTouchHelperAdapter {
 
     companion object {
-        private val LOG_TAG = AiringAnimeListAdapter::class.java.simpleName
+        private const val LOG_TAG = "54BE6C87_AALAd" // AALAd = AiringAnimeListAdapter
     }
 
     private val animeList : MutableList<AiringAnime> = mutableListOf()

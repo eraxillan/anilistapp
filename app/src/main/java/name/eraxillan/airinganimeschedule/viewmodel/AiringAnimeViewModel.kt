@@ -19,7 +19,7 @@ class AiringAnimeViewModel(application: Application)
     : AndroidViewModel(application) {
 
     companion object {
-        private val LOG_TAG = AiringAnimeViewModel::class.java.simpleName
+        private const val LOG_TAG = "54BE6C87_AAVM" // AAVM = AiringAnimeViewModel
     }
 
     private var airingAnimeRepo: AiringAnimeRepo = AiringAnimeRepo(getApplication())

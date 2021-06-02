@@ -140,8 +140,8 @@ class ZonedScheduledTime private constructor(
         fun parse(input: CharSequence): ZonedScheduledTime? {
             val dt = DayOfWeekTimeParser.parse(input)
             if (dt == null) {
-                Log.e(TAG, "Invalid zoned scheduled format!")
-                Log.e(TAG, "Input: '$input'")
+                Log.e(LOG_TAG, "Invalid zoned scheduled format!")
+                Log.e(LOG_TAG, "Input: '$input'")
                 return null
             }
 
@@ -153,6 +153,6 @@ class ZonedScheduledTime private constructor(
         // https://en.wikipedia.org/wiki/Common_year_starting_on_Monday
         // Let us go with 2001-01-01.
         /* private val BASELINE: LocalDateTime = LocalDateTime.of(2001, 1, 1, 0, 0, 0, 0) */
-        private val TAG = ZonedScheduledTime::class.java.simpleName
+        private const val LOG_TAG = "54BE6C87_ZST" // ZST = ZonedScheduledTime
     }
 }

@@ -8,7 +8,7 @@ import name.eraxillan.airinganimeschedule.R
 class ItemTouchHelperCallback(private val adapter: ItemTouchHelperAdapter) : ItemTouchHelper.Callback() {
 
     companion object {
-        private val LOG_TAG = ItemTouchHelperCallback::class.java.simpleName
+        private val LOG_TAG = "54BE6C87_ITHC" // ITHC = ItemTouchHelperCallback
     }
 
     override fun getMovementFlags(

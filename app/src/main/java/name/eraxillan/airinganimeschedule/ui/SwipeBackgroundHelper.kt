@@ -20,7 +20,7 @@ import kotlin.math.abs
  */
 class SwipeBackgroundHelper {
     companion object {
-        private val LOG_TAG = SwipeBackgroundHelper::class.java.simpleName
+        private val LOG_TAG = "54BE6C87_SBH" // SBH = SwipeBackgroundHelper
 
         private const val THRESHOLD = 2.5
         private const val OFFSET_PX = 20

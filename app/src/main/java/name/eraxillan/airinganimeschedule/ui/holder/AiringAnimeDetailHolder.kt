@@ -9,7 +9,7 @@ class AiringAnimeDetailHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     companion object {
-        private val LOG_TAG = AiringAnimeDetailHolder::class.java.simpleName
+        private const val LOG_TAG = "54BE6C87_AADH" // AADH = AiringAnimeDetailHolder
     }
 
     fun bind(text: String) {

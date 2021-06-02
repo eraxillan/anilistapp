@@ -12,7 +12,7 @@ import name.eraxillan.airinganimeschedule.databinding.ActivityAiringAnimeListBin
 class AiringAnimeListActivity : AppCompatActivity() {
 
     companion object {
-        private val LOG_TAG = AiringAnimeListActivity::class.java.simpleName
+        private const val LOG_TAG = "54BE6C87_AALA" // AiringAnimeListActivity
     }
 
     private lateinit var appBarConfiguration: AppBarConfiguration

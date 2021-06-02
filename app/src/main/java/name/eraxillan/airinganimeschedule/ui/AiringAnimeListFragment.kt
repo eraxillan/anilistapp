@@ -29,7 +29,7 @@ import java.time.*
 
 class AiringAnimeListFragment : Fragment() {
     companion object {
-        private val LOG_TAG = AiringAnimeListFragment::class.java.simpleName
+        private const val LOG_TAG = "54BE6C87_AALF" // AALF = AiringAnimeListFragment
     }
 
     private var _binding: FragmentAiringAnimeListBinding? = null

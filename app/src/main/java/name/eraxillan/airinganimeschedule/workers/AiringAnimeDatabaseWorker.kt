@@ -40,6 +40,6 @@ class AiringAnimeDatabaseWorker(
 
     companion object {
         // 54BE6C87 = crc32("name.eraxillan.airinganimeschedule")
-        private const val LOG_TAG = "54BE6C87_DatabaseWorker"
+        private const val LOG_TAG = "54BE6C87_DBW" // DBW = DatabaseWorker
     }
 }

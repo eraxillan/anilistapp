@@ -13,7 +13,7 @@ class AiringAnimeDetailAdapter(
     : RecyclerView.Adapter<AiringAnimeDetailHolder>() {
 
     companion object {
-        private val LOG_TAG = AiringAnimeDetailAdapter::class.java.simpleName
+        private const val LOG_TAG = "54BE6C87_AADA" // AADA = AiringAnimeDetailAdapter
         private const val fieldCount = 7
     }
 

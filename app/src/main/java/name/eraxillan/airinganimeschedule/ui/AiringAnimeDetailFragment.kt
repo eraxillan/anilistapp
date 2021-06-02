@@ -13,7 +13,7 @@ import name.eraxillan.airinganimeschedule.databinding.FragmentAnimeDetailBinding
 
 class AiringAnimeDetailFragment : Fragment() {
     companion object {
-        private val LOG_TAG = AiringAnimeDetailFragment::class.java.simpleName
+        private const val LOG_TAG = "54BE6C87_AADF" // AADF = AiringAnimeDetailFragment
     }
 
     private var _binding: FragmentAnimeDetailBinding? = null
