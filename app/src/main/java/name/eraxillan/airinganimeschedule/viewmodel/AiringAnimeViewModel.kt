@@ -6,16 +6,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import name.eraxillan.airinganimeschedule.model.AiringAnime
 import name.eraxillan.airinganimeschedule.parser.FakeParser
 import name.eraxillan.airinganimeschedule.repository.AiringAnimeRepo
 import name.eraxillan.airinganimeschedule.ui.showAiringAnimeInfo
-import java.lang.Thread.currentThread
 import java.net.URL
 
 class AiringAnimeViewModel(application: Application)
@@ -26,7 +23,7 @@ class AiringAnimeViewModel(application: Application)
     }
 
     private var airingAnimeRepo: AiringAnimeRepo = AiringAnimeRepo(getApplication())
-    private var airingAnimes: LiveData<List<AiringAnime>>? = null
+    private var airingAnimeList: LiveData<List<AiringAnime>>? = null
 
     private fun parseAiringAnimeFromUrl(url: URL): AiringAnime {
         val anime = airingAnimeRepo.createAiringAnime()
@@ -64,12 +61,12 @@ class AiringAnimeViewModel(application: Application)
         //job.cancelAndJoin()
     }
 
-    fun getAiringAnimes(): LiveData<List<AiringAnime>>? {
-        if (airingAnimes == null) {
+    fun getAiringAnimeList(): LiveData<List<AiringAnime>>? {
+        if (airingAnimeList == null) {
             /*val job =*/ viewModelScope.launch {
-                airingAnimes = airingAnimeRepo.airingAnimeList
+                airingAnimeList = airingAnimeRepo.airingAnimeList
             }
         }
-        return airingAnimes
+        return airingAnimeList
     }
 }

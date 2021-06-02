@@ -74,7 +74,7 @@ class AiringAnimeListAdapter(
         notifyItemRemoved(position)
     }
 
-    fun clearAiringAnimes() {
+    fun clearAiringAnimeList() {
         animeList.clear()
         notifyDataSetChanged()
     }

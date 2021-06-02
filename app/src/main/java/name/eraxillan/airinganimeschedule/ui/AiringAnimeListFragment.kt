@@ -207,18 +207,18 @@ class AiringAnimeListFragment : Fragment() {
     }
 
     private fun createAiringAnimeObserver() {
-        viewModel.getAiringAnimes()?.observe(
+        viewModel.getAiringAnimeList()?.observe(
             viewLifecycleOwner, {
                 // Clean old anime list
-                getAdapter().clearAiringAnimes()
+                getAdapter().clearAiringAnimeList()
 
                 // Add new anime list
-                displayAllAiringAnimes(it)
+                displayAiringAnimeList(it)
             }
         )
     }
 
-    private fun displayAllAiringAnimes(anime: List<AiringAnime>) {
+    private fun displayAiringAnimeList(anime: List<AiringAnime>) {
         anime.forEach { getAdapter().addAiringAnime(it) }
     }
 

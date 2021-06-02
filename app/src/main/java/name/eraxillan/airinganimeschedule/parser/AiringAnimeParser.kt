@@ -3,7 +3,6 @@ package name.eraxillan.airinganimeschedule.parser
 import android.util.Log
 import name.eraxillan.airinganimeschedule.db.ZonedScheduledTime
 import java.time.*
-import kotlin.random.Random
 import name.eraxillan.airinganimeschedule.model.AiringAnime
 import java.net.URL
 
@@ -16,7 +15,7 @@ interface AiringAnimeParser {
 
 class FakeParser: AiringAnimeParser {
 
-    private val predefinedAiringAnimes = listOf(
+    private val predefinedAiringAnimeList = listOf(
         AiringAnime(
             1,
             URL("https://www.wakanim.tv/ru/v2/catalogue/show/1251/kombatanty-budut-vyslany"),
@@ -92,19 +91,19 @@ class FakeParser: AiringAnimeParser {
     // https://stackoverflow.com/a/363692
     /* ThreadLocalRandom.current().nextInt(
         0,
-        predefinedAiringAnimes.size + 1
+        predefinedAiringAnimeList.size + 1
     )
-    private fun randomIndex(): Int = Random.nextInt(0, predefinedAiringAnimes.size)
+    private fun randomIndex(): Int = Random.nextInt(0, predefinedAiringAnimeList.size)
     */
 
     override fun parse(url: URL, anime: AiringAnime): Boolean {
         // Just randomly return one of predefined anime objects
-        //val randomAnime = predefinedAiringAnimes[randomIndex()]
+        //val randomAnime = predefinedAiringAnimeList[randomIndex()]
         //anime.copyDataFields(randomAnime)
 
         // Return next anime from predefined list
-        val nextAiringAnime = predefinedAiringAnimes[index++]
-        if (index == predefinedAiringAnimes.size) index = 0
+        val nextAiringAnime = predefinedAiringAnimeList[index++]
+        if (index == predefinedAiringAnimeList.size) index = 0
         Log.e(LOG_TAG, "Airing anime index: $index")
 
         anime.copyDataFields(nextAiringAnime)
