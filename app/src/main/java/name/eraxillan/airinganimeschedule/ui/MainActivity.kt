@@ -6,7 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.*
 import name.eraxillan.airinganimeschedule.R
-import name.eraxillan.airinganimeschedule.databinding.ActivityAiringAnimeListBinding
+import name.eraxillan.airinganimeschedule.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
-        val binding = ActivityAiringAnimeListBinding.inflate(layoutInflater)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setupActionBar(binding)
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private fun setupActionBar(binding: ActivityAiringAnimeListBinding) {
+    private fun setupActionBar(binding: ActivityMainBinding) {
         // NOTE: see https://developer.android.com/guide/navigation/navigation-ui#action_bar
 
         setSupportActionBar(binding.toolbarMain)
