@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "9f945bbdd19dae027bdac277bccfdcbf",
+    "identityHash": "74220c1196b039c21fec51720d19822b",
     "entities": [
       {
         "tableName": "airing_animes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `url` TEXT NOT NULL, `season` INTEGER NOT NULL, `originalName` TEXT NOT NULL, `latestEpisode` INTEGER NOT NULL, `totalEpisodes` INTEGER NOT NULL, `releaseDate` TEXT, `nextEpisodeDate` TEXT, `minAge` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `url` TEXT NOT NULL, `season` INTEGER NOT NULL, `format` TEXT NOT NULL, `originalName` TEXT NOT NULL, `latestEpisode` INTEGER NOT NULL, `totalEpisodes` INTEGER NOT NULL, `releaseDate` TEXT, `nextEpisodeDate` TEXT, `minAge` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -24,6 +24,12 @@
             "fieldPath": "season",
             "columnName": "season",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "format",
+            "columnName": "format",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -76,7 +82,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9f945bbdd19dae027bdac277bccfdcbf')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '74220c1196b039c21fec51720d19822b')"
     ]
   }
 }

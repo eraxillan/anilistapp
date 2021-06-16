@@ -9,12 +9,75 @@ import java.net.URL
 import java.time.LocalDate
 
 
-// Just for brevity in this module
+// Shortcuts just for brevity in this module
 private typealias DMY = LocalDate
 private typealias ZST = ZonedScheduledTime
+private typealias AAF = AiringAnimeFormat
 
-// FIXME: implement custom App class and replace with string resource
+// FIXME: implement custom App class and replace this with string resource
 private val INVALID_URL = URL("https://www.invalid.com")
+
+/**
+ * The format the media was released in
+ */
+enum class AiringAnimeFormat {
+    /**
+     * Anime broadcast on television
+     */
+    TV,
+
+    /**
+     * Anime which are under 15 minutes in length and broadcast on television
+     */
+    TV_SHORT,
+
+    /**
+     * Anime movies with a theatrical release
+     */
+    MOVIE,
+
+    /**
+     * Special episodes that have been included in DVD/Blu-ray releases, picture dramas, pilots, etc
+     */
+    SPECIAL,
+
+    /**
+     * (Original Video Animation) Anime that have been released directly on DVD/Blu-ray without
+     * originally going through a theatrical release or television broadcast
+     */
+    OVA,
+
+    /**
+     * (Original Net Animation) Anime that have been originally released online or are only available
+     * through streaming services.
+     */
+    ONA,
+
+    /**
+     * Short anime released as a music video
+     */
+    MUSIC,
+
+    /**
+     * Professionally published manga with more than one chapter
+     */
+    MANGA,
+
+    /**
+     * Written books released as a series of light novels
+     */
+    NOVEL,
+
+    /**
+     * Manga with just one chapter
+     */
+    ONE_SHOT,
+
+    /**
+     * Auto generated constant for unknown enum values
+     */
+    UNKNOWN
+}
 
 
 /**
@@ -27,6 +90,7 @@ data class AiringAnime constructor(
     var id: Long? = null,             // Database primary key
     var url: URL = INVALID_URL,       // Anilist/MyAnimeList/Wakanim/Crunchyroll/etc. URL
     var season: Int = -1,             // Season number
+    var format: AAF = AAF.TV,         // The format the media was released in
     var originalName: String = "",    // Original Japanese name in Romaji
     var latestEpisode: Int = -1,      // Latest episode number: e.g. 5, i.e. 5th from 12
     var totalEpisodes: Int = -1,      // Total episode count: e.g. 12
@@ -34,17 +98,6 @@ data class AiringAnime constructor(
     var nextEpisodeDate: ZST? = null, // Latest episode launch day+time with timezone
     var minAge: Int = -1,             // Minimal accepted age: e.g. 16 or 18
 ) : Parcelable {
-
-    fun copyDataFields(other: AiringAnime) {
-        // Ignore `id` and url `fields`, other filled by parser
-        season = other.season
-        originalName = other.originalName
-        latestEpisode = other.latestEpisode
-        totalEpisodes = other.totalEpisodes
-        releaseDate = other.releaseDate
-        nextEpisodeDate = other.nextEpisodeDate
-        minAge = other.minAge
-    }
 
     // Required for static extension functions
     companion object
