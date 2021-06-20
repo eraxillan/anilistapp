@@ -15,9 +15,9 @@ class AiringAnimeListHolder(
     }
 
     init {
-        binding.setClickListener {
+        binding.setClickListener { view ->
             binding.anime?.let { anime ->
-                showAiringAnimeInfo(anime, it.findNavController())
+                showAiringAnimeInfo(anime, view.findNavController())
             }
         }
     }
