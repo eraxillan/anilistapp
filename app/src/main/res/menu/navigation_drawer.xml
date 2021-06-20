@@ -7,15 +7,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/airingAnimeListFragment"
-            android:icon="@android:drawable/ic_menu_camera"
+            android:icon="@drawable/ic_baseline_search_24"
             android:title="@string/nav_drawer_main" />
         <item
             android:id="@+id/preferenceScreen"
-            android:icon="@android:drawable/ic_menu_preferences"
+            android:icon="@drawable/ic_baseline_settings_24"
             android:title="@string/nav_drawer_preferences" />
         <item
             android:id="@+id/aboutScreen"
-            android:icon="@android:drawable/ic_menu_help"
+            android:icon="@drawable/ic_baseline_help_24"
             android:title="@string/nav_drawer_about" />
     </group>
 
