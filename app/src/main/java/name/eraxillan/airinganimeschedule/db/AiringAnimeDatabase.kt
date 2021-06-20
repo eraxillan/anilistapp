@@ -42,12 +42,13 @@ abstract class AiringAnimeDatabase : RoomDatabase() {
                     object : RoomDatabase.Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
-                            val request =
-                                OneTimeWorkRequestBuilder<AiringAnimeDatabaseWorker>().build()
-                            WorkManager.getInstance(context).enqueue(request)
+                            /*val request = OneTimeWorkRequestBuilder<AiringAnimeDatabaseWorker>()
+                                .build()
+                            WorkManager.getInstance(context).enqueue(request)*/
                         }
                     }
                 )
+                .fallbackToDestructiveMigration()
                 .build()
         }
     }
