@@ -5,15 +5,16 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/airingAnimeListFragment">
 
+    <action
+        android:id="@+id/actionAiringAnimeDetails"
+        app:destination="@id/animeDetailFragment" >
+    </action>
+
     <fragment
         android:id="@+id/airingAnimeListFragment"
         android:name="name.eraxillan.airinganimeschedule.ui.AiringAnimeListFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_airing_anime_list">
-        <action
-            android:id="@+id/actionAiringAnimeDetails"
-            app:destination="@id/animeDetailFragment" >
-        </action>
     </fragment>
 
     <fragment
