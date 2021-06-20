@@ -2,7 +2,6 @@ package name.eraxillan.airinganimeschedule.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import androidx.room.OnConflictStrategy.IGNORE
 import androidx.room.OnConflictStrategy.REPLACE
 import name.eraxillan.airinganimeschedule.model.AiringAnime
 
@@ -22,6 +21,9 @@ import name.eraxillan.airinganimeschedule.model.AiringAnime
 interface AiringAnimeDao {
     @Query("SELECT * FROM airing_animes")
     fun getAiringAnimeList(): LiveData<List<AiringAnime>>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM airing_animes WHERE id = :id LIMIT 1)")
+    fun isAddedToFavorite(id: Long?): LiveData<Boolean>
 
     @Query("SELECT * FROM airing_animes WHERE id = :animeId")
     fun getAiringAnime(animeId: Long): AiringAnime

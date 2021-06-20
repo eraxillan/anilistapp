@@ -35,6 +35,13 @@
     </fragment>
 
     <fragment
+        android:id="@+id/favoriteFragment"
+        android:name="name.eraxillan.airinganimeschedule.ui.FavoriteListFragment"
+        android:label="@string/nav_drawer_favorite"
+        tools:layout="@layout/fragment_favorite_list" >
+    </fragment>
+
+    <fragment
         android:id="@+id/aboutScreen"
         android:name="name.eraxillan.airinganimeschedule.ui.AboutFragment"
         android:label="@string/nav_drawer_about"

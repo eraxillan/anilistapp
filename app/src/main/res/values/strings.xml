@@ -12,7 +12,8 @@
     <string name="action_refresh">Refresh</string>
 
     <!-- Navigation drawer -->
-    <string name="nav_drawer_main">Main</string>
+    <string name="nav_drawer_main">Discover</string>
+    <string name="nav_drawer_favorite">Favorite</string>
     <string name="nav_drawer_preferences">Settings</string>
     <string name="nav_drawer_about">About</string>
     <string name="nav_header_title">Ivan Petrov</string>

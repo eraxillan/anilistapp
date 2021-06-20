@@ -10,6 +10,10 @@
             android:icon="@drawable/ic_baseline_search_24"
             android:title="@string/nav_drawer_main" />
         <item
+            android:id="@+id/favoriteFragment"
+            android:icon="@drawable/ic_baseline_favorite_24"
+            android:title="@string/nav_drawer_favorite" />
+        <item
             android:id="@+id/preferenceScreen"
             android:icon="@drawable/ic_baseline_settings_24"
             android:title="@string/nav_drawer_preferences" />

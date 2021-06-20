@@ -6,9 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import name.eraxillan.airinganimeschedule.ui.adapter.AiringAnimeDetailAdapter
 import name.eraxillan.airinganimeschedule.databinding.FragmentAnimeDetailBinding
+import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
 
 
 class AiringAnimeDetailFragment : Fragment() {
@@ -22,6 +26,8 @@ class AiringAnimeDetailFragment : Fragment() {
 
     private val args: AiringAnimeDetailFragmentArgs by navArgs()
 
+    private val viewModel by viewModels<AiringAnimeViewModel>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,9 +35,12 @@ class AiringAnimeDetailFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentAnimeDetailBinding.inflate(inflater, container, false)
-        context ?: return binding.root
 
-        binding.animeFieldList.adapter = AiringAnimeDetailAdapter(args.anime!!)
+        /*binding.also { ui ->
+            ui.lifecycleOwner = viewLifecycleOwner
+            ui.animeId = (args.anime!!).id?.toInt() ?: -1
+            ui.viewModel = viewModel
+        }*/
 
         return binding.root
     }
@@ -39,5 +48,38 @@ class AiringAnimeDetailFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerView()
+        setupFab()
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private fun setupRecyclerView() {
+        val adapter = AiringAnimeDetailAdapter(args.anime!!)
+
+        binding.animeFieldList.adapter = adapter
+    }
+
+    private fun setupFab() {
+        val animeId = (args.anime!!).id?.toInt() ?: -1
+        /*binding.also { ui ->
+            ui.animeId = animeId
+            ui.viewModel = viewModel
+        }*/
+
+        binding.addToFavoriteButton.setOnClickListener {
+            viewModel.addAiringAnime(args.anime!!, findNavController())
+        }
+
+        viewModel.isAddedToFavorite(animeId).observe(
+            viewLifecycleOwner, { isFav ->
+                Log.e("name.eraxillan.app", "IS_FAV: $isFav")
+                binding.addToFavoriteButton.isVisible = !isFav
+            })
     }
 }

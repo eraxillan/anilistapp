@@ -4,6 +4,8 @@ plugins {
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs.kotlin'
     id 'kotlin-parcelize'
+    id 'com.apollographql.apollo'
+    //id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -26,6 +28,14 @@ android {
                 arg("room.expandProjection", "true")
             }
         }
+
+        /*
+        def token_file = project.file("anilist_token")
+        if (!token_file.exists()) {
+            token_file.write("<your_token>")
+        }
+        buildConfigField "String", "ANILIST_OAUTH_TOKEN", "\"" + token_file.readLines()[0].trim() + "\""
+        */
     }
 
     buildFeatures {
@@ -62,6 +72,11 @@ android {
 
 dependencies {
 
+    // Kotlin annotation processors
+    kapt "androidx.room:room-compiler:$room_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
+    //kapt "com.google.dagger:hilt-android-compiler:$rootProject.hiltVersion"
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$core_ctx_version"
     implementation "androidx.appcompat:appcompat:$app_compat_version"
@@ -73,6 +88,7 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation "androidx.work:work-runtime-ktx:$work_version"
     implementation "com.google.code.gson:gson:$gson_version"
+    implementation "com.github.bumptech.glide:glide:$glide_version"
 
     implementation "androidx.cardview:cardview:$card_view_version"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swipe_refresh_layout_version"
@@ -91,11 +107,24 @@ dependencies {
     // Room library
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
-    // Kotlin annotation processor for the Room library
-    kapt "androidx.room:room-compiler:$room_version"
+
     // Navigation Component
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    // Paging component
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+
+    // Networking components
+    implementation "com.apollographql.apollo:apollo-runtime:$apollo_version"
+    implementation "com.apollographql.apollo:apollo-coroutines-support:$apollo_version"
+    implementation "com.apollographql.apollo:apollo-android-support:$apollo_version"
+    implementation "com.apollographql.apollo:apollo-http-cache:$apollo_version"
+    //implementation "com.apollographql.apollo:apollo-normalized-cache-sqlite:$apollo_version"
+    //implementation "com.apollographql.apollo:apollo-rx2-support:$apollo_version"
+    //implementation "com.apollographql.apollo:apollo-rx3-support:$apollo_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_logging_version"
+
+    //kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
 
     testImplementation "junit:junit:$junit_version"
     //androidTestImplementation 'androidx.test.ext:junit:1.1.2'
@@ -104,7 +133,13 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$test_ext_junit_version"
     androidTestImplementation "androidx.test:core-ktx:$test_core_ktx_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$test_espresso_core_version"
+    //androidTestImplementation "com.google.dagger:hilt-android-testing:$rootProject.hilt_version"
 
     // Testing Navigation
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
+}
+
+apollo {
+    // Instruct the compiler to generate Kotlin models from GraphQL request files
+    generateKotlinModels = true
 }

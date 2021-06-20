@@ -6,20 +6,24 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
-import kotlinx.coroutines.*
+import androidx.recyclerview.widget.ItemTouchHelper
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import name.eraxillan.airinganimeschedule.R
-import name.eraxillan.airinganimeschedule.ui.adapter.AiringAnimeListAdapter
-import name.eraxillan.airinganimeschedule.databinding.FragmentAiringAnimeListBinding
+import name.eraxillan.airinganimeschedule.databinding.FragmentFavoriteListBinding
+import name.eraxillan.airinganimeschedule.ui.adapter.FavoriteListAdapter
 import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
+import java.net.URL
 
 
-class AiringAnimeListFragment : Fragment() {
+class FavoriteListFragment : Fragment() {
     companion object {
-        private const val LOG_TAG = "54BE6C87_AALF" // AALF = AiringAnimeListFragment
+        private const val LOG_TAG = "54BE6C87_FLF" // FLF = FavoriteListFragment
     }
 
-    private var _binding: FragmentAiringAnimeListBinding? = null
+    private var _binding: FragmentFavoriteListBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!
 
@@ -38,14 +42,14 @@ class AiringAnimeListFragment : Fragment() {
         // Signal SwipeRefreshLayout to start the progress indicator
         // NOTE: required only when called explicitly, e.g. from a menu item
         if (fromMenu)
-            binding.swipeRefresh.isRefreshing = true
+            binding.favoriteSwipeRefresh.isRefreshing = true
 
         lifecycleScope.launch {
             // FIXME: implement airing anime list force loading from Anilist/Database
             delay(1000)
 
             activity?.runOnUiThread {
-                binding.swipeRefresh.isRefreshing = false
+                binding.favoriteSwipeRefresh.isRefreshing = false
             }
         }
     }
@@ -60,7 +64,7 @@ class AiringAnimeListFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-        _binding = FragmentAiringAnimeListBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoriteListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -112,20 +116,27 @@ class AiringAnimeListFragment : Fragment() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun setupRecyclerView() {
-        val adapter = AiringAnimeListAdapter()
+        val adapter = FavoriteListAdapter {
+            viewModel.deleteAiringAnime(it)
+        }
 
         val divider = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
 
-        with (binding.airingAnimeList) {
+        val itemTouchHelperCallback = ItemTouchHelperCallback(adapter)
+        val touchHelper = ItemTouchHelper(itemTouchHelperCallback)
+
+        with (binding.favoriteAnimeList) {
             this.adapter = adapter
             this.addItemDecoration(divider)
             this.setHasFixedSize(true)
+
+            touchHelper.attachToRecyclerView(this)
         }
     }
 
     // https://developer.android.com/training/swipe/respond-refresh-request
     private fun setupSwipeOnRefresh() {
-        with (binding.swipeRefresh) {
+        with (binding.favoriteSwipeRefresh) {
             // Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked
             // when the user performs a swipe-to-refresh gesture.
             this.setOnRefreshListener {
@@ -139,18 +150,21 @@ class AiringAnimeListFragment : Fragment() {
     }
 
     private fun createAiringAnimeObserver() {
-        viewModel.getRemoteAiringAnimeList()?.observe(
+        viewModel.getAiringAnimeList()?.observe(
             viewLifecycleOwner, { animeList ->
-                binding.swipeRefresh.isRefreshing = true
+                // FIXME: add this call to beginning of db/anilist load function
+                binding.favoriteSwipeRefresh.isRefreshing = true
 
-                /*val job = */ lifecycleScope.launch {
-                    getAdapter().submitData(animeList)
-                }
+                // Clean old anime list
+                getAdapter().clearAiringAnimeList()
 
-                binding.swipeRefresh.isRefreshing = false
+                // Add new anime list
+                animeList.forEach { anime -> getAdapter().addAiringAnime(anime) }
+
+                binding.favoriteSwipeRefresh.isRefreshing = false
             }
         )
     }
 
-    private fun getAdapter() = binding.airingAnimeList.adapter as AiringAnimeListAdapter
+    private fun getAdapter() = binding.favoriteAnimeList.adapter as FavoriteListAdapter
 }

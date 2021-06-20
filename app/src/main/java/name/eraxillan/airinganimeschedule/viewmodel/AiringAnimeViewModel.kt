@@ -4,16 +4,16 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import kotlinx.coroutines.Dispatchers
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.work.impl.utils.LiveDataUtils
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import name.eraxillan.airinganimeschedule.model.AiringAnime
-import name.eraxillan.airinganimeschedule.parser.FakeParser
 import name.eraxillan.airinganimeschedule.repository.AiringAnimeRepo
-import name.eraxillan.airinganimeschedule.ui.showAiringAnimeInfo
-import java.net.URL
+
 
 class AiringAnimeViewModel(application: Application)
     : AndroidViewModel(application) {
@@ -24,32 +24,26 @@ class AiringAnimeViewModel(application: Application)
 
     private var airingAnimeRepo: AiringAnimeRepo = AiringAnimeRepo(getApplication())
     private var airingAnimeList: LiveData<List<AiringAnime>>? = null
+    private var remoteAiringAnimeList: LiveData<PagingData<AiringAnime>>? = null
 
-    private fun parseAiringAnimeFromUrl(url: URL): AiringAnime {
-        val anime = airingAnimeRepo.createAiringAnime()
+    //fun isAddedToFavorite(id: Int) = airingAnimeRepo.isAddedToFavorite(id)
+    fun isAddedToFavorite(id: Int): LiveData<Boolean> {
+        val result = airingAnimeRepo.isAddedToFavorite(id)
+        Log.e("name.eraxillan.animeapp", "viewmodel.isAddedToFavorite($id) = ${result.value}")
 
-        anime.url = url
-        // FIXME IMPLEMENT: parse website using JSoup and fill all `anime` fields
-        val parser = FakeParser()
-        if (!parser.parse(url, anime)) {
-            Log.e(LOG_TAG, "Unable to fetch anime data from URL='$url'!")
-        }
-
-        return anime
+        return result
     }
 
-    fun addAiringAnime(url: URL, navController: NavController) {
+    fun addAiringAnime(anime: AiringAnime, navController: NavController) {
         /*val job =*/ viewModelScope.launch {
-            // Parse airing anime data from website
-            val anime = parseAiringAnimeFromUrl(url)
-
             // Save airing anime to database
             val newId = airingAnimeRepo.addAiringAnime(anime)
             Log.i(LOG_TAG, "New anime with id=$newId added to the SQLite database")
 
-            withContext(Dispatchers.Main) {
+            // TODO: open `Favorites` fragment?
+            /*withContext(Dispatchers.Main) {
                 showAiringAnimeInfo(anime, navController)
-            }
+            }*/
         }
         //job.cancelAndJoin()
     }
@@ -68,5 +62,18 @@ class AiringAnimeViewModel(application: Application)
             }
         }
         return airingAnimeList
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    fun getRemoteAiringAnimeList(): LiveData<PagingData<AiringAnime>>? {
+        if (remoteAiringAnimeList == null) {
+            /*val job =*/ viewModelScope.launch {
+                remoteAiringAnimeList = airingAnimeRepo
+                    .remoteAiringAnimeList
+                    .cachedIn(viewModelScope)
+            }
+        }
+        return remoteAiringAnimeList
     }
 }

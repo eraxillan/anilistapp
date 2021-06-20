@@ -1,0 +1,73 @@
+query AiringAnime($page: Int!, $perPage: Int!, $season: MediaSeason!, $seasonYear: Int!, $sort: [MediaSort!]!, $status: MediaStatus!) {
+  Page(page: $page, perPage: $perPage) {
+    pageInfo {
+      total
+      currentPage
+      lastPage
+      hasNextPage
+      perPage
+    }
+    media(season: $season, seasonYear: $seasonYear, sort: $sort, status: $status, isAdult: false, type: ANIME, format: TV) {
+      id
+      siteUrl
+      description
+      idMal
+      title {
+        romaji
+        native
+        english
+      }
+      studios {
+       edges {
+          node {
+            name
+          }
+        }
+      }
+      format
+      genres
+      tags {
+        name
+        isAdult
+      }
+      relations {
+        edges {
+          relationType
+          node {
+            id
+            type
+            status
+            title {
+              romaji
+            }
+          }
+        }
+      }
+      status
+      coverImage {
+        large
+      }
+      episodes
+      startDate {
+        year
+        month
+        day
+      }
+      nextAiringEpisode {
+        id
+        episode
+        airingAt
+        timeUntilAiring
+      }
+      airingSchedule {
+        edges {
+          node {
+            episode
+            airingAt
+            timeUntilAiring
+          }
+        }
+      }
+    }
+  }
+}

@@ -15,4 +15,16 @@
         tools:listitem="@layout/list_item_airing_anime_detail"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_to_favorite_button"
+        style="@style/Widget.MaterialComponents.FloatingActionButton"
+        android:visibility="invisible"
+        android:tint="@android:color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_gravity="bottom|end"
+        app:srcCompat="@android:drawable/ic_menu_add"
+        android:contentDescription="@string/add_airing_anime_button_hint" />
+
 </FrameLayout>
