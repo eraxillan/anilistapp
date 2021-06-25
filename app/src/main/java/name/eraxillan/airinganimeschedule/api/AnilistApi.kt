@@ -43,6 +43,7 @@ class AnilistApi(private val client: ApolloClient) {
         val airingAnimeQuery = AiringAnimeQuery(
             page = page,
             perPage = perPage,
+            // FIXME: detect current/previous season/year and remove hardcode
             season = MediaSeason.SPRING,
             seasonYear = 2021,
             sort = listOf(MediaSort.POPULARITY_DESC),

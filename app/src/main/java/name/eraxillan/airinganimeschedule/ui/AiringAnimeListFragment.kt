@@ -22,8 +22,10 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import name.eraxillan.airinganimeschedule.R
 import name.eraxillan.airinganimeschedule.ui.adapter.AiringAnimeListAdapter
 import name.eraxillan.airinganimeschedule.databinding.FragmentAiringAnimeListBinding
@@ -155,6 +157,7 @@ class AiringAnimeListFragment : Fragment() {
     }
 
     private fun createAiringAnimeObserver() {
+        // Observe airing anime list loading
         viewModel.getRemoteAiringAnimeList()?.observe(
             viewLifecycleOwner, { animeList ->
                 binding.swipeRefresh.isRefreshing = true
@@ -166,6 +169,15 @@ class AiringAnimeListFragment : Fragment() {
                 binding.swipeRefresh.isRefreshing = false
             }
         )
+
+        // Observe airing anime list loading states
+        viewLifecycleOwner.lifecycleScope.launch {
+            getAdapter().loadStateFlow.collectLatest { loadStates ->
+                binding.swipeRefresh.isRefreshing = loadStates.refresh is LoadState.Loading
+                //retry.isVisible = loadState.refresh !is LoadState.Loading
+                //errorMsg.isVisible = loadState.refresh is LoadState.Error
+            }
+        }
     }
 
     private fun getAdapter() = binding.airingAnimeList.adapter as AiringAnimeListAdapter
