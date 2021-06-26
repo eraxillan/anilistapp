@@ -21,3 +21,4 @@ package name.eraxillan.airinganimeschedule.utilities
  */
 const val DATABASE_NAME = "airing_anime_db"
 const val ANIME_DATA_FILENAME = "animes.json"
+const val NETWORK_PAGE_SIZE = 20

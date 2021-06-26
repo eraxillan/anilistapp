@@ -31,6 +31,7 @@ import name.eraxillan.airinganimeschedule.model.AiringAnime
 import name.eraxillan.airinganimeschedule.type.MediaRelation
 import name.eraxillan.airinganimeschedule.type.MediaStatus
 import name.eraxillan.airinganimeschedule.type.MediaType
+import name.eraxillan.airinganimeschedule.utilities.NETWORK_PAGE_SIZE
 import java.lang.NumberFormatException
 
 private const val ANILIST_STARTING_PAGE_INDEX = 1
@@ -108,8 +109,30 @@ class AnilistPagingSource(
         return searchPrequels(relations)
     }
 
+    // TODO: move to custom Worker to increase load speed and avoid rate limit
+    private suspend fun fillEpisodeCount(
+        serverAnimeList: List<AiringAnimeQuery.Medium>, animeList: List<AiringAnime>) {
+        val ids = animeList.associateBy(
+            { it.id?.toInt() ?: -1 }, { mutableListOf(it.id?.toInt() ?: -1) }
+        )
+        searchPrequels(ids)
+        ids.forEach { entry ->
+            val seasonCount = entry.value.size - 1
+
+            val medium = serverAnimeList.find { medium -> medium.id == entry.key }
+            Log.d(
+                LOG_TAG,
+                "Id=${entry.key} name '${medium?.title?.romaji}' season count: $seasonCount"
+            )
+
+            val anime = animeList.find { anime -> anime.id == entry.key.toLong() }
+            anime?.season = seasonCount
+        }
+    }
+
     data class AnilistRateLimit(val total: Int, val remaining: Int)
 
+    // FIXME: create a response pool class to handle server query rate limit
     @ApolloExperimental
     private fun <T> getResponseRateLimit(response: Response<T>): AnilistRateLimit {
         val DEFAULT_RATE_LIMIT = 90
@@ -120,9 +143,9 @@ class AnilistPagingSource(
         val httpContext = response.executionContext[OkHttpExecutionContext.KEY]
         val headers = httpContext?.response?.headers()
 
-        headers?.names()?.forEach { name ->
+        /*headers?.names()?.forEach { name ->
             Log.d(LOG_TAG, "Response HTTP header: '${name}' => '${headers.get(name)}'")
-        }
+        }*/
 
         val totalStr = headers?.get(RATE_LIMIT_TOTAL_KEY).orEmpty()
         val remainingStr = headers?.get(RATE_LIMIT_REMAINING_KEY).orEmpty()
@@ -145,21 +168,34 @@ class AnilistPagingSource(
         return AnilistRateLimit(total, remaining)
     }
 
-    data class AnilistPagination(val totalItems: Int, val currentPage: Int, val perPage: Int, val totalPages: Int)
+    data class AnilistPagination(
+        val totalItems: Int,
+        val currentPage: Int,
+        val perPage: Int,
+        val totalPages: Int,
+        val hasNextPage: Boolean
+    )
 
     private fun getResponsePagination(response: Response<AiringAnimeQuery.Data>): AnilistPagination {
         return AnilistPagination(
             totalItems = response.data?.page?.pageInfo?.total ?: 0,
             currentPage = response.data?.page?.pageInfo?.currentPage ?: 0,
             perPage = response.data?.page?.pageInfo?.perPage ?: 0,
-            totalPages = response.data?.page?.pageInfo?.lastPage ?: 0
+            totalPages = response.data?.page?.pageInfo?.lastPage ?: 0,
+            hasNextPage = response.data?.page?.pageInfo?.hasNextPage ?: false
         )
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, AiringAnime> {
+        // Start refresh at first page if undefined
         val page = params.key ?: ANILIST_STARTING_PAGE_INDEX
+
         return try {
-            val response = service.getAiringAnimeList(page, params.loadSize)
+            Log.d(LOG_TAG, "Requesting ${page}st page with ${params.loadSize} items per page...")
+            // TODO: how to sync `params.loadSize` here and in `AiringAnimeRepo.remoteAiringAnimeList`
+            val response = service.getAiringAnimeList(page, /*params.loadSize*/ NETWORK_PAGE_SIZE)
 
             getResponseRateLimit(response)
             val pagination = getResponsePagination(response)
@@ -173,28 +209,19 @@ class AnilistPagingSource(
                 """.trimIndent()
             )
 
-            ////////////////////////////////////////////////////////////////////////////////////////
-            // TODO: move season calc to separate function and finally to Worker to avoid rate limit
             val serverAnimeList = response.data?.page?.media?.filterNotNull() ?: emptyList()
             val animeList = serverAnimeList.map { medium -> mediumToAiringAnime(medium) }
 
-            val ids = animeList.associateBy({ it.id?.toInt() ?: -1 }, { mutableListOf(it.id?.toInt() ?: -1) })
-            searchPrequels(ids)
-            ids.forEach { entry ->
-                val seasonCount = entry.value.size - 1
+            // FIXME: move to worker
+            fillEpisodeCount(serverAnimeList, animeList)
 
-                val medium = serverAnimeList.find { medium -> medium.id == entry.key }
-                Log.d(LOG_TAG, "Id=${entry.key} name '${medium?.title?.romaji}' season count: $seasonCount")
-
-                val anime = animeList.find { anime -> anime.id == entry.key.toLong() }
-                anime?.season = seasonCount
-            }
-            ////////////////////////////////////////////////////////////////////////////////////////
+            /*val test = if (pagination.hasNextPage) pagination.currentPage + 1 else null
+            Log.d(LOG_TAG, "prevKey=null, nextKey=$test")*/
 
             LoadResult.Page(
                 data = animeList,
-                prevKey = if (page == ANILIST_STARTING_PAGE_INDEX) null else page - 1,
-                nextKey = if (page == response.data?.page?.pageInfo?.lastPage) null else page + 1
+                prevKey = null, // only paging forward
+                nextKey = if (pagination.hasNextPage) pagination.currentPage + 1 else null
             )
         } catch (exception: Exception) {
             LoadResult.Error(exception)
@@ -202,14 +229,6 @@ class AnilistPagingSource(
     }
 
     override fun getRefreshKey(state: PagingState<Int, AiringAnime>): Int? {
-        return state.anchorPosition?.let { anchorPosition ->
-            // This loads starting from previous page, but since PagingConfig.initialLoadSize spans
-            // multiple pages, the initial load will still load items centered around
-            // anchorPosition. This also prevents needing to immediately launch prepend due to
-            // prefetchDistance.
-            state.closestPageToPosition(anchorPosition)?.prevKey
-        }
-
         // Try to find the page key of the closest page to anchorPosition, from
         // either the prevKey or the nextKey, but you need to handle nullability
         // here:
@@ -217,9 +236,9 @@ class AnilistPagingSource(
         //  * nextKey == null -> anchorPage is the last page.
         //  * both prevKey and nextKey null -> anchorPage is the initial page, so
         //    just return null.
-        /*return state.anchorPosition?.let { anchorPosition ->
+        return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
-        }*/
+        }
     }
 }

@@ -17,19 +17,17 @@
 package name.eraxillan.airinganimeschedule.repository
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.liveData
-import kotlinx.coroutines.flow.Flow
 import name.eraxillan.airinganimeschedule.api.AnilistApi
 import name.eraxillan.airinganimeschedule.db.AiringAnimeDao
 import name.eraxillan.airinganimeschedule.db.AiringAnimeDatabase
 import name.eraxillan.airinganimeschedule.db.AnilistPagingSource
 import name.eraxillan.airinganimeschedule.model.AiringAnime
+import name.eraxillan.airinganimeschedule.utilities.NETWORK_PAGE_SIZE
 
 /**
  * Repository pattern implementation: make an independent from concrete data source wrapper
@@ -66,15 +64,5 @@ class AiringAnimeRepo(context: Context) {
             ).liveData
         }
 
-    //fun isAddedToFavorite(id: Int) = airingAnimeDao.isAddedToFavorite(id.toLong())
-    fun isAddedToFavorite(id: Int): LiveData<Boolean> {
-        val result = airingAnimeDao.isAddedToFavorite(id.toLong())
-
-        Log.e("name.eraxillan.animeapp", "repo.isAddedToFavorite(${id.toLong()}) = ${result.value}")
-        return result
-    }
-
-    companion object {
-        private const val NETWORK_PAGE_SIZE = 10
-    }
+    fun isAddedToFavorite(id: Int) = airingAnimeDao.isAddedToFavorite(id.toLong())
 }
