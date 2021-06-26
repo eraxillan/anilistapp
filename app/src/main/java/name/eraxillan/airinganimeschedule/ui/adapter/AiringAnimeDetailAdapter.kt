@@ -43,14 +43,24 @@ class AiringAnimeDetailAdapter(
     }
 
     override fun onBindViewHolder(holder: AiringAnimeDetailHolder, position: Int) {
+        val PLACEHOLDER_STRING = "<unknown>"
+
+        val season = if (anime.season != -1) anime.season.toString() else PLACEHOLDER_STRING
+        val originalName = if (anime.originalName.isNotEmpty()) anime.originalName else PLACEHOLDER_STRING
+        val latestEpisode = if (anime.latestEpisode != -1) anime.latestEpisode.toString() else PLACEHOLDER_STRING
+        val totalEpisodes = if (anime.totalEpisodes != -1) anime.totalEpisodes.toString() else PLACEHOLDER_STRING
+        val releaseDate = if (anime.releaseDate != null) anime.releaseDate.toString() else PLACEHOLDER_STRING
+        val nextEpisodeDate = if (anime.nextEpisodeDate != null) anime.nextEpisodeDate!!.getDisplayString() else PLACEHOLDER_STRING
+        val minAge = if (anime.minAge != -1) anime.minAge.toString() else PLACEHOLDER_STRING
+
         val text = when (position) {
-            0 -> "Season: ${anime.season}"
-            1 -> "Original name: ${anime.originalName}"
-            2 -> "Latest episode: ${anime.latestEpisode}"
-            3 -> "Total episodes: ${anime.totalEpisodes}"
-            4 -> "Release date: ${anime.releaseDate}"
-            5 -> "Next episode date: ${anime.nextEpisodeDate?.getDisplayString() ?: "" }"
-            6 -> "Minimum age: ${anime.minAge}"
+            0 -> "Season: $season"
+            1 -> "Original name: $originalName"
+            2 -> "Latest episode: $latestEpisode"
+            3 -> "Total episodes: $totalEpisodes"
+            4 -> "Release date: $releaseDate"
+            5 -> "Next episode date: $nextEpisodeDate"
+            6 -> "Minimum age: $minAge"
             else -> ""
         }
         holder.bind(text)
