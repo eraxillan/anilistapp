@@ -26,9 +26,12 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
 import name.eraxillan.airinganimeschedule.R
 import name.eraxillan.airinganimeschedule.ui.adapter.AiringAnimeListAdapter
 import name.eraxillan.airinganimeschedule.databinding.FragmentAiringAnimeListBinding
+import name.eraxillan.airinganimeschedule.ui.adapter.AnimeListLoadStateAdapter
 import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
 
 
@@ -48,6 +51,8 @@ class AiringAnimeListFragment : Fragment() {
      * it returns the previously created `AiringAnimeViewModel`
      */
     private val viewModel by viewModels<AiringAnimeViewModel>()
+
+    private lateinit var listAdapter: AiringAnimeListAdapter
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -130,12 +135,14 @@ class AiringAnimeListFragment : Fragment() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun setupRecyclerView() {
-        val adapter = AiringAnimeListAdapter()
-
+        listAdapter = AiringAnimeListAdapter()
         val divider = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
 
         with (binding.airingAnimeList) {
-            this.adapter = adapter
+            this.adapter = listAdapter.withLoadStateHeaderAndFooter(
+                header = AnimeListLoadStateAdapter(listAdapter),
+                footer = AnimeListLoadStateAdapter(listAdapter)
+            )
             this.addItemDecoration(divider)
             this.setHasFixedSize(true)
         }
@@ -163,7 +170,7 @@ class AiringAnimeListFragment : Fragment() {
                 binding.swipeRefresh.isRefreshing = true
 
                 /*val job = */ lifecycleScope.launch {
-                    getAdapter().submitData(animeList)
+                    listAdapter.submitData(animeList)
                 }
 
                 binding.swipeRefresh.isRefreshing = false
@@ -172,13 +179,9 @@ class AiringAnimeListFragment : Fragment() {
 
         // Observe airing anime list loading states
         viewLifecycleOwner.lifecycleScope.launch {
-            getAdapter().loadStateFlow.collectLatest { loadStates ->
+            listAdapter.loadStateFlow.collectLatest { loadStates ->
                 binding.swipeRefresh.isRefreshing = loadStates.refresh is LoadState.Loading
-                //retry.isVisible = loadState.refresh !is LoadState.Loading
-                //errorMsg.isVisible = loadState.refresh is LoadState.Error
             }
         }
     }
-
-    private fun getAdapter() = binding.airingAnimeList.adapter as AiringAnimeListAdapter
 }

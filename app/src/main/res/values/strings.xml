@@ -66,4 +66,7 @@
     <string name="preferences_attachment_title">Download incoming attachments</string>
     <string name="preferences_attachment_summary_on">Automatically download attachments for incoming emails</string>
     <string name="preferences_attachment_summary_off">Only download attachments when manually requested</string>
+
+    <!-- Network state item -->
+    <string name="retry">Retry</string>
 </resources>
