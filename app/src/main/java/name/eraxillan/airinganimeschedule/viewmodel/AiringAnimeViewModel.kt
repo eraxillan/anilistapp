@@ -42,13 +42,7 @@ class AiringAnimeViewModel(application: Application)
     private var airingAnimeList: LiveData<List<AiringAnime>>? = null
     private var remoteAiringAnimeList: LiveData<PagingData<AiringAnime>>? = null
 
-    //fun isAddedToFavorite(id: Int) = airingAnimeRepo.isAddedToFavorite(id)
-    fun isAddedToFavorite(id: Int): LiveData<Boolean> {
-        val result = airingAnimeRepo.isAddedToFavorite(id)
-        Log.e("name.eraxillan.animeapp", "viewmodel.isAddedToFavorite($id) = ${result.value}")
-
-        return result
-    }
+    fun isAddedToFavorite(id: Int) = airingAnimeRepo.isAddedToFavorite(id)
 
     fun addAiringAnime(anime: AiringAnime, navController: NavController) {
         /*val job =*/ viewModelScope.launch {

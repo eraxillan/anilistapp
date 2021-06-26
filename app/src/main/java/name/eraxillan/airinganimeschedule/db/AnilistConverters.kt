@@ -37,7 +37,7 @@ fun mediumToAiringAnime(input: AiringAnimeQuery.Medium): AiringAnime {
     }
 
     fun getMinAge(): Int {
-        // NOTE: We already filtered strict 18+ titles in GraphQL query
+        // NOTE: We already filtered strictly 18+ titles in GraphQL query
 
         // All possible demographic-related tags and corresponding minimal age
         val demographicTagAges = mapOf(
@@ -51,16 +51,8 @@ fun mediumToAiringAnime(input: AiringAnimeQuery.Medium): AiringAnime {
         // First of all, convert all tag names to lowercase to simplify string comparison
         val inputTags = input.tags?.map { it?.name?.lowercase() ?: "" } ?: emptyList()
 
-        //
-        Log.e("name.eraxillan.animeapp", "Anime tags: '$inputTags'")
-        //
-
         // Now found the intersection between predefined demographic tags and input ones
         val intersectionTags = inputTags.intersect(demographicTagAges.keys)
-
-        //
-        Log.e("name.eraxillan.animeapp", "Anime demographic tags: '$intersectionTags'")
-        //
 
         // Find maximum age available in demographic tags
         val minAgeTag = intersectionTags.maxByOrNull { demographicTagAges[it] ?: 0 }
@@ -71,7 +63,6 @@ fun mediumToAiringAnime(input: AiringAnimeQuery.Medium): AiringAnime {
             minAge = 18
         }
 
-        Log.e("name.eraxillan.animeapp", "Anime min age: $minAge")
         return minAge
     }
 
@@ -84,16 +75,11 @@ fun mediumToAiringAnime(input: AiringAnimeQuery.Medium): AiringAnime {
         0, zoneOffset
     )
 
-    //
-    Log.e("name.eraxillan.animeapp", "-------------------------------------------------")
-    Log.e("name.eraxillan.animeapp", "Processing anime with title '${input.title?.romaji}'")
-    //
-
     return AiringAnime(
         id = input.id.toLong(),
         url = URL(input.siteUrl),
-        season = -1,//getSeason(),
-        originalName = input.title?.romaji ?: "<romaji name not specified>",
+        season = -1, // NOTE: will be determined later in `AnilistPagingSource`
+        originalName = input.title?.romaji ?: "",
         latestEpisode = (input.nextAiringEpisode?.episode?.minus(1)) ?: -1,
         totalEpisodes = input.episodes ?: -1,
         releaseDate = LocalDate.of(

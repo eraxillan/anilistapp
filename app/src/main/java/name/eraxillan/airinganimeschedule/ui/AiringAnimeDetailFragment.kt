@@ -51,13 +51,6 @@ class AiringAnimeDetailFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentAnimeDetailBinding.inflate(inflater, container, false)
-
-        /*binding.also { ui ->
-            ui.lifecycleOwner = viewLifecycleOwner
-            ui.animeId = (args.anime!!).id?.toInt() ?: -1
-            ui.viewModel = viewModel
-        }*/
-
         return binding.root
     }
 
@@ -83,10 +76,6 @@ class AiringAnimeDetailFragment : Fragment() {
 
     private fun setupFab() {
         val animeId = (args.anime!!).id?.toInt() ?: -1
-        /*binding.also { ui ->
-            ui.animeId = animeId
-            ui.viewModel = viewModel
-        }*/
 
         binding.addToFavoriteButton.setOnClickListener {
             viewModel.addAiringAnime(args.anime!!, findNavController())
@@ -94,7 +83,6 @@ class AiringAnimeDetailFragment : Fragment() {
 
         viewModel.isAddedToFavorite(animeId).observe(
             viewLifecycleOwner, { isFav ->
-                Log.e("name.eraxillan.app", "IS_FAV: $isFav")
                 binding.addToFavoriteButton.isVisible = !isFav
             })
     }
