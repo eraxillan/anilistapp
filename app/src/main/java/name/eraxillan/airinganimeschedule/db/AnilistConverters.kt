@@ -24,6 +24,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.util.*
 
 fun mediumToAiringAnime(input: AiringAnimeQuery.Medium): AiringAnime {
 
@@ -66,9 +67,11 @@ fun mediumToAiringAnime(input: AiringAnimeQuery.Medium): AiringAnime {
         return minAge
     }
 
-    // FIXME: detect user current time zone id/offset and remove this hardcode
-    val zoneOffset = ZoneOffset.of("+3")
-    val zoneId = ZoneId.of("Europe/Moscow")
+    // Get currently used time zone and offset
+    //Log.f(LOG_TAG, "Current timezone name is '${TimeZone.getDefault().displayName}'")
+    //Log.f(LOG_TAG, "Current timezone ID is '${TimeZone.getDefault().id}'")
+    val zoneId = ZoneId.systemDefault()
+    val zoneOffset = LocalDateTime.now().atZone(zoneId).offset
 
     val airingTime = LocalDateTime.ofEpochSecond(
         input.nextAiringEpisode?.airingAt?.toLong() ?: 0L,
