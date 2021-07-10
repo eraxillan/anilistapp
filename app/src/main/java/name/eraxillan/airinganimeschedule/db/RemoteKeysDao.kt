@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package name.eraxillan.airinganimeschedule.utilities
+package name.eraxillan.airinganimeschedule.db
 
-/**
- * Constants used throughout the app.
- */
-const val DATABASE_NAME = "airing_anime_db"
-const val ANIME_DATA_FILENAME = "animes.json"
-const val NETWORK_PAGE_SIZE = 30
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+
+@Dao
+interface RemoteKeysDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(remoteKey: List<RemoteKeys>)
+
+    @Query("SELECT * FROM remote_keys WHERE anilistId = :anilistId")
+    suspend fun remoteKeysAnimeId(anilistId: Int): RemoteKeys?
+
+    @Query("DELETE FROM remote_keys")
+    suspend fun clearRemoteKeys()
+}

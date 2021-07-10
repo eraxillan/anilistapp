@@ -25,6 +25,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import name.eraxillan.airinganimeschedule.model.AiringAnime
+import name.eraxillan.airinganimeschedule.model.FavoriteAnime
 import name.eraxillan.airinganimeschedule.utilities.DATABASE_NAME
 import name.eraxillan.airinganimeschedule.workers.AiringAnimeDatabaseWorker
 
@@ -32,12 +33,16 @@ import name.eraxillan.airinganimeschedule.workers.AiringAnimeDatabaseWorker
  * The Room database for this app
  */
 @Database(
-    entities = [AiringAnime::class],
-    version = 2
+    entities = [AiringAnime::class, FavoriteAnime::class, RemoteKeys::class],
+    version = 3,
+    //exportSchema = false
 )
 @TypeConverters(DatabaseTypeConverters::class)
 abstract class AiringAnimeDatabase : RoomDatabase() {
-    abstract fun airingAnimeDao(): AiringAnimeDao
+
+    abstract fun airingDao(): AiringAnimeDao
+    abstract fun favoriteDao(): FavoriteAnimeDao
+    abstract fun remoteKeysDao(): RemoteKeysDao
 
     // Singleton object
     companion object {

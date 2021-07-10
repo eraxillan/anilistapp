@@ -1,18 +1,18 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 2,
-    "identityHash": "ec7b9847ad9b329a8b525cedbf979980",
+    "version": 3,
+    "identityHash": "a4ce73472873a6f2601d80897bcd2ba0",
     "entities": [
       {
         "tableName": "airing_animes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `url` TEXT NOT NULL, `season` INTEGER NOT NULL, `format` TEXT NOT NULL, `originalName` TEXT NOT NULL, `latestEpisode` INTEGER NOT NULL, `totalEpisodes` INTEGER NOT NULL, `releaseDate` TEXT, `nextEpisodeDate` TEXT, `minAge` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`anilistId` INTEGER NOT NULL, `url` TEXT NOT NULL, `season` INTEGER NOT NULL, `format` TEXT NOT NULL, `originalName` TEXT NOT NULL, `latestEpisode` INTEGER NOT NULL, `totalEpisodes` INTEGER NOT NULL, `releaseDate` TEXT, `nextEpisodeDate` TEXT, `minAge` INTEGER NOT NULL, PRIMARY KEY(`anilistId`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
+            "fieldPath": "anilistId",
+            "columnName": "anilistId",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "url",
@@ -71,20 +71,40 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "anilistId"
           ],
-          "autoGenerate": true
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "favorite_animes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`anilistId` INTEGER NOT NULL, PRIMARY KEY(`anilistId`))",
+        "fields": [
+          {
+            "fieldPath": "anilistId",
+            "columnName": "anilistId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "anilistId"
+          ],
+          "autoGenerate": false
         },
         "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "remote_keys",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`animeId` INTEGER NOT NULL, `prevKey` INTEGER, `nextKey` INTEGER, PRIMARY KEY(`animeId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`anilistId` INTEGER NOT NULL, `prevKey` INTEGER, `nextKey` INTEGER, PRIMARY KEY(`anilistId`))",
         "fields": [
           {
-            "fieldPath": "animeId",
-            "columnName": "animeId",
+            "fieldPath": "anilistId",
+            "columnName": "anilistId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -103,7 +123,7 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "animeId"
+            "anilistId"
           ],
           "autoGenerate": false
         },
@@ -114,7 +134,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ec7b9847ad9b329a8b525cedbf979980')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a4ce73472873a6f2601d80897bcd2ba0')"
     ]
   }
 }

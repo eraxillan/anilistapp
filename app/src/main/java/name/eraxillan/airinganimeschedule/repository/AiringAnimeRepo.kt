@@ -17,52 +17,63 @@
 package name.eraxillan.airinganimeschedule.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.liveData
+import androidx.paging.*
+import kotlinx.coroutines.flow.Flow
 import name.eraxillan.airinganimeschedule.api.AnilistApi
 import name.eraxillan.airinganimeschedule.db.AiringAnimeDao
 import name.eraxillan.airinganimeschedule.db.AiringAnimeDatabase
-import name.eraxillan.airinganimeschedule.db.AnilistPagingSource
+import name.eraxillan.airinganimeschedule.db.FavoriteAnimeDao
 import name.eraxillan.airinganimeschedule.model.AiringAnime
+import name.eraxillan.airinganimeschedule.model.FavoriteAnime
 import name.eraxillan.airinganimeschedule.utilities.NETWORK_PAGE_SIZE
 
 /**
- * Repository pattern implementation: make an independent from concrete data source wrapper
+ * Repository class that works with local and remote data sources
  */
 class AiringAnimeRepo(context: Context) {
-    private var db = AiringAnimeDatabase.getInstance(context)
-    private var airingAnimeDao: AiringAnimeDao = db.airingAnimeDao()
-    private val service: AnilistApi = AnilistApi.create(AnilistApi.createClient())
+    companion object {
+        private const val LOG_TAG = "54BE6C87_AAR" // AAR = AiringAnimeRepo
+    }
+
+    private var database = AiringAnimeDatabase.getInstance(context)
+    private var airingDao: AiringAnimeDao = database.airingDao()
+    private var favoriteDao: FavoriteAnimeDao = database.favoriteDao()
+    private val backend: AnilistApi = AnilistApi.create(AnilistApi.createClient())
 
     // Favorite anime list local database API
-    suspend fun addAiringAnime(anime: AiringAnime): Long {
-        val newId = airingAnimeDao.insertAiringAnime(anime)
-        anime.id = newId
-        return newId
+    suspend fun addAnimeToFavorite(anime: AiringAnime): Int {
+        return favoriteDao.addAnimeToFavorite(FavoriteAnime(anilistId = anime.anilistId))
     }
 
-    suspend fun deleteAiringAnime(anime: AiringAnime) {
-        airingAnimeDao.deleteAiringAnime(anime)
+    suspend fun deleteFavoriteAnime(anime: AiringAnime) {
+        favoriteDao.deleteFavoriteAnime(FavoriteAnime(anilistId = anime.anilistId))
     }
 
-    val airingAnimeList: LiveData<List<AiringAnime>>
+    fun isAnimeAddedToFavorite(anilistId: Int) = favoriteDao.isAnimeAddedToFavorite(anilistId)
+
+    val favoriteAnimeList: LiveData<List<AiringAnime>>
         get() {
-            return airingAnimeDao.getAiringAnimeList()
+            return favoriteDao.getFavoriteAnimeList()
         }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Currently airing anime list remote Anilist API
-    val remoteAiringAnimeList: LiveData<PagingData<AiringAnime>>
-        get() {
-            return Pager(
-                config = PagingConfig(enablePlaceholders = false, pageSize = NETWORK_PAGE_SIZE),
-                pagingSourceFactory = { AnilistPagingSource(service) }
-            ).liveData
-        }
+    /**
+     * Get currently airing anime list, exposed as a stream of data that will emit
+     * every time we get more data from the network
+     */
+    fun getAiringAnimeListStream(): Flow<PagingData<AiringAnime>> {
+        Log.d(LOG_TAG, "Query currently airing anime list from backend...")
 
-    fun isAddedToFavorite(id: Int) = airingAnimeDao.isAddedToFavorite(id.toLong())
+        val animePagingSourceFactory = { airingDao.getAiringAnimeListPages() }
+
+        @OptIn(ExperimentalPagingApi::class)
+        return Pager(
+            config = PagingConfig(enablePlaceholders = false, pageSize = NETWORK_PAGE_SIZE),
+            remoteMediator = AnilistRemoteMediator(database, backend),
+            pagingSourceFactory = animePagingSourceFactory
+        ).flow
+    }
 }

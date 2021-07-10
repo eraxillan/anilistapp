@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package name.eraxillan.airinganimeschedule.utilities
+package name.eraxillan.airinganimeschedule.db
 
-/**
- * Constants used throughout the app.
- */
-const val DATABASE_NAME = "airing_anime_db"
-const val ANIME_DATA_FILENAME = "animes.json"
-const val NETWORK_PAGE_SIZE = 30
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "remote_keys")
+data class RemoteKeys(
+    @PrimaryKey val anilistId: Int,
+    val prevKey: Int?,
+    val nextKey: Int?
+)

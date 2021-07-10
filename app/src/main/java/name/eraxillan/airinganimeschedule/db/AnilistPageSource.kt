@@ -113,7 +113,7 @@ class AnilistPagingSource(
     private suspend fun fillEpisodeCount(
         serverAnimeList: List<AiringAnimeQuery.Medium>, animeList: List<AiringAnime>) {
         val ids = animeList.associateBy(
-            { it.id?.toInt() ?: -1 }, { mutableListOf(it.id?.toInt() ?: -1) }
+            { it.anilistId }, { mutableListOf(it.anilistId) }
         )
         searchPrequels(ids)
         ids.forEach { entry ->
@@ -125,7 +125,7 @@ class AnilistPagingSource(
                 "Id=${entry.key} name '${medium?.title?.romaji}' season count: $seasonCount"
             )
 
-            val anime = animeList.find { anime -> anime.id == entry.key.toLong() }
+            val anime = animeList.find { anime -> anime.anilistId == entry.key }
             anime?.season = seasonCount
         }
     }
@@ -133,15 +133,16 @@ class AnilistPagingSource(
     data class AnilistRateLimit(val total: Int, val remaining: Int)
 
     // FIXME: create a response pool class to handle server query rate limit
-    @ApolloExperimental
     private fun <T> getResponseRateLimit(response: Response<T>): AnilistRateLimit {
         val DEFAULT_RATE_LIMIT = 90
         val RATE_LIMIT_TOTAL_KEY = "X-RateLimit-Limit"
         val RATE_LIMIT_REMAINING_KEY = "X-RateLimit-Remaining"
 
         // See https://anilist.gitbook.io/anilist-apiv2-docs/overview/rate-limiting for details
+        @OptIn(ApolloExperimental::class)
         val httpContext = response.executionContext[OkHttpExecutionContext.KEY]
-        val headers = httpContext?.response?.headers()
+        @OptIn(ApolloExperimental::class)
+        val headers = httpContext?.response?.headers
 
         /*headers?.names()?.forEach { name ->
             Log.d(LOG_TAG, "Response HTTP header: '${name}' => '${headers.get(name)}'")

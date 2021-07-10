@@ -22,7 +22,6 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import kotlinx.coroutines.delay
@@ -31,7 +30,6 @@ import name.eraxillan.airinganimeschedule.R
 import name.eraxillan.airinganimeschedule.databinding.FragmentFavoriteListBinding
 import name.eraxillan.airinganimeschedule.ui.adapter.FavoriteListAdapter
 import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
-import java.net.URL
 
 
 class FavoriteListFragment : Fragment() {
@@ -133,7 +131,7 @@ class FavoriteListFragment : Fragment() {
 
     private fun setupRecyclerView() {
         val adapter = FavoriteListAdapter {
-            viewModel.deleteAiringAnime(it)
+            viewModel.deleteFavoriteAnime(it)
         }
 
         val divider = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
@@ -166,7 +164,7 @@ class FavoriteListFragment : Fragment() {
     }
 
     private fun createAiringAnimeObserver() {
-        viewModel.getAiringAnimeList()?.observe(
+        viewModel.getFavoriteAnimeList()?.observe(
             viewLifecycleOwner, { animeList ->
                 // FIXME: add this call to beginning of db/anilist load function
                 binding.favoriteSwipeRefresh.isRefreshing = true

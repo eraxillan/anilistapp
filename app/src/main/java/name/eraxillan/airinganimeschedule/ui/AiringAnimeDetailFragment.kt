@@ -17,7 +17,6 @@
 package name.eraxillan.airinganimeschedule.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -75,13 +74,13 @@ class AiringAnimeDetailFragment : Fragment() {
     }
 
     private fun setupFab() {
-        val animeId = (args.anime!!).id?.toInt() ?: -1
+        val animeId = (args.anime!!).anilistId
 
         binding.addToFavoriteButton.setOnClickListener {
-            viewModel.addAiringAnime(args.anime!!, findNavController())
+            viewModel.addAnimeToFavorite(args.anime!!, findNavController())
         }
 
-        viewModel.isAddedToFavorite(animeId).observe(
+        viewModel.isAnimeAddedToFavorite(animeId).observe(
             viewLifecycleOwner, { isFav ->
                 binding.addToFavoriteButton.isVisible = !isFav
             })

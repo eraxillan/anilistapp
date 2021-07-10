@@ -17,9 +17,11 @@
 package name.eraxillan.airinganimeschedule.db
 
 import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
 import name.eraxillan.airinganimeschedule.model.AiringAnime
+import name.eraxillan.airinganimeschedule.model.FavoriteAnime
 
 /**
  * Airing anime database CRUD: create-read-update-delete
@@ -36,27 +38,11 @@ import name.eraxillan.airinganimeschedule.model.AiringAnime
 @Dao
 interface AiringAnimeDao {
     @Query("SELECT * FROM airing_animes")
-    fun getAiringAnimeList(): LiveData<List<AiringAnime>>
-
-    @Query("SELECT EXISTS(SELECT 1 FROM airing_animes WHERE id = :id LIMIT 1)")
-    fun isAddedToFavorite(id: Long?): LiveData<Boolean>
-
-    @Query("SELECT * FROM airing_animes WHERE id = :animeId")
-    fun getAiringAnime(animeId: Long): AiringAnime
-
-    // Asynchronous version
-    @Query("SELECT * FROM airing_animes WHERE id = :animeId")
-    fun getLiveAiringAnime(animeId: Long): LiveData<AiringAnime>
+    fun getAiringAnimeListPages(): PagingSource<Int, AiringAnime>
 
     @Insert(onConflict = REPLACE)
-    suspend fun insertAiringAnime(anime: AiringAnime): Long
+    suspend fun insertAllAnime(animeList: List<AiringAnime>)
 
-    @Insert(onConflict = REPLACE)
-    suspend fun insertAll(animeList: List<AiringAnime>)
-
-    @Update(onConflict = REPLACE)
-    suspend fun updateAiringAnime(anime: AiringAnime)
-
-    @Delete
-    suspend fun deleteAiringAnime(anime: AiringAnime)
+    @Query("DELETE FROM airing_animes")
+    suspend fun deleteAllAnime()
 }

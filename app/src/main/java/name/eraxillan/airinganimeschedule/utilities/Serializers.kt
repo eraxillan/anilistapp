@@ -47,7 +47,7 @@ private val gson: Gson by lazy {
             JsonSerializer<AiringAnime> { src, _, _ ->
                 val jsonObject = JsonObject()
                 // NOTE: we can use `::id.name` here, but it is not available in `fromJson` (no `this`)
-                jsonObject.addProperty(AA_ID, src.id)
+                jsonObject.addProperty(AA_ID, src.anilistId)
                 jsonObject.addProperty(AA_URL, src.url.toString())
                 jsonObject.addProperty(AA_SEASON, src.season)
                 jsonObject.addProperty(AA_ORIGINAL_NAME, src.originalName)
@@ -83,7 +83,7 @@ private val gson: Gson by lazy {
                 var nextEpisodeDateString: String
                 with(anime) {
                     try {
-                        id = jsonObject.get("id").asLong
+                        anilistId = jsonObject.get("id").asInt
                         url = URL(jsonObject.get("url").asString)
                         season = jsonObject.get("season").asInt
                         originalName = jsonObject.get("originalName").asString

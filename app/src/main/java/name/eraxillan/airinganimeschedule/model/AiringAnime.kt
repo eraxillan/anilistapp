@@ -102,8 +102,8 @@ enum class AiringAnimeFormat {
 @Entity(tableName = "airing_animes")
 @Parcelize
 data class AiringAnime constructor(
-    @PrimaryKey(autoGenerate = true)
-    var id: Long? = null,             // Database primary key
+    @PrimaryKey
+    var anilistId: Int = -1,          // Anilist identifier
     var url: URL = INVALID_URL,       // Anilist/MyAnimeList/Wakanim/Crunchyroll/etc. URL
     var season: Int = -1,             // Season number
     var format: AAF = AAF.TV,         // The format the media was released in
@@ -118,3 +118,10 @@ data class AiringAnime constructor(
     // Required for static extension functions
     companion object
 }
+
+@Entity(tableName = "favorite_animes")
+@Parcelize
+data class FavoriteAnime constructor(
+    @PrimaryKey
+    val anilistId: Int = -1,          // Anilist identifier
+) : Parcelable

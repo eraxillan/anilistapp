@@ -48,7 +48,7 @@ class AiringAnimeListAdapter
 
 class AiringAnimeDiffCallback : DiffUtil.ItemCallback<AiringAnime>() {
     override fun areItemsTheSame(oldItem: AiringAnime, newItem: AiringAnime): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem.anilistId == newItem.anilistId
     }
 
     override fun areContentsTheSame(oldItem: AiringAnime, newItem: AiringAnime): Boolean {

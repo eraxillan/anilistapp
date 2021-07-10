@@ -42,7 +42,7 @@ class AiringAnimeDatabaseWorker(
                     Log.e(LOG_TAG, "Mock airing anime list loaded: ${animeList.size}")
 
                     val database = AiringAnimeDatabase.getInstance(applicationContext)
-                    database.airingAnimeDao().insertAll(animeList)
+                    database.airingDao().insertAllAnime(animeList)
                     Result.success()
                 }
             }.onFailure {

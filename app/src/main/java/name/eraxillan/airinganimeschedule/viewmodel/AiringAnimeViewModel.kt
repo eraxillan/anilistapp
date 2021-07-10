@@ -20,34 +20,30 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.work.impl.utils.LiveDataUtils
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import name.eraxillan.airinganimeschedule.model.AiringAnime
 import name.eraxillan.airinganimeschedule.repository.AiringAnimeRepo
 
 
-class AiringAnimeViewModel(application: Application)
-    : AndroidViewModel(application) {
+class AiringAnimeViewModel(application: Application): AndroidViewModel(application) {
 
     companion object {
         private const val LOG_TAG = "54BE6C87_AAVM" // AAVM = AiringAnimeViewModel
     }
 
-    private var airingAnimeRepo: AiringAnimeRepo = AiringAnimeRepo(getApplication())
-    private var airingAnimeList: LiveData<List<AiringAnime>>? = null
-    private var remoteAiringAnimeList: LiveData<PagingData<AiringAnime>>? = null
+    private var repository: AiringAnimeRepo = AiringAnimeRepo(getApplication())
+    private var favoriteAnimeList: LiveData<List<AiringAnime>>? = null
+    private var airingAnimeList: Flow<PagingData<AiringAnime>>? = null
 
-    fun isAddedToFavorite(id: Int) = airingAnimeRepo.isAddedToFavorite(id)
-
-    fun addAiringAnime(anime: AiringAnime, navController: NavController) {
+    fun addAnimeToFavorite(anime: AiringAnime, navController: NavController) {
         /*val job =*/ viewModelScope.launch {
             // Save airing anime to database
-            val newId = airingAnimeRepo.addAiringAnime(anime)
+            val newId = repository.addAnimeToFavorite(anime)
             Log.i(LOG_TAG, "New anime with id=$newId added to the SQLite database")
 
             // TODO: open `Favorites` fragment?
@@ -58,32 +54,32 @@ class AiringAnimeViewModel(application: Application)
         //job.cancelAndJoin()
     }
 
-    fun deleteAiringAnime(anime: AiringAnime) {
+    fun deleteFavoriteAnime(anime: AiringAnime) {
         /*val job =*/ viewModelScope.launch {
-            airingAnimeRepo.deleteAiringAnime(anime)
+            repository.deleteFavoriteAnime(anime)
         }
         //job.cancelAndJoin()
     }
 
-    fun getAiringAnimeList(): LiveData<List<AiringAnime>>? {
-        if (airingAnimeList == null) {
+    fun isAnimeAddedToFavorite(anilistId: Int) = repository.isAnimeAddedToFavorite(anilistId)
+
+    fun getFavoriteAnimeList(): LiveData<List<AiringAnime>>? {
+        if (favoriteAnimeList == null) {
             /*val job =*/ viewModelScope.launch {
-                airingAnimeList = airingAnimeRepo.airingAnimeList
+                favoriteAnimeList = repository.favoriteAnimeList
             }
         }
-        return airingAnimeList
+        return favoriteAnimeList
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun getRemoteAiringAnimeList(): LiveData<PagingData<AiringAnime>>? {
-        if (remoteAiringAnimeList == null) {
-            /*val job =*/ viewModelScope.launch {
-                remoteAiringAnimeList = airingAnimeRepo
-                    .remoteAiringAnimeList
-                    .cachedIn(viewModelScope)
-            }
+    fun getAiringAnimeListStream(): Flow<PagingData<AiringAnime>> {
+        if (airingAnimeList == null) {
+            airingAnimeList = repository
+                .getAiringAnimeListStream()
+                .cachedIn(viewModelScope)
         }
-        return remoteAiringAnimeList
+        return airingAnimeList!!
     }
 }

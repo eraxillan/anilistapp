@@ -79,7 +79,7 @@ fun mediumToAiringAnime(input: AiringAnimeQuery.Medium): AiringAnime {
     )
 
     return AiringAnime(
-        id = input.id.toLong(),
+        anilistId = input.id,
         url = URL(input.siteUrl),
         season = -1, // NOTE: will be determined later in `AnilistPagingSource`
         originalName = input.title?.romaji ?: "",

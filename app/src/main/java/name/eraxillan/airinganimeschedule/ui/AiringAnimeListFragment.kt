@@ -19,12 +19,16 @@ package name.eraxillan.airinganimeschedule.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
@@ -33,6 +37,11 @@ import name.eraxillan.airinganimeschedule.ui.adapter.AiringAnimeListAdapter
 import name.eraxillan.airinganimeschedule.databinding.FragmentAiringAnimeListBinding
 import name.eraxillan.airinganimeschedule.ui.adapter.AnimeListLoadStateAdapter
 import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.util.*
 
 
 class AiringAnimeListFragment : Fragment() {
@@ -52,6 +61,7 @@ class AiringAnimeListFragment : Fragment() {
      */
     private val viewModel by viewModels<AiringAnimeViewModel>()
 
+    private var searchJob: Job? = null
     private lateinit var listAdapter: AiringAnimeListAdapter
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,9 +73,8 @@ class AiringAnimeListFragment : Fragment() {
         if (fromMenu)
             binding.swipeRefresh.isRefreshing = true
 
-        lifecycleScope.launch {
-            // FIXME: implement airing anime list force loading from Anilist/Database
-            delay(1000)
+        viewLifecycleOwner.lifecycleScope.launch {
+            listAdapter.refresh()
 
             activity?.runOnUiThread {
                 binding.swipeRefresh.isRefreshing = false
@@ -99,7 +108,11 @@ class AiringAnimeListFragment : Fragment() {
 
         setupRecyclerView()
         setupSwipeOnRefresh()
-        createAiringAnimeObserver()
+
+        search()
+        initSearch()
+
+        binding.retryButton.setOnClickListener { listAdapter.retry() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -138,13 +151,64 @@ class AiringAnimeListFragment : Fragment() {
         listAdapter = AiringAnimeListAdapter()
         val divider = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
 
+        val header = AnimeListLoadStateAdapter(listAdapter)
+
         with (binding.airingAnimeList) {
             this.adapter = listAdapter.withLoadStateHeaderAndFooter(
-                header = AnimeListLoadStateAdapter(listAdapter),
+                header = header,
                 footer = AnimeListLoadStateAdapter(listAdapter)
             )
             this.addItemDecoration(divider)
             this.setHasFixedSize(true)
+        }
+
+        listAdapter.addLoadStateListener { loadState ->
+
+            // Show empty list
+            val isListEmpty = loadState.refresh is LoadState.NotLoading && listAdapter.itemCount == 0
+            showEmptyList(isListEmpty)
+
+            // Show a retry header if there was an error refreshing, and items were previously
+            // cached OR default to the default prepend state
+            header.loadState = loadState.mediator
+                ?.refresh
+                ?.takeIf { it is LoadState.Error && listAdapter.itemCount > 0 }
+                ?: loadState.prepend
+
+            // Only show the list if refresh succeeds, either from the the local db or the remote.
+            binding.airingAnimeList.isVisible =  loadState.source.refresh is LoadState.NotLoading || loadState.mediator?.refresh is LoadState.NotLoading
+
+            // Show loading spinner during initial load or refresh
+            binding.progressBar.isVisible = loadState.mediator?.refresh is LoadState.Loading
+            binding.swipeRefresh.isRefreshing = loadState.mediator?.refresh is LoadState.Loading
+
+            // Show the retry state if initial load or refresh fails and there are no items
+            binding.retryButton.isVisible = loadState.mediator?.refresh is LoadState.Error && listAdapter.itemCount == 0
+
+            // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
+            val errorState = loadState.source.append as? LoadState.Error
+                ?: loadState.source.prepend as? LoadState.Error
+                ?: loadState.append as? LoadState.Error
+                ?: loadState.prepend as? LoadState.Error
+            errorState?.let {
+                Toast.makeText(
+                    requireContext(),
+                    "\uD83D\uDE28 Wooops ${it.error}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
+    private fun initSearch() {
+        // Scroll to top when the list is refreshed from network
+        viewLifecycleOwner.lifecycleScope.launch {
+            listAdapter.loadStateFlow
+                // Only emit when REFRESH LoadState for RemoteMediator changes
+                .distinctUntilChangedBy { it.refresh }
+                // Only react to cases where Remote REFRESH completes i.e., NotLoading
+                .filter { it.refresh is LoadState.NotLoading }
+                .collect { binding.airingAnimeList.scrollToPosition(0) }
         }
     }
 
@@ -163,25 +227,24 @@ class AiringAnimeListFragment : Fragment() {
         }
     }
 
-    private fun createAiringAnimeObserver() {
+    private fun search() {
+        // Make sure we cancel the previous job before creating a new one
+        searchJob?.cancel()
         // Observe airing anime list loading
-        viewModel.getRemoteAiringAnimeList()?.observe(
-            viewLifecycleOwner, { animeList ->
-                binding.swipeRefresh.isRefreshing = true
-
-                /*val job = */ lifecycleScope.launch {
-                    listAdapter.submitData(animeList)
-                }
-
-                binding.swipeRefresh.isRefreshing = false
+        searchJob = viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getAiringAnimeListStream().collectLatest {
+                listAdapter.submitData(it)
             }
-        )
+        }
+    }
 
-        // Observe airing anime list loading states
-        viewLifecycleOwner.lifecycleScope.launch {
-            listAdapter.loadStateFlow.collectLatest { loadStates ->
-                binding.swipeRefresh.isRefreshing = loadStates.refresh is LoadState.Loading
-            }
+    private fun showEmptyList(show: Boolean) {
+        if (show) {
+            binding.emptyList.visibility = View.VISIBLE
+            binding.airingAnimeList.visibility = View.GONE
+        } else {
+            binding.emptyList.visibility = View.GONE
+            binding.airingAnimeList.visibility = View.VISIBLE
         }
     }
 }
