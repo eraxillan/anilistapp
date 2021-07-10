@@ -25,17 +25,20 @@ import com.apollographql.apollo.coroutines.await
 import name.eraxillan.airinganimeschedule.AiringAnimeQuery
 import name.eraxillan.airinganimeschedule.AnimeDetailQuery
 import name.eraxillan.airinganimeschedule.AnimeRelationsQuery
-import name.eraxillan.airinganimeschedule.type.MediaSeason
 import name.eraxillan.airinganimeschedule.type.MediaSort
 import name.eraxillan.airinganimeschedule.type.MediaStatus
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.time.LocalDate
 
 /**
  * Used to connect to the Anilist API to fetch airing anime schedule and details
  */
 class AnilistApi(private val client: ApolloClient) {
 
+    /**
+     * Get currently airing anime list, ordered by popularity (must popular first)
+     */
     suspend fun getAiringAnimeList(page: Int, perPage: Int): Response<AiringAnimeQuery.Data> {
         check(page >= 1)
         check(perPage >= 1)
@@ -43,13 +46,12 @@ class AnilistApi(private val client: ApolloClient) {
         val airingAnimeQuery = AiringAnimeQuery(
             page = page,
             perPage = perPage,
-            // FIXME: detect current/previous season/year and remove hardcode
-            season = MediaSeason.SPRING,
-            seasonYear = 2021,
+            seasonYear = LocalDate.now().year,
             sort = listOf(MediaSort.POPULARITY_DESC),
             status = MediaStatus.RELEASING
         )
 
+        // TODO: use `client.query(airingAnimeQuery).enqueue(...)` instead?
         return client.query(airingAnimeQuery).await()
     }
 

@@ -1,4 +1,4 @@
-query AiringAnime($page: Int!, $perPage: Int!, $season: MediaSeason!, $seasonYear: Int!, $sort: [MediaSort!]!, $status: MediaStatus!) {
+query AiringAnime($page: Int!, $perPage: Int!, $seasonYear: Int!, $sort: [MediaSort!]!, $status: MediaStatus!) {
   Page(page: $page, perPage: $perPage) {
     pageInfo {
       total
@@ -7,7 +7,7 @@ query AiringAnime($page: Int!, $perPage: Int!, $season: MediaSeason!, $seasonYea
       hasNextPage
       perPage
     }
-    media(season: $season, seasonYear: $seasonYear, sort: $sort, status: $status, isAdult: false, type: ANIME, format: TV) {
+    media(seasonYear: $seasonYear, sort: $sort, status: $status, isAdult: false, type: ANIME, format: TV) {
       id
       siteUrl
       description
