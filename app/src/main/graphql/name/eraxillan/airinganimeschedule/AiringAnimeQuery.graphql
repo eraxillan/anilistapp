@@ -68,6 +68,7 @@ query AiringAnime($page: Int!, $perPage: Int!, $seasonYear: Int!, $sort: [MediaS
           }
         }
       }
+      popularity
     }
   }
 }

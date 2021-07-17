@@ -34,7 +34,7 @@ import name.eraxillan.airinganimeschedule.workers.AiringAnimeDatabaseWorker
  */
 @Database(
     entities = [AiringAnime::class, FavoriteAnime::class, RemoteKeys::class],
-    version = 3,
+    version = 4,
     //exportSchema = false
 )
 @TypeConverters(DatabaseTypeConverters::class)
@@ -58,19 +58,21 @@ abstract class AiringAnimeDatabase : RoomDatabase() {
         // Create and pre-populate the database. See this article for more details:
         // https://medium.com/google-developers/7-pro-tips-for-room-fbadea4bfbd1#4785
         private fun buildDatabase(context: Context): AiringAnimeDatabase {
-            return Room.databaseBuilder(context, AiringAnimeDatabase::class.java, DATABASE_NAME)
-                .addCallback(
-                    object : RoomDatabase.Callback() {
-                        override fun onCreate(db: SupportSQLiteDatabase) {
-                            super.onCreate(db)
-                            /*val request = OneTimeWorkRequestBuilder<AiringAnimeDatabaseWorker>()
+            return Room.databaseBuilder(
+                context.applicationContext,
+                AiringAnimeDatabase::class.java,
+                DATABASE_NAME
+            ).addCallback(
+                object : RoomDatabase.Callback() {
+                    override fun onCreate(db: SupportSQLiteDatabase) {
+                        super.onCreate(db)
+                        /*val request = OneTimeWorkRequestBuilder<AiringAnimeDatabaseWorker>()
                                 .build()
                             WorkManager.getInstance(context).enqueue(request)*/
-                        }
                     }
-                )
-                .fallbackToDestructiveMigration()
-                .build()
+                }
+            ).fallbackToDestructiveMigration(
+            ).build()
         }
     }
 }

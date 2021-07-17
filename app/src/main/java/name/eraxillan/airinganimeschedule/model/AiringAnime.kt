@@ -113,6 +113,7 @@ data class AiringAnime constructor(
     var releaseDate: DMY? = null,     // Aired day+month+year
     var nextEpisodeDate: ZST? = null, // Latest episode launch day+time with timezone
     var minAge: Int = -1,             // Minimal accepted age: e.g. 16 or 18
+    var popularity: Int = -1          // The number of users with the media on their list
 ) : Parcelable {
 
     // Required for static extension functions
