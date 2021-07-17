@@ -61,7 +61,7 @@ class AiringAnimeViewModel(application: Application): AndroidViewModel(applicati
         //job.cancelAndJoin()
     }
 
-    fun isAnimeAddedToFavorite(anilistId: Int) = repository.isAnimeAddedToFavorite(anilistId)
+    fun isAnimeAddedToFavorite(anilistId: Long) = repository.isAnimeAddedToFavorite(anilistId)
 
     fun getFavoriteAnimeList(): LiveData<List<AiringAnime>>? {
         if (favoriteAnimeList == null) {

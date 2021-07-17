@@ -11,11 +11,11 @@ interface FavoriteAnimeDao {
     fun getFavoriteAnimeList(): LiveData<List<AiringAnime>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addAnimeToFavorite(fav: FavoriteAnime): Int
+    suspend fun addAnimeToFavorite(fav: FavoriteAnime): Long
 
     @Delete
     suspend fun deleteFavoriteAnime(fav: FavoriteAnime)
 
     @Query("SELECT EXISTS(SELECT 1 FROM favorite_animes WHERE anilistId = :anilistId LIMIT 1)")
-    fun isAnimeAddedToFavorite(anilistId: Int): LiveData<Boolean>
+    fun isAnimeAddedToFavorite(anilistId: Long): LiveData<Boolean>
 }

@@ -83,7 +83,7 @@ private val gson: Gson by lazy {
                 var nextEpisodeDateString: String
                 with(anime) {
                     try {
-                        anilistId = jsonObject.get("id").asInt
+                        anilistId = jsonObject.get("id").asLong
                         url = URL(jsonObject.get("url").asString)
                         season = jsonObject.get("season").asInt
                         originalName = jsonObject.get("originalName").asString

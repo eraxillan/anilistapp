@@ -19,11 +19,9 @@ package name.eraxillan.airinganimeschedule.api
 import android.os.Looper
 import android.util.Log
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Input
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.coroutines.await
 import name.eraxillan.airinganimeschedule.AiringAnimeQuery
-import name.eraxillan.airinganimeschedule.AnimeDetailQuery
 import name.eraxillan.airinganimeschedule.AnimeRelationsQuery
 import name.eraxillan.airinganimeschedule.type.MediaSort
 import name.eraxillan.airinganimeschedule.type.MediaStatus
@@ -55,7 +53,7 @@ class AnilistApi(private val client: ApolloClient) {
         return client.query(airingAnimeQuery).await()
     }
 
-    suspend fun getAnimeDetail(id: Int, page: Int, perPage: Int): Response<AnimeDetailQuery.Data> {
+    /*suspend fun getAnimeDetail(id: Int, page: Int, perPage: Int): Response<AnimeDetailQuery.Data> {
         val animeDetailQuery = AnimeDetailQuery(
             page = page,
             perPage = perPage,
@@ -64,19 +62,22 @@ class AnilistApi(private val client: ApolloClient) {
         )
 
         return client.query(animeDetailQuery).await()
-    }
+    }*/
 
-    suspend fun getAnimeRelations(ids: List<Int>, page: Int, perPage: Int): Response<AnimeRelationsQuery.Data> {
+    private suspend fun getAnimeRelations(ids: List<Long>, page: Int, perPage: Int): Response<AnimeRelationsQuery.Data> {
         val animeRelationsQuery = AnimeRelationsQuery(
             page = page,
             perPage = perPage,
-            id_in = ids
+            id_in = ids.map { it.toInt() }
         )
 
         return client.query(animeRelationsQuery).await()
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     companion object {
+        private const val LOG_TAG = "54BE6C87_ANILIST"
         private const val BASE_URL = "https://graphql.anilist.co"
 
         fun createClient(): ApolloClient {
@@ -84,7 +85,7 @@ class AnilistApi(private val client: ApolloClient) {
                 "Only the main thread can get the apolloClient instance!"
             }
 
-            val logger = HttpLoggingInterceptor { Log.d("ANILIST_API", it) }
+            val logger = HttpLoggingInterceptor { Log.d(LOG_TAG, it) }
             logger.level = HttpLoggingInterceptor.Level.BASIC
 
             val okHttpClient = OkHttpClient.Builder()

@@ -34,7 +34,7 @@ import name.eraxillan.airinganimeschedule.utilities.NETWORK_PAGE_SIZE
  */
 class AiringAnimeRepo(context: Context) {
     companion object {
-        private const val LOG_TAG = "54BE6C87_AAR" // AAR = AiringAnimeRepo
+        private const val LOG_TAG = "54BE6C87_Repository"
     }
 
     private var database = AiringAnimeDatabase.getInstance(context)
@@ -43,7 +43,7 @@ class AiringAnimeRepo(context: Context) {
     private val backend: AnilistApi = AnilistApi.create(AnilistApi.createClient())
 
     // Favorite anime list local database API
-    suspend fun addAnimeToFavorite(anime: AiringAnime): Int {
+    suspend fun addAnimeToFavorite(anime: AiringAnime): Long {
         return favoriteDao.addAnimeToFavorite(FavoriteAnime(anilistId = anime.anilistId))
     }
 
@@ -51,7 +51,7 @@ class AiringAnimeRepo(context: Context) {
         favoriteDao.deleteFavoriteAnime(FavoriteAnime(anilistId = anime.anilistId))
     }
 
-    fun isAnimeAddedToFavorite(anilistId: Int) = favoriteDao.isAnimeAddedToFavorite(anilistId)
+    fun isAnimeAddedToFavorite(anilistId: Long) = favoriteDao.isAnimeAddedToFavorite(anilistId)
 
     val favoriteAnimeList: LiveData<List<AiringAnime>>
         get() {
