@@ -71,12 +71,12 @@ class DayOfWeekTimeParser {
             val tzOffsetStr = tzTokens[1]
             val tzNameStr = baseTokens[1]
 
-            if (BuildConfig.DEBUG) {
+            /*if (BuildConfig.DEBUG) {
                 Log.d(LOG_TAG, "Raw day of week: $dowStr")
                 Log.d(LOG_TAG, "Raw local time: $ltStr")
                 Log.d(LOG_TAG, "Raw tz offset: $tzOffsetStr")
                 Log.d(LOG_TAG, "Raw tz name: $tzNameStr")
-            }
+            }*/
 
             val dowInt = try {
                 dowStr.toInt()
