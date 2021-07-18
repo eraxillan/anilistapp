@@ -45,7 +45,7 @@ class AnilistRemoteMediator(
 ) : RemoteMediator<Int, AiringAnime>() {
 
     companion object {
-        private const val LOG_TAG = "54BE6C87_ARM" // ARM = AnilistRemoteMediator
+        private const val LOG_TAG = "54BE6C87_Mediator"
     }
 
     override suspend fun initialize(): InitializeAction {
@@ -74,7 +74,7 @@ class AnilistRemoteMediator(
             REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
                 val temp = remoteKeys?.nextKey?.minus(1) ?: ANILIST_STARTING_PAGE_INDEX
-                Log.d(LOG_TAG, "Got LoadType.REFRESH request: pageNo = $temp")
+                Log.d(LOG_TAG, "Got LoadType.REFRESH request: pageNo=$temp")
                 temp
             }
             PREPEND -> {
@@ -85,8 +85,8 @@ class AnilistRemoteMediator(
                 // If `remoteKeys` is NOT NULL but its `prevKey` is null, that means we've reached
                 // the end of pagination for prepend
                 val prevKey = remoteKeys?.prevKey
-                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
-                Log.d(LOG_TAG, "Got LoadType.PREPEND request: pageNo = $prevKey")
+                    ?: return MediatorResult.Success(endOfPaginationReached = (remoteKeys != null))
+                Log.d(LOG_TAG, "Got LoadType.PREPEND request: pageNo=$prevKey")
                 prevKey
             }
             APPEND -> {
@@ -97,25 +97,44 @@ class AnilistRemoteMediator(
                 // If `remoteKeys` is NOT NULL but its `prevKey` is null, that means we've reached
                 // the end of pagination for append
                 val nextKey = remoteKeys?.nextKey
-                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
-                Log.d(LOG_TAG, "Got LoadType.APPEND request: pageNo = $nextKey")
+                    ?: return MediatorResult.Success(endOfPaginationReached = (remoteKeys != null))
+                Log.d(LOG_TAG, "Got LoadType.APPEND request: pageNo=$nextKey")
                 nextKey
             }
         }
 
         try {
-            Log.d(LOG_TAG, "Querying server: pageNo=$page with $NETWORK_PAGE_SIZE per page")
+            Log.d(LOG_TAG, "Querying server: pageNo=$page with ${state.config.pageSize} per page...")
             check(NETWORK_PAGE_SIZE == state.config.pageSize)
-            val apiResponse =
-                backend.getAiringAnimeList(page, state.config.pageSize /*NETWORK_PAGE_SIZE*/)
+            val backendResponse = backend.getAiringAnimeList(page, state.config.pageSize)
+            Log.d(LOG_TAG, "Successfully got response from server")
 
-            val serverAnimeList = apiResponse.data?.page?.media?.filterNotNull() ?: emptyList()
+            val rateLimit = backend.getResponseRateLimit(backendResponse)
+            Log.d(
+                LOG_TAG,
+                "Network query rate limit status: ${rateLimit.remaining} from ${rateLimit.total}"
+            )
+
+            val pagination = backend.getResponsePagination(backendResponse)
+            val endOfPaginationReached = !pagination.hasNextPage
+            Log.d(
+                LOG_TAG,
+                """
+                    Anime list total size: ${pagination.totalItems},
+                    current page: ${pagination.currentPage},
+                    items per page: ${pagination.perPage},
+                    total pages: ${pagination.totalPages}
+                    end of pagination reached: $endOfPaginationReached
+                """.trimIndent()
+            )
+
+            val serverAnimeList = backendResponse.data?.page?.media?.filterNotNull() ?: emptyList()
             val animeList = serverAnimeList.map { medium -> mediumToAiringAnime(medium) }
 
-            val endOfPaginationReached = apiResponse.data?.page?.pageInfo?.hasNextPage == false
+            // FIXME: move to background worker
+            backend.fillEpisodeCount(serverAnimeList, animeList)
 
-            Log.d(LOG_TAG, "Got response from server: animeList.size=${animeList.size}")
-            Log.d(LOG_TAG, "End of pagination reached: $endOfPaginationReached")
+            Log.d(LOG_TAG, "animeList.size=${animeList.size}")
 
             database.withTransaction {
                 // Clear all tables in the database
@@ -125,8 +144,8 @@ class AnilistRemoteMediator(
                     Log.d(LOG_TAG, "Cache database cleared!")
                 }
 
-                val prevKey = if (page == ANILIST_STARTING_PAGE_INDEX) null else page - 1
-                val nextKey = if (endOfPaginationReached) null else page + 1
+                val prevKey = if (page == ANILIST_STARTING_PAGE_INDEX) null else (page - 1)
+                val nextKey = if (endOfPaginationReached) null else (page + 1)
                 Log.d(LOG_TAG, "prevKey=$prevKey, nextKey=$nextKey")
 
                 val keys = animeList.map {
@@ -134,7 +153,10 @@ class AnilistRemoteMediator(
                 }
                 database.remoteKeysDao().insertAll(keys)
                 database.airingDao().insertAllAnime(animeList)
-                Log.d(LOG_TAG, "Cache filled: ${keys.size} keys and ${animeList.size} records added")
+                Log.d(
+                    LOG_TAG,
+                    "Cache updated: ${keys.size} keys and ${animeList.size} records added"
+                )
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (exception: IOException) {

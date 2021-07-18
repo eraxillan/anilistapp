@@ -18,15 +18,23 @@ package name.eraxillan.airinganimeschedule.api
 
 import android.os.Looper
 import android.util.Log
+import androidx.core.text.isDigitsOnly
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.ApolloExperimental
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.coroutines.await
+import com.apollographql.apollo.http.OkHttpExecutionContext
+import kotlinx.coroutines.delay
 import name.eraxillan.airinganimeschedule.AiringAnimeQuery
 import name.eraxillan.airinganimeschedule.AnimeRelationsQuery
+import name.eraxillan.airinganimeschedule.model.AiringAnime
+import name.eraxillan.airinganimeschedule.type.MediaRelation
 import name.eraxillan.airinganimeschedule.type.MediaSort
 import name.eraxillan.airinganimeschedule.type.MediaStatus
+import name.eraxillan.airinganimeschedule.type.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.lang.NumberFormatException
 import java.time.LocalDate
 
 /**
@@ -72,6 +80,155 @@ class AnilistApi(private val client: ApolloClient) {
         )
 
         return client.query(animeRelationsQuery).await()
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private fun getPrequel(medium: AnimeRelationsQuery.Medium): Pair<Boolean, Int> {
+        val prequelEdge = medium.relations?.edges?.filterNotNull()?.find { edge ->
+            // Anime can have only one prequel and have not at all
+            if (edge.relationType == MediaRelation.PREQUEL &&
+                edge.node?.type == MediaType.ANIME &&
+                edge.node.status == MediaStatus.FINISHED
+            ) {
+                val title = edge.node.title?.romaji
+                Log.d(LOG_TAG, "Prequel anime found: $title")
+                true
+            } else
+                false
+        }
+
+        val prequelId = prequelEdge?.node?.id ?: -1
+        return Pair(prequelEdge != null, prequelId)
+    }
+
+    private tailrec suspend fun searchPrequels(relations: Map<Long, MutableList<Long>>): Int {
+        // Free AniList API rate limit restricted with just 90 req/sec!
+        // So we need to make as few requests as possible.
+        // To achieve this, query all airing anime relations in one request using `id_in` argument
+
+        if (relations.isEmpty()) return 0
+
+        // Recursion stop condition: all anime in list marked with special stop-value (-1)
+        val finishedCount = relations.count { entry -> entry.value.last() == -1L }
+        Log.d(LOG_TAG, "Relations search progress: $finishedCount from ${relations.size}")
+        if (finishedCount == relations.size) return 0
+
+        val ids = relations.map { entry -> entry.value.last() }.filter { entry -> entry != -1L }
+        Log.d(LOG_TAG, "Remaining anime ids: ${ids.toString()}")
+
+        val responseInner = getAnimeRelations(ids = ids, page = 1, perPage = 30)
+
+        val rateLimit = getResponseRateLimit(responseInner)
+        Log.d(
+            LOG_TAG,
+            "Network query rate limit status: ${rateLimit.remaining} from ${rateLimit.total}"
+        )
+
+        delay(100)
+
+        if (responseInner.hasErrors()) {
+            Log.e(LOG_TAG, "Relations request failed: `${responseInner.errors.toString()}`!")
+            return -1
+        }
+        Log.d(LOG_TAG, "Relations response succeed: ${responseInner.data?.page?.media?.size} anime found")
+        if (responseInner.data?.page?.media?.isEmpty() == true) return -1
+
+        val animeList = responseInner.data?.page?.media?.filterNotNull() ?: emptyList()
+        animeList.forEach { medium ->
+            Log.d(LOG_TAG, "Calculation episode count for anime '${medium.title?.romaji}'...")
+
+            // Find key with value
+            val parent = relations.entries.find { entry -> entry.value.indexOf(medium.id.toLong()) != -1 }
+            val id = parent?.key ?: medium.id
+            check(relations.containsKey(id))
+
+            val (hasPrequel, prequelId) = getPrequel(medium)
+            if (hasPrequel) {
+                relations[id]?.add(prequelId.toLong())
+            } else {
+                relations[id]?.add(-1)
+            }
+        }
+
+        return searchPrequels(relations)
+    }
+
+    // TODO: move to custom Worker to increase load speed and avoid rate limit
+    suspend fun fillEpisodeCount(
+        serverAnimeList: List<AiringAnimeQuery.Medium>, animeList: List<AiringAnime>) {
+        val ids = animeList.associateBy(
+            { it.anilistId }, { mutableListOf(it.anilistId) }
+        )
+        searchPrequels(ids)
+        ids.forEach { entry ->
+            val seasonCount = entry.value.size - 1
+
+            val medium = serverAnimeList.find { medium -> medium.id.toLong() == entry.key }
+            Log.d(
+                LOG_TAG,
+                "Id=${entry.key} name '${medium?.title?.romaji}' season count: $seasonCount"
+            )
+
+            val anime = animeList.find { anime -> anime.anilistId == entry.key }
+            anime?.season = seasonCount
+        }
+    }
+
+    data class AnilistRateLimit(val total: Int, val remaining: Int)
+
+    // FIXME: create a response pool class to handle server query rate limit
+    fun <T> getResponseRateLimit(response: Response<T>): AnilistRateLimit {
+        val DEFAULT_RATE_LIMIT = 90
+        val RATE_LIMIT_TOTAL_KEY = "X-RateLimit-Limit"
+        val RATE_LIMIT_REMAINING_KEY = "X-RateLimit-Remaining"
+
+        // See https://anilist.gitbook.io/anilist-apiv2-docs/overview/rate-limiting for details
+        @OptIn(ApolloExperimental::class)
+        val httpContext = response.executionContext[OkHttpExecutionContext.KEY]
+        @OptIn(ApolloExperimental::class)
+        val headers = httpContext?.response?.headers
+
+        /*headers?.names()?.forEach { name ->
+            Log.d(LOG_TAG, "Response HTTP header: '${name}' => '${headers.get(name)}'")
+        }*/
+
+        val totalStr = headers?.get(RATE_LIMIT_TOTAL_KEY).orEmpty()
+        val remainingStr = headers?.get(RATE_LIMIT_REMAINING_KEY).orEmpty()
+
+        val total = try {
+            if (totalStr.isEmpty() || !totalStr.isDigitsOnly()) DEFAULT_RATE_LIMIT else totalStr.toInt()
+        } catch (exc: NumberFormatException) {
+            Log.e(LOG_TAG, "Invalid total rate limit value: '$totalStr'!")
+            DEFAULT_RATE_LIMIT
+        }
+
+        val remaining = try {
+            if (remainingStr.isEmpty() || !remainingStr.isDigitsOnly()) 0 else remainingStr.toInt()
+        } catch (exc: NumberFormatException) {
+            Log.e(LOG_TAG, "Invalid remaining rate limit value: '$remainingStr'!")
+            0
+        }
+
+        return AnilistRateLimit(total, remaining)
+    }
+
+    data class AnilistPagination(
+        val totalItems: Int,
+        val currentPage: Int,
+        val perPage: Int,
+        val totalPages: Int,
+        val hasNextPage: Boolean
+    )
+
+    fun getResponsePagination(response: Response<AiringAnimeQuery.Data>): AnilistPagination {
+        return AnilistPagination(
+            totalItems = response.data?.page?.pageInfo?.total ?: 0,
+            currentPage = response.data?.page?.pageInfo?.currentPage ?: 0,
+            perPage = response.data?.page?.pageInfo?.perPage ?: 0,
+            totalPages = response.data?.page?.pageInfo?.lastPage ?: 0,
+            hasNextPage = response.data?.page?.pageInfo?.hasNextPage ?: false
+        )
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
