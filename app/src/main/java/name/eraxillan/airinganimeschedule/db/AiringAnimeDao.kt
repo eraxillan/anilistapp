@@ -37,7 +37,7 @@ import name.eraxillan.airinganimeschedule.model.FavoriteAnime
  */
 @Dao
 interface AiringAnimeDao {
-    @Query("SELECT * FROM airing_animes ORDER BY popularity DESC")
+    @Query("SELECT * FROM airing_animes ORDER BY popularity DESC, originalName ASC")
     fun getAiringAnimeListPages(): PagingSource<Int, AiringAnime>
 
     @Insert(onConflict = REPLACE)
