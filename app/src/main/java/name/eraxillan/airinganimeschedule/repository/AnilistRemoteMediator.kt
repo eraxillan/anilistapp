@@ -104,9 +104,13 @@ class AnilistRemoteMediator(
         }
 
         try {
-            Log.d(LOG_TAG, "Querying server: pageNo=$page with ${state.config.pageSize} per page...")
             check(NETWORK_PAGE_SIZE == state.config.pageSize)
-            val backendResponse = backend.getAiringAnimeList(page, state.config.pageSize)
+            val pageSize = when (loadType) {
+                REFRESH -> state.config.initialLoadSize
+                else -> state.config.pageSize
+            }
+            Log.d(LOG_TAG, "Querying server: pageNo=$page with $pageSize per page...")
+            val backendResponse = backend.getAiringAnimeList(page, pageSize)
             Log.d(LOG_TAG, "Successfully got response from server")
 
             val rateLimit = backend.getResponseRateLimit(backendResponse)
@@ -145,7 +149,12 @@ class AnilistRemoteMediator(
                 }
 
                 val prevKey = if (page == ANILIST_STARTING_PAGE_INDEX) null else (page - 1)
-                val nextKey = if (endOfPaginationReached) null else (page + 1)
+                // RemoteMediator.load with loadType=APPEND uses pageSize=state.config.pageSize,
+                // so nextKey should always be computed based on increments of state.config.pageSize.
+                // E.g., If we load items 0-59 on initial load with key=1, the nextKey should
+                // not be 2, because that would load items 20-39, which overlaps our initial load
+                // instead of fetching new data as intended
+                val nextKey = if (endOfPaginationReached) null else page + (pageSize / state.config.pageSize)
                 Log.d(LOG_TAG, "prevKey=$prevKey, nextKey=$nextKey")
 
                 val keys = animeList.map {
