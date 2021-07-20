@@ -34,7 +34,7 @@ import name.eraxillan.airinganimeschedule.workers.AiringAnimeDatabaseWorker
  */
 @Database(
     entities = [AiringAnime::class, FavoriteAnime::class, RemoteKeys::class],
-    version = 4,
+    version = 5,
     //exportSchema = false
 )
 @TypeConverters(DatabaseTypeConverters::class)

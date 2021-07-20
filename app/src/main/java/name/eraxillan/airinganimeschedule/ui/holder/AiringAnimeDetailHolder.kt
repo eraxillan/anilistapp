@@ -28,9 +28,10 @@ class AiringAnimeDetailHolder(
         private const val LOG_TAG = "54BE6C87_AADH" // AADH = AiringAnimeDetailHolder
     }
 
-    fun bind(text: String) {
+    fun bind(text: String, textColor: Int) {
         binding.apply {
             setText(text)
+            setTextColor(textColor)
             executePendingBindings()
         }
     }

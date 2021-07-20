@@ -8,7 +8,10 @@
     "totalEpisodes": 12,
     "releaseDate": "2021-04-04",
     "nextEpisodeDate": "W-7T15:00+03:00[Europe/Moscow]",
-    "minAge": 18
+    "minAge": 18,
+    "popularity": 44077,
+    "imageUrl": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx116588-dZlzrABT4ttC.jp",
+    "imageColor": "#d6ae6b"
   },
   {
     "id": 2,
@@ -19,7 +22,10 @@
     "totalEpisodes": 13,
     "releaseDate": "2021-04-06",
     "nextEpisodeDate": "W-1T20:30+03:00[Europe/Moscow]",
-    "minAge": 16
+    "minAge": 16,
+    "popularity": 56104,
+    "imageUrl": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx124194-r9MueM46SgLV.jpg",
+    "imageColor": "#35bbf1"
   },
   {
     "id": 3,
@@ -30,7 +36,10 @@
     "totalEpisodes": 12,
     "releaseDate": "2021-04-07",
     "nextEpisodeDate": "W-3T17:30+03:00[Europe/Moscow]",
-    "minAge": 18
+    "minAge": 18,
+    "popularity": 30992,
+    "imageUrl": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx126791-Rwhm1a5QFope.jpg",
+    "imageColor": "#5d78e4"
   },
   {
     "id": 4,
@@ -41,7 +50,10 @@
     "totalEpisodes": 12,
     "releaseDate": "2021-04-07",
     "nextEpisodeDate": "W-3T18:00+03:00[Europe/Moscow]",
-    "minAge": 12
+    "minAge": 12,
+    "popularity": 19578,
+    "imageUrl": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx113418-OhgQiQrGI0GH.jpg",
+    "imageColor": "#5093c9"
   },
   {
     "id": 5,
@@ -52,7 +64,10 @@
     "totalEpisodes": 24,
     "releaseDate": "2021-04-09",
     "nextEpisodeDate": "W-5T20:55+03:00[Europe/Moscow]",
-    "minAge": 12
+    "minAge": 12,
+    "popularity": 5540,
+    "imageUrl": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx129814-eXwKMTyCNge7.jpg",
+    "imageColor": "#e4a135"
   },
   {
     "id": 6,
@@ -63,7 +78,10 @@
     "totalEpisodes": 24,
     "releaseDate": "2021-01-08",
     "nextEpisodeDate": "W-5T19:30+03:00[Europe/Moscow]",
-    "minAge": 18
+    "minAge": 18,
+    "popularity": 8379,
+    "imageUrl": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx114307-hZFz35Nh7YuS.jpg",
+    "imageColor": "#e4c91a"
   },
   {
     "id": 7,
@@ -74,7 +92,10 @@
     "totalEpisodes": 13,
     "releaseDate": "2021-04-10",
     "nextEpisodeDate": "W-6T20:00+03:00[Europe/Moscow]",
-    "minAge": 12
+    "minAge": 12,
+    "popularity": 36074,
+    "imageUrl": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx125038-EDYVfZUMnCBg.png",
+    "imageColor": "#f1bb50"
   },
   {
     "id": 8,
@@ -85,7 +106,10 @@
     "totalEpisodes": 13,
     "releaseDate": "2021-04-05",
     "nextEpisodeDate": "W-1T21:00+03:00[Europe/Moscow]",
-    "minAge": 18
+    "minAge": 18,
+    "popularity": 26654,
+    "imageUrl": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx115183-jvILP9lWry4s.jpg",
+    "imageColor": "#f1d6bb"
   },
   {
     "id": 9,
@@ -96,7 +120,10 @@
     "totalEpisodes": 12,
     "releaseDate": "2021-04-06",
     "nextEpisodeDate": "W-2T18:30+03:00[Europe/Moscow]",
-    "minAge": 12
+    "minAge": 12,
+    "popularity": 22436,
+    "imageUrl": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx123802-FpGzlfjebl0z.jpg",
+    "imageColor": "#50e4fe"
   },
   {
     "id": 10,
@@ -107,6 +134,9 @@
     "totalEpisodes": 13,
     "releaseDate": "2021-04-03",
     "nextEpisodeDate": "W-6T19:00+03:00[Europe/Moscow]",
-    "minAge": 18
+    "minAge": 18,
+    "popularity": 59181,
+    "imageUrl": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx128546-UIwyhuhjxmL0.jpg",
+    "imageColor": "#35a1bb"
   }
 ]

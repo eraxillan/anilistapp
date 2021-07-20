@@ -46,6 +46,7 @@ query AiringAnime($page: Int!, $perPage: Int!, $seasonYear: Int!, $sort: [MediaS
       status
       coverImage {
         large
+        color
       }
       episodes
       startDate {

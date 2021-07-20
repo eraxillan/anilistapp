@@ -18,6 +18,7 @@ package name.eraxillan.airinganimeschedule.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeDetailBinding
 import name.eraxillan.airinganimeschedule.model.AiringAnime
@@ -52,6 +53,8 @@ class AiringAnimeDetailAdapter(
         val releaseDate = if (anime.releaseDate != null) anime.releaseDate.toString() else PLACEHOLDER_STRING
         val nextEpisodeDate = if (anime.nextEpisodeDate != null) anime.nextEpisodeDate!!.getDisplayString() else PLACEHOLDER_STRING
         val minAge = if (anime.minAge != -1) anime.minAge.toString() else PLACEHOLDER_STRING
+        val popularity = if (anime.popularity != -1) anime.popularity else PLACEHOLDER_STRING
+        val imageColor = if (anime.imageColor.isNotEmpty()) anime.imageColor else "#000000"
 
         val text = when (position) {
             0 -> "Season: $season"
@@ -61,9 +64,10 @@ class AiringAnimeDetailAdapter(
             4 -> "Release date: $releaseDate"
             5 -> "Next episode date: $nextEpisodeDate"
             6 -> "Minimum age: $minAge"
+            7 -> "Popularity: $popularity"
             else -> ""
         }
-        holder.bind(text)
+        holder.bind(text, imageColor.toColorInt())
     }
 
     // Tells the `RecyclerView` how many items to display

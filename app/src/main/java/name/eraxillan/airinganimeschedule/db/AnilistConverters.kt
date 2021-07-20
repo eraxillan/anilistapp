@@ -97,6 +97,8 @@ fun mediumToAiringAnime(input: AiringAnimeQuery.Medium): AiringAnime {
             zoneId
         ),
         minAge = getMinAge(),
-        popularity = input.popularity ?: -1
+        popularity = input.popularity ?: -1,
+        imageUrl = input.coverImage?.large ?: "",
+        imageColor = input.coverImage?.color ?: "",
     )
 }

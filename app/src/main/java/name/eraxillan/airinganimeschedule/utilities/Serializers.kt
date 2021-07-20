@@ -92,6 +92,9 @@ private val gson: Gson by lazy {
                         releaseDateString = jsonObject.get("releaseDate").asString
                         nextEpisodeDateString = jsonObject.get("nextEpisodeDate").asString
                         minAge = jsonObject.get("minAge").asInt
+                        popularity = jsonObject.get("popularity").asInt
+                        imageUrl = jsonObject.get("imageUrl").asString
+                        imageColor = jsonObject.get("imageColor").asString
                     } catch (exc: ClassCastException) {
                         Log.e(LOG_TAG, "Invalid JSON value type: `${exc.message}`")
                         return@JsonDeserializer null
