@@ -147,7 +147,7 @@ class AiringAnimeListFragment : Fragment() {
 
         val header = AnimeListLoadStateAdapter(listAdapter)
 
-        with (binding.airingAnimeList) {
+        with (binding.list) {
             this.adapter = listAdapter.withLoadStateHeaderAndFooter(
                 header = header,
                 footer = AnimeListLoadStateAdapter(listAdapter)
@@ -168,7 +168,7 @@ class AiringAnimeListFragment : Fragment() {
                 ?: loadState.prepend
 
             // Only show the list if refresh succeeds, either from the the local db or the remote
-            binding.airingAnimeList.isVisible = loadState.source.refresh is LoadState.NotLoading || loadState.mediator?.refresh is LoadState.NotLoading
+            binding.list.isVisible = loadState.source.refresh is LoadState.NotLoading || loadState.mediator?.refresh is LoadState.NotLoading
 
             // Show loading spinner during initial load or refresh
             binding.progressBar.isVisible = loadState.mediator?.refresh is LoadState.Loading
@@ -235,10 +235,10 @@ class AiringAnimeListFragment : Fragment() {
     private fun showEmptyList(show: Boolean) {
         if (show) {
             binding.emptyList.visibility = View.VISIBLE
-            binding.airingAnimeList.visibility = View.GONE
+            binding.list.visibility = View.GONE
         } else {
             binding.emptyList.visibility = View.GONE
-            binding.airingAnimeList.visibility = View.VISIBLE
+            binding.list.visibility = View.VISIBLE
         }
     }
 }
