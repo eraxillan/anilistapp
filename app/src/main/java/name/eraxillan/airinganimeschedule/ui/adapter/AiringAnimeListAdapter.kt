@@ -40,7 +40,6 @@ class AiringAnimeListAdapter
     }
 
     override fun onBindViewHolder(holder: AiringAnimeListHolder, position: Int) {
-        // FIXME: load anime image from URL, see Sunflower for example code
         val anime = getItem(position)
         anime?.let { holder.bind(position, anime) }
     }
