@@ -23,8 +23,6 @@ import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
-import java.util.*
 
 fun mediumToAiringAnime(input: AiringAnimeQuery.Medium): AiringAnime {
 
