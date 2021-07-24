@@ -19,6 +19,7 @@ package name.eraxillan.airinganimeschedule.db
 import android.util.Log
 import name.eraxillan.airinganimeschedule.AiringAnimeQuery
 import name.eraxillan.airinganimeschedule.model.AiringAnime
+import name.eraxillan.airinganimeschedule.model.AnimeTitle
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -80,7 +81,11 @@ fun mediumToAiringAnime(input: AiringAnimeQuery.Medium): AiringAnime {
         anilistId = input.id.toLong(),
         url = URL(input.siteUrl),
         season = -1, // NOTE: will be determined later in `AnilistPagingSource`
-        originalName = input.title?.romaji ?: "",
+        title = AnimeTitle(
+            romaji = input.title?.romaji ?: "",
+            english = input.title?.english ?: "",
+            native = input.title?.native_ ?: ""
+        ),
         latestEpisode = (input.nextAiringEpisode?.episode?.minus(1)) ?: -1,
         totalEpisodes = input.episodes ?: -1,
         releaseDate = LocalDate.of(

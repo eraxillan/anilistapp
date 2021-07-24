@@ -31,7 +31,7 @@ class AiringAnimeDetailAdapter(
 
     companion object {
         private const val LOG_TAG = "54BE6C87_AADA" // AADA = AiringAnimeDetailAdapter
-        private const val fieldCount = 7
+        private const val fieldCount = 10
     }
 
     // Create a `View` from the `Layout`
@@ -47,7 +47,9 @@ class AiringAnimeDetailAdapter(
         val PLACEHOLDER_STRING = "<unknown>"
 
         val season = if (anime.season != -1) anime.season.toString() else PLACEHOLDER_STRING
-        val originalName = if (anime.originalName.isNotEmpty()) anime.originalName else PLACEHOLDER_STRING
+        val romajiTitle = if (anime.title.romaji.isNotEmpty()) anime.title.romaji else PLACEHOLDER_STRING
+        val englishTitle = if (anime.title.english.isNotEmpty()) anime.title.english else PLACEHOLDER_STRING
+        val nativeTitle = if (anime.title.native.isNotEmpty()) anime.title.native else PLACEHOLDER_STRING
         val latestEpisode = if (anime.latestEpisode != -1) anime.latestEpisode.toString() else PLACEHOLDER_STRING
         val totalEpisodes = if (anime.totalEpisodes != -1) anime.totalEpisodes.toString() else PLACEHOLDER_STRING
         val releaseDate = if (anime.releaseDate != null) anime.releaseDate.toString() else PLACEHOLDER_STRING
@@ -56,15 +58,18 @@ class AiringAnimeDetailAdapter(
         val popularity = if (anime.popularity != -1) anime.popularity else PLACEHOLDER_STRING
         val imageColor = if (anime.imageColor.isNotEmpty()) anime.imageColor else "#000000"
 
+        // TODO: extract these strings to resources
         val text = when (position) {
             0 -> "Season: $season"
-            1 -> "Original name: $originalName"
-            2 -> "Latest episode: $latestEpisode"
-            3 -> "Total episodes: $totalEpisodes"
-            4 -> "Release date: $releaseDate"
-            5 -> "Next episode date: $nextEpisodeDate"
-            6 -> "Minimum age: $minAge"
-            7 -> "Popularity: $popularity"
+            1 -> "Romaji title: $romajiTitle"
+            2 -> "English title: $englishTitle"
+            3 -> "Native title: $nativeTitle"
+            4 -> "Latest episode: $latestEpisode"
+            5 -> "Total episodes: $totalEpisodes"
+            6 -> "Release date: $releaseDate"
+            7 -> "Next episode date: $nextEpisodeDate"
+            8 -> "Minimum age: $minAge"
+            9 -> "Popularity: $popularity"
             else -> ""
         }
         holder.bind(text, imageColor.toColorInt())

@@ -26,6 +26,7 @@ import java.time.LocalDate
 
 
 // Shortcuts just for brevity in this module
+private typealias AT = AnimeTitle
 private typealias DMY = LocalDate
 private typealias ZST = ZonedScheduledTime
 private typealias AAF = AiringAnimeFormat
@@ -95,9 +96,18 @@ enum class AiringAnimeFormat {
     UNKNOWN
 }
 
+/**
+ * The official titles of the media in various languages
+ */
+@Parcelize
+data class AnimeTitle(
+    val romaji: String = "",  // The romanization of the native language title
+    val english: String = "", // The official english title
+    val native: String = "",  // Official title in it's native language (usually Japanese)
+) : Parcelable
 
 /**
- * An anime description
+ * An anime description from Anilist
  */
 @Entity(tableName = "airing_animes")
 @Parcelize
@@ -107,7 +117,7 @@ data class AiringAnime constructor(
     var url: URL = INVALID_URL,       // Anilist/MyAnimeList/Wakanim/Crunchyroll/etc. URL
     var season: Int = -1,             // Season number
     var format: AAF = AAF.TV,         // The format the media was released in
-    var originalName: String = "",    // Original Japanese name in Romaji
+    var title: AT = AT(),             // The official titles of the media in various languages
     var latestEpisode: Int = -1,      // Latest episode number: e.g. 5, i.e. 5th from 12
     var totalEpisodes: Int = -1,      // Total episode count: e.g. 12
     var releaseDate: DMY? = null,     // Aired day+month+year
@@ -122,6 +132,9 @@ data class AiringAnime constructor(
     companion object
 }
 
+/**
+ * Local favorite anime data
+ */
 @Entity(tableName = "favorite_animes")
 @Parcelize
 data class FavoriteAnime constructor(

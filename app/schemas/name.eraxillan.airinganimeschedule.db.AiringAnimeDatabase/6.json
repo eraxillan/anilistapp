@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 5,
-    "identityHash": "bc6e30facc499cf6ddfdec0393088c70",
+    "version": 6,
+    "identityHash": "168ddefa7b82d05f1e5e248be59df1cd",
     "entities": [
       {
         "tableName": "airing_animes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`anilistId` INTEGER NOT NULL, `url` TEXT NOT NULL, `season` INTEGER NOT NULL, `format` TEXT NOT NULL, `originalName` TEXT NOT NULL, `latestEpisode` INTEGER NOT NULL, `totalEpisodes` INTEGER NOT NULL, `releaseDate` TEXT, `nextEpisodeDate` TEXT, `minAge` INTEGER NOT NULL, `popularity` INTEGER NOT NULL, `imageUrl` TEXT NOT NULL, `imageColor` TEXT NOT NULL, PRIMARY KEY(`anilistId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`anilistId` INTEGER NOT NULL, `url` TEXT NOT NULL, `season` INTEGER NOT NULL, `format` TEXT NOT NULL, `title` TEXT NOT NULL, `latestEpisode` INTEGER NOT NULL, `totalEpisodes` INTEGER NOT NULL, `releaseDate` TEXT, `nextEpisodeDate` TEXT, `minAge` INTEGER NOT NULL, `popularity` INTEGER NOT NULL, `imageUrl` TEXT NOT NULL, `imageColor` TEXT NOT NULL, PRIMARY KEY(`anilistId`))",
         "fields": [
           {
             "fieldPath": "anilistId",
@@ -33,8 +33,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "originalName",
-            "columnName": "originalName",
+            "fieldPath": "title",
+            "columnName": "title",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -152,7 +152,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'bc6e30facc499cf6ddfdec0393088c70')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '168ddefa7b82d05f1e5e248be59df1cd')"
     ]
   }
 }

@@ -17,9 +17,9 @@
 package name.eraxillan.airinganimeschedule.db
 
 import androidx.room.TypeConverter
+import name.eraxillan.airinganimeschedule.model.AnimeTitle
 import java.net.URL
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 object DatabaseTypeConverters {
     /*
@@ -29,7 +29,7 @@ object DatabaseTypeConverters {
     @JvmStatic
     fun toOffsetDateTime(value: String?): OffsetDateTime? {
         return value?.let {
-            return formatter.parse(value, OffsetDateTime::from)
+            formatter.parse(value, OffsetDateTime::from)
         }
     }
 
@@ -44,7 +44,7 @@ object DatabaseTypeConverters {
     @JvmStatic
     fun toURL(value: String?): URL? {
         return value?.let {
-            return URL(value)
+            URL(value)
         }
     }
 
@@ -58,7 +58,7 @@ object DatabaseTypeConverters {
     @JvmStatic
     fun toLocalDate(value: String?): LocalDate? {
         return value?.let {
-            return LocalDate.parse(value)
+            LocalDate.parse(value)
         }
     }
 
@@ -72,7 +72,7 @@ object DatabaseTypeConverters {
     @JvmStatic
     fun toZonedScheduledTime(value: String?): ZonedScheduledTime? {
         return value?.let {
-            return ZonedScheduledTime.parse(it)
+            ZonedScheduledTime.parse(it)
         }
     }
 
@@ -81,4 +81,24 @@ object DatabaseTypeConverters {
     fun fromScheduleTime(zst: ZonedScheduledTime?): String? {
         return zst?.toString()
     }
+
+    @TypeConverter
+    @JvmStatic
+    fun toAnimeTitle(value: String?): AnimeTitle? {
+        return value?.let {
+            val list = it.split(listDelimiter)
+            check(list.size == 3)
+            AnimeTitle(romaji = list[0], english = list[1], native = list[2])
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromAnimeTitle(title: AnimeTitle?): String? {
+        return title?.let {
+            "${it.romaji}${listDelimiter}${it.english}${listDelimiter}${it.native}"
+        }
+    }
+
+    private const val listDelimiter = ":::::"
 }

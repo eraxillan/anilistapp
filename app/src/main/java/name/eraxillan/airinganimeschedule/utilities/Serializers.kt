@@ -22,6 +22,7 @@ import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import name.eraxillan.airinganimeschedule.db.ZonedScheduledTime
 import name.eraxillan.airinganimeschedule.model.AiringAnime
+import name.eraxillan.airinganimeschedule.model.AnimeTitle
 import java.io.InputStreamReader
 import java.lang.ClassCastException
 import java.lang.IllegalStateException
@@ -50,7 +51,7 @@ private val gson: Gson by lazy {
                 jsonObject.addProperty(AA_ID, src.anilistId)
                 jsonObject.addProperty(AA_URL, src.url.toString())
                 jsonObject.addProperty(AA_SEASON, src.season)
-                jsonObject.addProperty(AA_ORIGINAL_NAME, src.originalName)
+                jsonObject.addProperty(AA_ORIGINAL_NAME, src.title.romaji)
                 jsonObject.addProperty(AA_LATEST_EPISODE, src.latestEpisode)
                 jsonObject.addProperty(AA_TOTAL_EPISODES, src.totalEpisodes)
                 jsonObject.addProperty(AA_RELEASE_DATE, src.releaseDate.toString())
@@ -86,7 +87,7 @@ private val gson: Gson by lazy {
                         anilistId = jsonObject.get("id").asLong
                         url = URL(jsonObject.get("url").asString)
                         season = jsonObject.get("season").asInt
-                        originalName = jsonObject.get("originalName").asString
+                        title = AnimeTitle(romaji = jsonObject.get("originalName").asString)
                         latestEpisode = jsonObject.get("latestEpisode").asInt
                         totalEpisodes = jsonObject.get("totalEpisodes").asInt
                         releaseDateString = jsonObject.get("releaseDate").asString

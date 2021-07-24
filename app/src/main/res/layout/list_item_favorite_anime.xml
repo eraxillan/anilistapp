@@ -78,7 +78,7 @@
                     android:maxLines="2"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:text="@{anime.originalName}"
+                    android:text="@{anime.title.romaji}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
