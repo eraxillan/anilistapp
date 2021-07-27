@@ -18,22 +18,22 @@ package name.eraxillan.airinganimeschedule.ui.holder
 
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeBinding
+import name.eraxillan.airinganimeschedule.databinding.ListItemMediaBinding
 import name.eraxillan.airinganimeschedule.model.Media
-import name.eraxillan.airinganimeschedule.ui.showAiringAnimeInfo
+import name.eraxillan.airinganimeschedule.ui.showMediaInfo
 
-class AiringAnimeListHolder(
-    private val binding: ListItemAiringAnimeBinding
+class MediaListHolder(
+    private val binding: ListItemMediaBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
     companion object {
-        private const val LOG_TAG = "54BE6C87_AALH" // AALH = AiringAnimeListHolder
+        private const val LOG_TAG = "54BE6C87_MLH" // AALH = MediaListHolder
     }
 
     init {
         binding.setClickListener { view ->
-            binding.media?.let { anime ->
-                showAiringAnimeInfo(anime, view.findNavController())
+            binding.media?.let { media ->
+                showMediaInfo(media, view.findNavController())
             }
         }
     }

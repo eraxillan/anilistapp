@@ -39,7 +39,7 @@
             android:paddingVertical="@dimen/row_item_margin_vertical"
             android:scrollbars="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/list_item_airing_anime" />
+            tools:listitem="@layout/list_item_media" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ProgressBar

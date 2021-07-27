@@ -19,17 +19,17 @@ package name.eraxillan.airinganimeschedule.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeBinding
+import name.eraxillan.airinganimeschedule.databinding.ListItemMediaBinding
 import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.ui.ItemTouchHelperCallback
-import name.eraxillan.airinganimeschedule.ui.holder.AiringAnimeListHolder
+import name.eraxillan.airinganimeschedule.ui.holder.MediaListHolder
 
 // TODO: favorite airing anime list adapter with CRUD support (AiringAnimeListAdapter stay read-only)
 // `PagingDataAdapter` have read-only data, and there is no way to remove item in-place
 
 class FavoriteListAdapter(
     private val deleteDelegate: (Media) -> Unit
-) : RecyclerView.Adapter<AiringAnimeListHolder>()
+) : RecyclerView.Adapter<MediaListHolder>()
     , ItemTouchHelperCallback.ItemTouchHelperAdapter {
 
     companion object {
@@ -40,15 +40,15 @@ class FavoriteListAdapter(
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AiringAnimeListHolder {
-        return AiringAnimeListHolder(
-            ListItemAiringAnimeBinding.inflate(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaListHolder {
+        return MediaListHolder(
+            ListItemMediaBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )
     }
 
-    override fun onBindViewHolder(holder: AiringAnimeListHolder, position: Int) {
+    override fun onBindViewHolder(holder: MediaListHolder, position: Int) {
         // FIXME: load anime image from URL, see Sunflower for example code
         holder.bind(position, animeList[position])
     }

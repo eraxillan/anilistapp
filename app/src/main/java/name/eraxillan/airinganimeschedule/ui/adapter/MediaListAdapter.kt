@@ -20,26 +20,26 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeBinding
+import name.eraxillan.airinganimeschedule.databinding.ListItemMediaBinding
 import name.eraxillan.airinganimeschedule.model.Media
-import name.eraxillan.airinganimeschedule.ui.holder.AiringAnimeListHolder
+import name.eraxillan.airinganimeschedule.ui.holder.MediaListHolder
 
 class MediaListAdapter
-    : PagingDataAdapter<Media, AiringAnimeListHolder>(AiringAnimeDiffCallback()) {
+    : PagingDataAdapter<Media, MediaListHolder>(AiringAnimeDiffCallback()) {
 
     companion object {
         private const val LOG_TAG = "54BE6C87_AALAd" // AALAd = AiringAnimeListAdapter
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AiringAnimeListHolder {
-        return AiringAnimeListHolder(
-            ListItemAiringAnimeBinding.inflate(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaListHolder {
+        return MediaListHolder(
+            ListItemMediaBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )
     }
 
-    override fun onBindViewHolder(holder: AiringAnimeListHolder, position: Int) {
+    override fun onBindViewHolder(holder: MediaListHolder, position: Int) {
         val anime = getItem(position)
         anime?.let { holder.bind(position, anime) }
     }
