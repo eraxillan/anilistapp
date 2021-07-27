@@ -27,13 +27,13 @@ import name.eraxillan.airinganimeschedule.api.AnilistApi
 import name.eraxillan.airinganimeschedule.db.AiringAnimeDatabase
 import name.eraxillan.airinganimeschedule.db.RemoteKeys
 import name.eraxillan.airinganimeschedule.db.mediumToAiringAnime
-import name.eraxillan.airinganimeschedule.model.AiringAnime
+import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.utilities.NETWORK_PAGE_SIZE
 import java.io.IOException
 import java.lang.Exception
 
 
-typealias AnimePagingState = PagingState<Int, AiringAnime>
+typealias AnimePagingState = PagingState<Int, Media>
 
 // Anilist page API is 1 based: https://anilist.gitbook.io/anilist-apiv2-docs/overview/graphql/pagination
 private const val ANILIST_STARTING_PAGE_INDEX = 1
@@ -42,7 +42,7 @@ private const val ANILIST_STARTING_PAGE_INDEX = 1
 class AnilistRemoteMediator(
     private val database: AiringAnimeDatabase,
     private val backend: AnilistApi
-) : RemoteMediator<Int, AiringAnime>() {
+) : RemoteMediator<Int, Media>() {
 
     companion object {
         private const val LOG_TAG = "54BE6C87_Mediator"
@@ -169,13 +169,13 @@ class AnilistRemoteMediator(
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (exception: IOException) {
-            Log.e(LOG_TAG, "Unable to fetch data from network: ${exception.localizedMessage}")
+            Log.e(LOG_TAG, "Unable to fetch data from network (IOException): ${exception.localizedMessage}")
             return MediatorResult.Error(exception)
         } catch (exception: java.net.UnknownHostException) {
-            Log.e(LOG_TAG, "Unable to fetch data from network: ${exception.localizedMessage}")
+            Log.e(LOG_TAG, "Unable to fetch data from network (UnknownHostException): ${exception.localizedMessage}")
             return MediatorResult.Error(exception)
         } catch (exception: Exception) {
-            Log.e(LOG_TAG, "Unable to fetch data from network: ${exception.localizedMessage}")
+            Log.e(LOG_TAG, "Unable to fetch data from network (unknown exception): ${exception.localizedMessage}")
             return MediatorResult.Error(exception)
         }
     }

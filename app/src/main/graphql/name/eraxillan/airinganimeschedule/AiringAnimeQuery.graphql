@@ -9,9 +9,13 @@ query AiringAnime($page: Int!, $perPage: Int!, $seasonYear: Int!, $sort: [MediaS
     }
     media(seasonYear: $seasonYear, sort: $sort, status: $status, isAdult: false, type: ANIME, format: TV) {
       id
-      siteUrl
-      description
       idMal
+      siteUrl
+      description(asHtml: false)
+      idMal
+      updatedAt
+      synonyms
+      source(version: 2)
       title {
         romaji
         native
@@ -20,7 +24,13 @@ query AiringAnime($page: Int!, $perPage: Int!, $seasonYear: Int!, $sort: [MediaS
       studios {
        edges {
           node {
+            id
             name
+            isAnimationStudio
+            #media
+            siteUrl
+            #isFavourite
+            favourites
           }
         }
       }
@@ -28,6 +38,13 @@ query AiringAnime($page: Int!, $perPage: Int!, $seasonYear: Int!, $sort: [MediaS
       genres
       tags {
         name
+        id
+        name
+        description
+        category
+        rank
+        isGeneralSpoiler
+        isMediaSpoiler
         isAdult
       }
       relations {
@@ -36,24 +53,34 @@ query AiringAnime($page: Int!, $perPage: Int!, $seasonYear: Int!, $sort: [MediaS
           node {
             id
             type
-            status
+            status(version: 2)
             title {
               romaji
             }
           }
         }
       }
-      status
+      status(version: 2)
       coverImage {
+        extraLarge
         large
+        medium
         color
       }
       episodes
+      duration
       startDate {
         year
         month
         day
       }
+      endDate {
+        year
+        month
+        day
+      }
+      season
+      seasonYear
       nextAiringEpisode {
         id
         episode
@@ -69,7 +96,41 @@ query AiringAnime($page: Int!, $perPage: Int!, $seasonYear: Int!, $sort: [MediaS
           }
         }
       }
+      averageScore
+      meanScore
       popularity
+      favourites
+      trending
+      countryOfOrigin
+      hashtag
+      trailer {
+        site
+        thumbnail
+      }
+      bannerImage
+      genres
+      isLicensed
+      externalLinks {
+        id
+        url
+        site
+      }
+      streamingEpisodes {
+        title
+        thumbnail
+        url
+        site
+      }
+      rankings {
+        id
+        rank
+        type
+        format
+        year
+        season
+        allTime
+        context
+      }
     }
   }
 }

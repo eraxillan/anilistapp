@@ -18,7 +18,7 @@ query AnimeRelations($id_in: [Int!]!, $page: Int!, $perPage: Int!) {
           node {
             id
             type
-            status
+            status(version: 2)
             title {
               romaji
             }

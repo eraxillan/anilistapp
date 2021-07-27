@@ -21,8 +21,7 @@ import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import name.eraxillan.airinganimeschedule.db.ZonedScheduledTime
-import name.eraxillan.airinganimeschedule.model.AiringAnime
-import name.eraxillan.airinganimeschedule.model.AnimeTitle
+import name.eraxillan.airinganimeschedule.model.Media
 import java.io.InputStreamReader
 import java.lang.ClassCastException
 import java.lang.IllegalStateException
@@ -44,22 +43,22 @@ private const val AA_MIN_AGE = "minAge"
 
 private val gson: Gson by lazy {
     GsonBuilder()
-        .registerTypeAdapter(AiringAnime::class.java,
-            JsonSerializer<AiringAnime> { src, _, _ ->
+        .registerTypeAdapter(Media::class.java,
+            JsonSerializer<Media> { src, _, _ ->
                 val jsonObject = JsonObject()
                 // NOTE: we can use `::id.name` here, but it is not available in `fromJson` (no `this`)
                 jsonObject.addProperty(AA_ID, src.anilistId)
-                jsonObject.addProperty(AA_URL, src.url.toString())
+                jsonObject.addProperty(AA_URL, src.anilistUrl.toString())
                 jsonObject.addProperty(AA_SEASON, src.season)
-                jsonObject.addProperty(AA_ORIGINAL_NAME, src.title.romaji)
-                jsonObject.addProperty(AA_LATEST_EPISODE, src.latestEpisode)
-                jsonObject.addProperty(AA_TOTAL_EPISODES, src.totalEpisodes)
-                jsonObject.addProperty(AA_RELEASE_DATE, src.releaseDate.toString())
-                jsonObject.addProperty(AA_NEXT_EPISODE_DATE, src.nextEpisodeDate.toString())
+                jsonObject.addProperty(AA_ORIGINAL_NAME, src.romajiTitle)
+                jsonObject.addProperty(AA_LATEST_EPISODE, src.nextEpisodeNo)
+                jsonObject.addProperty(AA_TOTAL_EPISODES, src.episodeCount)
+                jsonObject.addProperty(AA_RELEASE_DATE, src.startDate.toString())
+                jsonObject.addProperty(AA_NEXT_EPISODE_DATE, src.nextEpisodeAiringAt?.toString())
                 jsonObject.addProperty(AA_MIN_AGE, src.minAge)
                 jsonObject
             })
-        .registerTypeAdapter(AiringAnime::class.java,
+        .registerTypeAdapter(Media::class.java,
             JsonDeserializer { dst, _, _ ->
                 if (!dst.isJsonObject) {
                     Log.e(LOG_TAG, "Specified JSON text is not an object!")
@@ -79,23 +78,23 @@ private val gson: Gson by lazy {
                     }
                 }
 
-                val anime = AiringAnime()
+                val anime = Media()
                 var releaseDateString: String
                 var nextEpisodeDateString: String
                 with(anime) {
                     try {
                         anilistId = jsonObject.get("id").asLong
-                        url = URL(jsonObject.get("url").asString)
+                        anilistUrl = URL(jsonObject.get("url").asString)
                         season = jsonObject.get("season").asInt
-                        title = AnimeTitle(romaji = jsonObject.get("originalName").asString)
-                        latestEpisode = jsonObject.get("latestEpisode").asInt
-                        totalEpisodes = jsonObject.get("totalEpisodes").asInt
+                        romajiTitle = jsonObject.get("originalName").asString
+                        nextEpisodeNo = jsonObject.get("latestEpisode").asInt
+                        episodeCount = jsonObject.get("totalEpisodes").asInt
                         releaseDateString = jsonObject.get("releaseDate").asString
                         nextEpisodeDateString = jsonObject.get("nextEpisodeDate").asString
                         minAge = jsonObject.get("minAge").asInt
                         popularity = jsonObject.get("popularity").asInt
-                        imageUrl = jsonObject.get("imageUrl").asString
-                        imageColor = jsonObject.get("imageColor").asString
+                        coverImageLarge = jsonObject.get("imageUrl").asString
+                        coverImageColor = jsonObject.get("imageColor").asString
                     } catch (exc: ClassCastException) {
                         Log.e(LOG_TAG, "Invalid JSON value type: `${exc.message}`")
                         return@JsonDeserializer null
@@ -105,13 +104,13 @@ private val gson: Gson by lazy {
                     }
 
                     try {
-                        releaseDate = LocalDate.parse(releaseDateString)
+                        startDate = LocalDate.parse(releaseDateString)
                     } catch (exc: DateTimeParseException) {
                         Log.e(LOG_TAG, "Unable to parse release date string: `$releaseDateString`")
                     }
 
-                    nextEpisodeDate = ZonedScheduledTime.parse(nextEpisodeDateString)
-                    if (nextEpisodeDate == null) {
+                    nextEpisodeAiringAt = ZonedScheduledTime.parse(nextEpisodeDateString)
+                    if (nextEpisodeAiringAt == null) {
                         Log.e(
                             LOG_TAG,
                             "Unable to parse next episode date string: `$nextEpisodeDateString`"
@@ -124,9 +123,9 @@ private val gson: Gson by lazy {
         ).create()
 }
 
-fun airingAnimeListFromJson(inputStreamReader: InputStreamReader): List<AiringAnime> {
+fun airingAnimeListFromJson(inputStreamReader: InputStreamReader): List<Media> {
     JsonReader(inputStreamReader).use { jsonReader ->
-        val animeType = object : TypeToken<List<AiringAnime>>() {}.type
+        val animeType = object : TypeToken<List<Media>>() {}.type
         return gson.fromJson(jsonReader, animeType)
     }
 }

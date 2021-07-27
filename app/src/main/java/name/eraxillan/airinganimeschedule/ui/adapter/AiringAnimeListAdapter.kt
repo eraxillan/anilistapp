@@ -21,11 +21,11 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeBinding
-import name.eraxillan.airinganimeschedule.model.AiringAnime
+import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.ui.holder.AiringAnimeListHolder
 
 class AiringAnimeListAdapter
-    : PagingDataAdapter<AiringAnime, AiringAnimeListHolder>(AiringAnimeDiffCallback()) {
+    : PagingDataAdapter<Media, AiringAnimeListHolder>(AiringAnimeDiffCallback()) {
 
     companion object {
         private const val LOG_TAG = "54BE6C87_AALAd" // AALAd = AiringAnimeListAdapter
@@ -45,12 +45,12 @@ class AiringAnimeListAdapter
     }
 }
 
-class AiringAnimeDiffCallback : DiffUtil.ItemCallback<AiringAnime>() {
-    override fun areItemsTheSame(oldItem: AiringAnime, newItem: AiringAnime): Boolean {
+class AiringAnimeDiffCallback : DiffUtil.ItemCallback<Media>() {
+    override fun areItemsTheSame(oldItem: Media, newItem: Media): Boolean {
         return oldItem.anilistId == newItem.anilistId
     }
 
-    override fun areContentsTheSame(oldItem: AiringAnime, newItem: AiringAnime): Boolean {
+    override fun areContentsTheSame(oldItem: Media, newItem: Media): Boolean {
         return oldItem == newItem
     }
 }

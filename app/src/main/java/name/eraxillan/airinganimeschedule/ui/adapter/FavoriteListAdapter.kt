@@ -20,7 +20,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeBinding
-import name.eraxillan.airinganimeschedule.model.AiringAnime
+import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.ui.ItemTouchHelperCallback
 import name.eraxillan.airinganimeschedule.ui.holder.AiringAnimeListHolder
 
@@ -28,7 +28,7 @@ import name.eraxillan.airinganimeschedule.ui.holder.AiringAnimeListHolder
 // `PagingDataAdapter` have read-only data, and there is no way to remove item in-place
 
 class FavoriteListAdapter(
-    private val deleteDelegate: (AiringAnime) -> Unit
+    private val deleteDelegate: (Media) -> Unit
 ) : RecyclerView.Adapter<AiringAnimeListHolder>()
     , ItemTouchHelperCallback.ItemTouchHelperAdapter {
 
@@ -36,7 +36,7 @@ class FavoriteListAdapter(
         private const val LOG_TAG = "54BE6C87_FLAd" // FLAd = FavoriteListAdapter
     }
 
-    private val animeList : MutableList<AiringAnime> = mutableListOf()
+    private val animeList : MutableList<Media> = mutableListOf()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -80,12 +80,12 @@ class FavoriteListAdapter(
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun addAiringAnime(anime: AiringAnime) {
+    fun addAiringAnime(anime: Media) {
         animeList.add(anime)
         notifyItemInserted(animeList.size - 1)
     }
 
-    fun deleteAiringAnime(anime: AiringAnime) {
+    fun deleteAiringAnime(anime: Media) {
         val position = animeList.indexOf(anime)
         animeList.remove(anime)
         notifyItemRemoved(position)

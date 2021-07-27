@@ -22,19 +22,16 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import name.eraxillan.airinganimeschedule.model.AiringAnime
-import name.eraxillan.airinganimeschedule.model.FavoriteAnime
+import name.eraxillan.airinganimeschedule.model.Media
+import name.eraxillan.airinganimeschedule.model.FavoriteMedia
 import name.eraxillan.airinganimeschedule.utilities.DATABASE_NAME
-import name.eraxillan.airinganimeschedule.workers.AiringAnimeDatabaseWorker
 
 /**
  * The Room database for this app
  */
 @Database(
-    entities = [AiringAnime::class, FavoriteAnime::class, RemoteKeys::class],
-    version = 6,
+    entities = [Media::class, FavoriteMedia::class, RemoteKeys::class],
+    version = 7,
     //exportSchema = false
 )
 @TypeConverters(DatabaseTypeConverters::class)

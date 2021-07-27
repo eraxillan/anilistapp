@@ -17,28 +17,27 @@
 package name.eraxillan.airinganimeschedule.db
 
 import androidx.room.TypeConverter
-import name.eraxillan.airinganimeschedule.model.AnimeTitle
+import com.google.gson.Gson
+import name.eraxillan.airinganimeschedule.model.*
 import java.net.URL
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 object DatabaseTypeConverters {
-    /*
-    private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 
     @TypeConverter
     @JvmStatic
-    fun toOffsetDateTime(value: String?): OffsetDateTime? {
+    fun toLocalDateTime(value: String?): LocalDateTime? {
         return value?.let {
-            formatter.parse(value, OffsetDateTime::from)
+            LocalDateTime.parse(it)
         }
     }
 
     @TypeConverter
     @JvmStatic
-    fun fromOffsetDateTime(date: OffsetDateTime?): String? {
-        return date?.format(formatter)
+    fun fromLocalDateTime(date: LocalDateTime?): String? {
+        return date?.toString()
     }
-    */
 
     @TypeConverter
     @JvmStatic
@@ -84,19 +83,113 @@ object DatabaseTypeConverters {
 
     @TypeConverter
     @JvmStatic
-    fun toAnimeTitle(value: String?): AnimeTitle? {
+    fun toMediaTitleSynonymList(value: String?): List<MediaTitleSynonym>? {
         return value?.let {
-            val list = it.split(listDelimiter)
-            check(list.size == 3)
-            AnimeTitle(romaji = list[0], english = list[1], native = list[2])
+            Gson().fromJson(it, Array<MediaTitleSynonym>::class.java).toList()
         }
     }
 
     @TypeConverter
     @JvmStatic
-    fun fromAnimeTitle(title: AnimeTitle?): String? {
-        return title?.let {
-            "${it.romaji}${listDelimiter}${it.english}${listDelimiter}${it.native}"
+    fun fromMediaTitleSynonymList(synonyms: List<MediaTitleSynonym>?): String? {
+        return synonyms?.let {
+            Gson().toJson(it)
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun toMediaTagList(value: String?): List<MediaTag>? {
+        return value?.let {
+            Gson().fromJson(value, Array<MediaTag>::class.java).toList()
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromMediaTagList(tags: List<MediaTag>?): String? {
+        return tags?.let {
+            Gson().toJson(it)
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun toMediaExternalLinkList(value: String?): List<MediaExternalLink>? {
+        return value?.let {
+            Gson().fromJson(value, Array<MediaExternalLink>::class.java).toList()
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromMediaExternalLinkList(externalLinks: List<MediaExternalLink>?): String? {
+        return externalLinks?.let {
+            Gson().toJson(externalLinks)
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun toMediaStreamingEpisodeList(value: String?): List<MediaStreamingEpisode>? {
+        return value?.let {
+            Gson().fromJson(value, Array<MediaStreamingEpisode>::class.java).toList()
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromMediaStreamingEpisodeList(streamingEpisodes: List<MediaStreamingEpisode>?): String? {
+        return streamingEpisodes?.let {
+            Gson().toJson(it)
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun toMediaRankList(value: String?): List<MediaRank>? {
+        return value?.let {
+            Gson().fromJson(value, Array<MediaRank>::class.java).toList()
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromMediaRankList(ranks: List<MediaRank>?): String? {
+        return ranks?.let {
+            Gson().toJson(it)
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun toMediaGenreList(value: String?): List<MediaGenre>? {
+        return value?.let {
+            Gson().fromJson(it, Array<MediaGenre>::class.java).toList()
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromMediaGenreList(genres: List<MediaGenre>?): String? {
+        return genres?.let {
+            Gson().toJson(it)
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun toMediaStudioList(value: String?): List<MediaStudio>? {
+        return value?.let {
+            Gson().fromJson(value, Array<MediaStudio>::class.java).toList()
+        }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromMediaStudioList(studios: List<MediaStudio>?): String? {
+        return studios?.let {
+            Gson().toJson(it)
         }
     }
 

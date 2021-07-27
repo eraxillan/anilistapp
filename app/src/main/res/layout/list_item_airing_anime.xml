@@ -24,8 +24,8 @@
             name="clickListener"
             type="android.view.View.OnClickListener" />
         <variable
-            name="anime"
-            type="name.eraxillan.airinganimeschedule.model.AiringAnime" />
+            name="media"
+            type="name.eraxillan.airinganimeschedule.model.Media" />
         <variable
             name="position"
             type="String" />
@@ -44,7 +44,7 @@
             android:layout_marginTop="0dp"
             android:elevation="10dp"
             android:scaleType="fitXY"
-            app:imageFromUrl="@{anime.imageUrl}"
+            app:imageFromUrl="@{media.coverImageLarge}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -95,7 +95,7 @@
                     android:ellipsize="end"
                     android:maxLines="3"
                     android:textSize="@dimen/anime_title_size"
-                    android:text="@{anime.title.romaji}"
+                    android:text="@{media.romajiTitle}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/airing_anime_number_text"

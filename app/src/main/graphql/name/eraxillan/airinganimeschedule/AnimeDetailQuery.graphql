@@ -9,10 +9,13 @@ query AnimeDetail($id: Int, $page: Int!, $perPage: Int!) {
     }
     media(id: $id, type: ANIME, format: TV, isAdult: false) {
       id
+      idMal
+      source(version: 2)
       title {
         romaji
       }
       siteUrl
+      description(asHtml: false)
       updatedAt
       nextAiringEpisode {
         id

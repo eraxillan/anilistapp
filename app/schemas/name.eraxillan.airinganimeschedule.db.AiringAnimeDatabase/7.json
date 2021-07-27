@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 6,
-    "identityHash": "6315c9aa73f35d21d863e17c2e272433",
+    "version": 7,
+    "identityHash": "135b7c0026c9a6eb946ffbaba379b877",
     "entities": [
       {
-        "tableName": "airing_animes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`anilistId` INTEGER NOT NULL, `malId` INTEGER NOT NULL, `anilistUrl` TEXT NOT NULL, `malUrl` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, `romajiTitle` TEXT NOT NULL, `englishTitle` TEXT NOT NULL, `nativeTitle` TEXT NOT NULL, `titleSynonyms` TEXT NOT NULL, `format` TEXT NOT NULL, `status` TEXT NOT NULL, `description` TEXT NOT NULL, `startDate` TEXT, `endDate` TEXT, `startSeason` TEXT NOT NULL, `startSeasonYear` INTEGER NOT NULL, `episodeCount` INTEGER NOT NULL, `episodeDuration` INTEGER NOT NULL, `nextEpisodeAiringAt` TEXT, `nextEpisodeTimeUntilAiring` INTEGER NOT NULL, `nextEpisodeNo` INTEGER NOT NULL, `countryOfOrigin` TEXT NOT NULL, `isLicensed` INTEGER NOT NULL, `source` TEXT NOT NULL, `hashtag` TEXT NOT NULL, `trailerSite` TEXT NOT NULL, `trailerThumbnail` TEXT NOT NULL, `coverImageExtraLarge` TEXT NOT NULL, `coverImageLarge` TEXT NOT NULL, `coverImageMedium` TEXT NOT NULL, `coverImageColor` TEXT NOT NULL, `bannerImage` TEXT NOT NULL, `genres` TEXT NOT NULL, `averageScore` INTEGER NOT NULL, `meanScore` INTEGER NOT NULL, `popularity` INTEGER NOT NULL, `favorites` INTEGER NOT NULL, `trending` INTEGER NOT NULL, `tags` TEXT NOT NULL, `isFavorite` INTEGER NOT NULL, `externalLinks` TEXT NOT NULL, `streamingEpisodes` TEXT NOT NULL, `rankings` TEXT NOT NULL, `season` INTEGER NOT NULL, `minAge` INTEGER NOT NULL, PRIMARY KEY(`anilistId`))",
+        "tableName": "media_collection",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`anilistId` INTEGER NOT NULL, `malId` INTEGER NOT NULL, `anilistUrl` TEXT NOT NULL, `malUrl` TEXT NOT NULL, `updatedAt` TEXT, `romajiTitle` TEXT NOT NULL, `englishTitle` TEXT NOT NULL, `nativeTitle` TEXT NOT NULL, `titleSynonyms` TEXT NOT NULL, `format` TEXT NOT NULL, `status` TEXT NOT NULL, `description` TEXT NOT NULL, `startDate` TEXT, `endDate` TEXT, `startSeason` TEXT NOT NULL, `startSeasonYear` INTEGER NOT NULL, `episodeCount` INTEGER NOT NULL, `episodeDuration` INTEGER NOT NULL, `nextEpisodeAiringAt` TEXT, `nextEpisodeTimeUntilAiring` TEXT, `nextEpisodeNo` INTEGER NOT NULL, `countryOfOrigin` TEXT NOT NULL, `isLicensed` INTEGER NOT NULL, `source` TEXT NOT NULL, `hashtag` TEXT NOT NULL, `trailerSite` TEXT NOT NULL, `trailerThumbnail` TEXT NOT NULL, `coverImageExtraLarge` TEXT NOT NULL, `coverImageLarge` TEXT NOT NULL, `coverImageMedium` TEXT NOT NULL, `coverImageColor` TEXT NOT NULL, `bannerImage` TEXT NOT NULL, `genres` TEXT NOT NULL, `averageScore` INTEGER NOT NULL, `meanScore` INTEGER NOT NULL, `popularity` INTEGER NOT NULL, `favorites` INTEGER NOT NULL, `trending` INTEGER NOT NULL, `tags` TEXT NOT NULL, `studios` TEXT NOT NULL, `externalLinks` TEXT NOT NULL, `streamingEpisodes` TEXT NOT NULL, `rankings` TEXT NOT NULL, `season` INTEGER NOT NULL, `minAge` INTEGER NOT NULL, PRIMARY KEY(`anilistId`))",
         "fields": [
           {
             "fieldPath": "anilistId",
@@ -35,8 +35,8 @@
           {
             "fieldPath": "updatedAt",
             "columnName": "updatedAt",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "romajiTitle",
@@ -125,8 +125,8 @@
           {
             "fieldPath": "nextEpisodeTimeUntilAiring",
             "columnName": "nextEpisodeTimeUntilAiring",
-            "affinity": "INTEGER",
-            "notNull": true
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "nextEpisodeNo",
@@ -243,9 +243,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "isFavorite",
-            "columnName": "isFavorite",
-            "affinity": "INTEGER",
+            "fieldPath": "studios",
+            "columnName": "studios",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -289,7 +289,7 @@
         "foreignKeys": []
       },
       {
-        "tableName": "favorite_animes",
+        "tableName": "favorite_media_collection",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`anilistId` INTEGER NOT NULL, PRIMARY KEY(`anilistId`))",
         "fields": [
           {
@@ -344,7 +344,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6315c9aa73f35d21d863e17c2e272433')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '135b7c0026c9a6eb946ffbaba379b877')"
     ]
   }
 }

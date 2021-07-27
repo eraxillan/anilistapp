@@ -17,34 +17,23 @@
 package name.eraxillan.airinganimeschedule.db
 
 import android.util.Log
-import androidx.core.text.isDigitsOnly
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.apollographql.apollo.api.ApolloExperimental
-import com.apollographql.apollo.api.Response
-import com.apollographql.apollo.http.OkHttpExecutionContext
-import kotlinx.coroutines.delay
-import name.eraxillan.airinganimeschedule.AiringAnimeQuery
-import name.eraxillan.airinganimeschedule.AnimeRelationsQuery
 import name.eraxillan.airinganimeschedule.api.AnilistApi
-import name.eraxillan.airinganimeschedule.model.AiringAnime
-import name.eraxillan.airinganimeschedule.type.MediaRelation
-import name.eraxillan.airinganimeschedule.type.MediaStatus
-import name.eraxillan.airinganimeschedule.type.MediaType
+import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.utilities.NETWORK_PAGE_SIZE
-import java.lang.NumberFormatException
 
 private const val ANILIST_STARTING_PAGE_INDEX = 1
 
 class AnilistPagingSource(
     private val service: AnilistApi
-) : PagingSource<Int, AiringAnime>() {
+) : PagingSource<Int, Media>() {
 
     companion object {
         private const val LOG_TAG = "54BE6C87_APS" // APS = AnilistPagingSource
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, AiringAnime> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Media> {
         // Start refresh at first page if undefined
         val page = params.key ?: ANILIST_STARTING_PAGE_INDEX
 
@@ -86,7 +75,7 @@ class AnilistPagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, AiringAnime>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, Media>): Int? {
         // Try to find the page key of the closest page to anchorPosition, from
         // either the prevKey or the nextKey, but you need to handle nullability
         // here:

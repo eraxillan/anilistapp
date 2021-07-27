@@ -16,12 +16,10 @@
 
 package name.eraxillan.airinganimeschedule.db
 
-import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import name.eraxillan.airinganimeschedule.model.AiringAnime
-import name.eraxillan.airinganimeschedule.model.FavoriteAnime
+import name.eraxillan.airinganimeschedule.model.Media
 
 /**
  * Airing anime database CRUD: create-read-update-delete
@@ -37,12 +35,12 @@ import name.eraxillan.airinganimeschedule.model.FavoriteAnime
  */
 @Dao
 interface AiringAnimeDao {
-    @Query("SELECT * FROM airing_animes ORDER BY popularity DESC, title ASC")
-    fun getAiringAnimeListPages(): PagingSource<Int, AiringAnime>
+    @Query("SELECT * FROM media_collection ORDER BY popularity DESC, romajiTitle ASC")
+    fun getAiringAnimeListPages(): PagingSource<Int, Media>
 
     @Insert(onConflict = REPLACE)
-    suspend fun insertAllAnime(animeList: List<AiringAnime>)
+    suspend fun insertAllAnime(animeList: List<Media>)
 
-    @Query("DELETE FROM airing_animes")
+    @Query("DELETE FROM media_collection")
     suspend fun deleteAllAnime()
 }

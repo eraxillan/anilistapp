@@ -25,8 +25,8 @@ import name.eraxillan.airinganimeschedule.api.AnilistApi
 import name.eraxillan.airinganimeschedule.db.AiringAnimeDao
 import name.eraxillan.airinganimeschedule.db.AiringAnimeDatabase
 import name.eraxillan.airinganimeschedule.db.FavoriteAnimeDao
-import name.eraxillan.airinganimeschedule.model.AiringAnime
-import name.eraxillan.airinganimeschedule.model.FavoriteAnime
+import name.eraxillan.airinganimeschedule.model.Media
+import name.eraxillan.airinganimeschedule.model.FavoriteMedia
 import name.eraxillan.airinganimeschedule.utilities.NETWORK_PAGE_SIZE
 
 /**
@@ -43,17 +43,17 @@ class AiringAnimeRepo(context: Context) {
     private val backend: AnilistApi = AnilistApi.create(AnilistApi.createClient())
 
     // Favorite anime list local database API
-    suspend fun addAnimeToFavorite(anime: AiringAnime): Long {
-        return favoriteDao.addAnimeToFavorite(FavoriteAnime(anilistId = anime.anilistId))
+    suspend fun addAnimeToFavorite(anime: Media): Long {
+        return favoriteDao.addAnimeToFavorite(FavoriteMedia(anilistId = anime.anilistId))
     }
 
-    suspend fun deleteFavoriteAnime(anime: AiringAnime) {
-        favoriteDao.deleteFavoriteAnime(FavoriteAnime(anilistId = anime.anilistId))
+    suspend fun deleteFavoriteAnime(anime: Media) {
+        favoriteDao.deleteFavoriteAnime(FavoriteMedia(anilistId = anime.anilistId))
     }
 
     fun isAnimeAddedToFavorite(anilistId: Long) = favoriteDao.isAnimeAddedToFavorite(anilistId)
 
-    val favoriteAnimeList: LiveData<List<AiringAnime>>
+    val favoriteAnimeList: LiveData<List<Media>>
         get() {
             return favoriteDao.getFavoriteAnimeList()
         }
@@ -64,7 +64,7 @@ class AiringAnimeRepo(context: Context) {
      * Get currently airing anime list, exposed as a stream of data that will emit
      * every time we get more data from the network
      */
-    fun getAiringAnimeListStream(): Flow<PagingData<AiringAnime>> {
+    fun getAiringAnimeListStream(): Flow<PagingData<Media>> {
         Log.d(LOG_TAG, "Query currently airing anime list from backend...")
 
         val animePagingSourceFactory = { airingDao.getAiringAnimeListPages() }

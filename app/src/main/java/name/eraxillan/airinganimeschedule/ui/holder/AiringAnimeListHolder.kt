@@ -19,7 +19,7 @@ package name.eraxillan.airinganimeschedule.ui.holder
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeBinding
-import name.eraxillan.airinganimeschedule.model.AiringAnime
+import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.ui.showAiringAnimeInfo
 
 class AiringAnimeListHolder(
@@ -32,16 +32,16 @@ class AiringAnimeListHolder(
 
     init {
         binding.setClickListener { view ->
-            binding.anime?.let { anime ->
+            binding.media?.let { anime ->
                 showAiringAnimeInfo(anime, view.findNavController())
             }
         }
     }
 
-    fun bind(position: Int, anime: AiringAnime) {
+    fun bind(position: Int, media: Media) {
         binding.apply {
             setPosition((position + 1).toString())
-            setAnime(anime)
+            setMedia(media)
             executePendingBindings()
         }
     }

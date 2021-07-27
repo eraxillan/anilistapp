@@ -18,11 +18,11 @@ package name.eraxillan.airinganimeschedule.ui
 
 import androidx.navigation.NavController
 import name.eraxillan.airinganimeschedule.NavGraphDirections
-import name.eraxillan.airinganimeschedule.model.AiringAnime
+import name.eraxillan.airinganimeschedule.model.Media
 
-fun showAiringAnimeInfo(anime: AiringAnime, navController: NavController) {
+fun showAiringAnimeInfo(anime: Media, navController: NavController) {
     val directions = NavGraphDirections.actionAiringAnimeDetails(
-        anime, anime.title.romaji
+        anime, anime.romajiTitle
     )
     navController.navigate(directions)
 }

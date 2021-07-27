@@ -40,7 +40,7 @@
         tools:layout="@layout/fragment_anime_detail" >
         <argument
             android:name="anime"
-            app:argType="name.eraxillan.airinganimeschedule.model.AiringAnime"
+            app:argType="name.eraxillan.airinganimeschedule.model.Media"
             app:nullable="true"
             android:defaultValue="@null" />
         <argument
