@@ -28,14 +28,13 @@ import name.eraxillan.airinganimeschedule.utilities.ANIME_DATA_FILENAME
 import name.eraxillan.airinganimeschedule.utilities.airingAnimeListFromJson
 
 
-class AiringAnimeDatabaseWorker(
+class MediaDatabaseWorker(
     context: Context,
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result = coroutineScope {
         // NOTE: see https://developer.android.com/topic/libraries/architecture/workmanager/advanced/coroutineworker
         withContext(Dispatchers.IO) {
-
             val result = kotlin.runCatching {
                 applicationContext.assets.open(ANIME_DATA_FILENAME).use { inputStream ->
                     val animeList = airingAnimeListFromJson(inputStream.reader())
