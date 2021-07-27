@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.collectLatest
 import name.eraxillan.airinganimeschedule.R
 import name.eraxillan.airinganimeschedule.ui.adapter.MediaListAdapter
 import name.eraxillan.airinganimeschedule.databinding.FragmentAiringAnimeListBinding
-import name.eraxillan.airinganimeschedule.ui.adapter.AnimeListLoadStateAdapter
+import name.eraxillan.airinganimeschedule.ui.adapter.MediaListLoadStateAdapter
 import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
 
 
@@ -142,12 +142,12 @@ class AiringAnimeListFragment : Fragment() {
         // Add dividers between RecyclerView's row items
         val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
 
-        val header = AnimeListLoadStateAdapter(listAdapter)
+        val header = MediaListLoadStateAdapter(listAdapter)
 
         with (binding.list) {
             this.adapter = listAdapter.withLoadStateHeaderAndFooter(
                 header = header,
-                footer = AnimeListLoadStateAdapter(listAdapter)
+                footer = MediaListLoadStateAdapter(listAdapter)
             )
             this.addItemDecoration(decoration)
         }

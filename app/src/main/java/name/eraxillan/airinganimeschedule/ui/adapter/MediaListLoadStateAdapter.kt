@@ -22,7 +22,7 @@ import androidx.paging.LoadStateAdapter
 import name.eraxillan.airinganimeschedule.ui.holder.NetworkStateItemViewHolder
 
 
-class AnimeListLoadStateAdapter(
+class MediaListLoadStateAdapter(
     private val adapter: MediaListAdapter
 ) : LoadStateAdapter<NetworkStateItemViewHolder>() {
 
