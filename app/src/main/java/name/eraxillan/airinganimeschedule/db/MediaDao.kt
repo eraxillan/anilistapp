@@ -22,25 +22,26 @@ import androidx.room.OnConflictStrategy.REPLACE
 import name.eraxillan.airinganimeschedule.model.Media
 
 /**
- * Airing anime database CRUD: create-read-update-delete
+ * Media database CRUD: create-read-update-delete
+ * NOTE: currently only airing anime stored
  *
- * LiveData objects can be observed by another object.
- * LiveData notifies any observers when the data changes.
+ * `LiveData` objects can be observed by another object.
+ * `LiveData` notifies any observers when the data changes.
  * This provides a great way to keep user interface elements up
  * to date when items change in the database.
- * LiveData objects do their work in a background thread. By default, Room won’t
- * allow you to make calls to DAO methods on the main thread. By returning LiveData
+ * `LiveData` objects do their work in a background thread. By default, Room won’t
+ * allow you to make calls to DAO methods on the main thread. By returning `LiveData`
  * objects, your method becomes an asynchronous query, and there is no restriction to
- * calling it from the main thread.
+ * calling it from the main thread
  */
 @Dao
-interface AiringAnimeDao {
+interface MediaDao {
     @Query("SELECT * FROM media_collection ORDER BY popularity DESC, romajiTitle ASC")
-    fun getAiringAnimeListPages(): PagingSource<Int, Media>
+    fun getMediaListPages(): PagingSource<Int, Media>
 
     @Insert(onConflict = REPLACE)
-    suspend fun insertAllAnime(animeList: List<Media>)
+    suspend fun insertMediaList(mediaList: List<Media>)
 
     @Query("DELETE FROM media_collection")
-    suspend fun deleteAllAnime()
+    suspend fun deleteAllMedia()
 }

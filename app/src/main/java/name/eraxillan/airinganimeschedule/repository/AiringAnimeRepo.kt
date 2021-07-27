@@ -22,7 +22,7 @@ import androidx.lifecycle.LiveData
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import name.eraxillan.airinganimeschedule.api.AnilistApi
-import name.eraxillan.airinganimeschedule.db.AiringAnimeDao
+import name.eraxillan.airinganimeschedule.db.MediaDao
 import name.eraxillan.airinganimeschedule.db.AiringAnimeDatabase
 import name.eraxillan.airinganimeschedule.db.FavoriteAnimeDao
 import name.eraxillan.airinganimeschedule.model.Media
@@ -38,7 +38,7 @@ class AiringAnimeRepo(context: Context) {
     }
 
     private var database = AiringAnimeDatabase.getInstance(context)
-    private var airingDao: AiringAnimeDao = database.airingDao()
+    private var airingDao: MediaDao = database.airingDao()
     private var favoriteDao: FavoriteAnimeDao = database.favoriteDao()
     private val backend: AnilistApi = AnilistApi.create(AnilistApi.createClient())
 
@@ -67,7 +67,7 @@ class AiringAnimeRepo(context: Context) {
     fun getAiringAnimeListStream(): Flow<PagingData<Media>> {
         Log.d(LOG_TAG, "Query currently airing anime list from backend...")
 
-        val animePagingSourceFactory = { airingDao.getAiringAnimeListPages() }
+        val animePagingSourceFactory = { airingDao.getMediaListPages() }
 
         @OptIn(ExperimentalPagingApi::class)
         return Pager(

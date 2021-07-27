@@ -37,7 +37,7 @@ import name.eraxillan.airinganimeschedule.utilities.DATABASE_NAME
 @TypeConverters(DatabaseTypeConverters::class)
 abstract class AiringAnimeDatabase : RoomDatabase() {
 
-    abstract fun airingDao(): AiringAnimeDao
+    abstract fun airingDao(): MediaDao
     abstract fun favoriteDao(): FavoriteAnimeDao
     abstract fun remoteKeysDao(): RemoteKeysDao
 

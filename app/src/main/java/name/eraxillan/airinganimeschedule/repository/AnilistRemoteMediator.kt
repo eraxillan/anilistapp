@@ -144,7 +144,7 @@ class AnilistRemoteMediator(
                 // Clear all tables in the database
                 if (loadType == REFRESH) {
                     database.remoteKeysDao().clearRemoteKeys()
-                    database.airingDao().deleteAllAnime()
+                    database.airingDao().deleteAllMedia()
                     Log.d(LOG_TAG, "Cache database cleared!")
                 }
 
@@ -161,7 +161,7 @@ class AnilistRemoteMediator(
                     RemoteKeys(anilistId = it.anilistId, prevKey = prevKey, nextKey = nextKey)
                 }
                 database.remoteKeysDao().insertAll(keys)
-                database.airingDao().insertAllAnime(animeList)
+                database.airingDao().insertMediaList(animeList)
                 Log.d(
                     LOG_TAG,
                     "Cache updated: ${keys.size} keys and ${animeList.size} records added"
