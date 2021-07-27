@@ -20,12 +20,12 @@ import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeDetailBinding
 
-class AiringAnimeDetailHolder(
+class MediaDetailHolder(
     private val binding: ListItemAiringAnimeDetailBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
     companion object {
-        private const val LOG_TAG = "54BE6C87_AADH" // AADH = AiringAnimeDetailHolder
+        private const val LOG_TAG = "54BE6C87_AADH" // AADH = MediaDetailHolder
     }
 
     fun bind(text: String, textColor: Int) {

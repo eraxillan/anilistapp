@@ -22,9 +22,9 @@ import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeDetailBinding
 import name.eraxillan.airinganimeschedule.model.Media
-import name.eraxillan.airinganimeschedule.ui.holder.AiringAnimeDetailHolder
+import name.eraxillan.airinganimeschedule.ui.holder.MediaDetailHolder
 
-class MediaDetailAdapter(var media: Media) : RecyclerView.Adapter<AiringAnimeDetailHolder>() {
+class MediaDetailAdapter(var media: Media) : RecyclerView.Adapter<MediaDetailHolder>() {
 
     companion object {
         private const val LOG_TAG = "54BE6C87_AADA" // AADA = AiringAnimeDetailAdapter
@@ -32,15 +32,15 @@ class MediaDetailAdapter(var media: Media) : RecyclerView.Adapter<AiringAnimeDet
     }
 
     // Create a `View` from the `Layout`
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AiringAnimeDetailHolder {
-        return AiringAnimeDetailHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaDetailHolder {
+        return MediaDetailHolder(
             ListItemAiringAnimeDetailBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )
     }
 
-    override fun onBindViewHolder(holder: AiringAnimeDetailHolder, position: Int) {
+    override fun onBindViewHolder(holder: MediaDetailHolder, position: Int) {
         val PLACEHOLDER_STRING = "?"
 
         val format = media.format.toString()
