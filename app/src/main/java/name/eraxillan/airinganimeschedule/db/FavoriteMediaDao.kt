@@ -6,16 +6,16 @@ import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.model.FavoriteMedia
 
 @Dao
-interface FavoriteAnimeDao {
+interface FavoriteMediaDao {
     @Query("SELECT * FROM media_collection WHERE anilistId IN (SELECT anilistId FROM favorite_media_collection)")
-    fun getFavoriteAnimeList(): LiveData<List<Media>>
+    fun getFavoriteMediaList(): LiveData<List<Media>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addAnimeToFavorite(fav: FavoriteMedia): Long
+    suspend fun addMediaToFavorite(media: FavoriteMedia): Long
 
     @Delete
-    suspend fun deleteFavoriteAnime(fav: FavoriteMedia)
+    suspend fun deleteFavoriteMedia(media: FavoriteMedia)
 
     @Query("SELECT EXISTS(SELECT 1 FROM favorite_media_collection WHERE anilistId = :anilistId LIMIT 1)")
-    fun isAnimeAddedToFavorite(anilistId: Long): LiveData<Boolean>
+    fun isMediaAddedToFavorite(anilistId: Long): LiveData<Boolean>
 }

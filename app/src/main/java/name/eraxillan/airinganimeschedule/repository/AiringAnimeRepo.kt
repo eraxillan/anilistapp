@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.Flow
 import name.eraxillan.airinganimeschedule.api.AnilistApi
 import name.eraxillan.airinganimeschedule.db.MediaDao
 import name.eraxillan.airinganimeschedule.db.MediaDatabase
-import name.eraxillan.airinganimeschedule.db.FavoriteAnimeDao
+import name.eraxillan.airinganimeschedule.db.FavoriteMediaDao
 import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.model.FavoriteMedia
 import name.eraxillan.airinganimeschedule.utilities.NETWORK_PAGE_SIZE
@@ -39,23 +39,23 @@ class AiringAnimeRepo(context: Context) {
 
     private var database = MediaDatabase.getInstance(context)
     private var airingDao: MediaDao = database.mediaDao()
-    private var favoriteDao: FavoriteAnimeDao = database.favoriteDao()
+    private var favoriteDao: FavoriteMediaDao = database.favoriteDao()
     private val backend: AnilistApi = AnilistApi.create(AnilistApi.createClient())
 
     // Favorite anime list local database API
     suspend fun addAnimeToFavorite(anime: Media): Long {
-        return favoriteDao.addAnimeToFavorite(FavoriteMedia(anilistId = anime.anilistId))
+        return favoriteDao.addMediaToFavorite(FavoriteMedia(anilistId = anime.anilistId))
     }
 
     suspend fun deleteFavoriteAnime(anime: Media) {
-        favoriteDao.deleteFavoriteAnime(FavoriteMedia(anilistId = anime.anilistId))
+        favoriteDao.deleteFavoriteMedia(FavoriteMedia(anilistId = anime.anilistId))
     }
 
-    fun isAnimeAddedToFavorite(anilistId: Long) = favoriteDao.isAnimeAddedToFavorite(anilistId)
+    fun isAnimeAddedToFavorite(anilistId: Long) = favoriteDao.isMediaAddedToFavorite(anilistId)
 
     val favoriteAnimeList: LiveData<List<Media>>
         get() {
-            return favoriteDao.getFavoriteAnimeList()
+            return favoriteDao.getFavoriteMediaList()
         }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

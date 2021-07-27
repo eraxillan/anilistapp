@@ -38,7 +38,7 @@ import name.eraxillan.airinganimeschedule.utilities.DATABASE_NAME
 abstract class MediaDatabase : RoomDatabase() {
 
     abstract fun mediaDao(): MediaDao
-    abstract fun favoriteDao(): FavoriteAnimeDao
+    abstract fun favoriteDao(): FavoriteMediaDao
     abstract fun remoteKeysDao(): RemoteKeysDao
 
     // Singleton object
