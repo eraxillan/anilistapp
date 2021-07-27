@@ -23,7 +23,7 @@ import androidx.work.WorkerParameters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import name.eraxillan.airinganimeschedule.db.AiringAnimeDatabase
+import name.eraxillan.airinganimeschedule.db.MediaDatabase
 import name.eraxillan.airinganimeschedule.utilities.ANIME_DATA_FILENAME
 import name.eraxillan.airinganimeschedule.utilities.airingAnimeListFromJson
 
@@ -41,8 +41,8 @@ class AiringAnimeDatabaseWorker(
                     val animeList = airingAnimeListFromJson(inputStream.reader())
                     Log.e(LOG_TAG, "Mock airing anime list loaded: ${animeList.size}")
 
-                    val database = AiringAnimeDatabase.getInstance(applicationContext)
-                    database.airingDao().insertMediaList(animeList)
+                    val database = MediaDatabase.getInstance(applicationContext)
+                    database.mediaDao().insertMediaList(animeList)
                     Result.success()
                 }
             }.onFailure {

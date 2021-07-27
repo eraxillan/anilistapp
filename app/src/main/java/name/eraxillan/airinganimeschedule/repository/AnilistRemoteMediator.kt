@@ -24,7 +24,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import name.eraxillan.airinganimeschedule.api.AnilistApi
-import name.eraxillan.airinganimeschedule.db.AiringAnimeDatabase
+import name.eraxillan.airinganimeschedule.db.MediaDatabase
 import name.eraxillan.airinganimeschedule.db.RemoteKeys
 import name.eraxillan.airinganimeschedule.db.mediumToAiringAnime
 import name.eraxillan.airinganimeschedule.model.Media
@@ -40,7 +40,7 @@ private const val ANILIST_STARTING_PAGE_INDEX = 1
 
 @ExperimentalPagingApi
 class AnilistRemoteMediator(
-    private val database: AiringAnimeDatabase,
+    private val database: MediaDatabase,
     private val backend: AnilistApi
 ) : RemoteMediator<Int, Media>() {
 
@@ -144,7 +144,7 @@ class AnilistRemoteMediator(
                 // Clear all tables in the database
                 if (loadType == REFRESH) {
                     database.remoteKeysDao().clearRemoteKeys()
-                    database.airingDao().deleteAllMedia()
+                    database.mediaDao().deleteAllMedia()
                     Log.d(LOG_TAG, "Cache database cleared!")
                 }
 
@@ -161,7 +161,7 @@ class AnilistRemoteMediator(
                     RemoteKeys(anilistId = it.anilistId, prevKey = prevKey, nextKey = nextKey)
                 }
                 database.remoteKeysDao().insertAll(keys)
-                database.airingDao().insertMediaList(animeList)
+                database.mediaDao().insertMediaList(animeList)
                 Log.d(
                     LOG_TAG,
                     "Cache updated: ${keys.size} keys and ${animeList.size} records added"

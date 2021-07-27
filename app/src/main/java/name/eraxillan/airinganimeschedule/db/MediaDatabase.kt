@@ -35,18 +35,18 @@ import name.eraxillan.airinganimeschedule.utilities.DATABASE_NAME
     //exportSchema = false
 )
 @TypeConverters(DatabaseTypeConverters::class)
-abstract class AiringAnimeDatabase : RoomDatabase() {
+abstract class MediaDatabase : RoomDatabase() {
 
-    abstract fun airingDao(): MediaDao
+    abstract fun mediaDao(): MediaDao
     abstract fun favoriteDao(): FavoriteAnimeDao
     abstract fun remoteKeysDao(): RemoteKeysDao
 
     // Singleton object
     companion object {
         @Volatile
-        private var instance: AiringAnimeDatabase? = null
+        private var instance: MediaDatabase? = null
 
-        fun getInstance(context: Context): AiringAnimeDatabase {
+        fun getInstance(context: Context): MediaDatabase {
             return instance ?: synchronized(this) {
                 instance ?: buildDatabase(context).also { instance = it }
             }
@@ -54,10 +54,10 @@ abstract class AiringAnimeDatabase : RoomDatabase() {
 
         // Create and pre-populate the database. See this article for more details:
         // https://medium.com/google-developers/7-pro-tips-for-room-fbadea4bfbd1#4785
-        private fun buildDatabase(context: Context): AiringAnimeDatabase {
+        private fun buildDatabase(context: Context): MediaDatabase {
             return Room.databaseBuilder(
                 context.applicationContext,
-                AiringAnimeDatabase::class.java,
+                MediaDatabase::class.java,
                 DATABASE_NAME
             ).addCallback(
                 object : RoomDatabase.Callback() {

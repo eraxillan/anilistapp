@@ -23,7 +23,7 @@ import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import name.eraxillan.airinganimeschedule.api.AnilistApi
 import name.eraxillan.airinganimeschedule.db.MediaDao
-import name.eraxillan.airinganimeschedule.db.AiringAnimeDatabase
+import name.eraxillan.airinganimeschedule.db.MediaDatabase
 import name.eraxillan.airinganimeschedule.db.FavoriteAnimeDao
 import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.model.FavoriteMedia
@@ -37,8 +37,8 @@ class AiringAnimeRepo(context: Context) {
         private const val LOG_TAG = "54BE6C87_Repository"
     }
 
-    private var database = AiringAnimeDatabase.getInstance(context)
-    private var airingDao: MediaDao = database.airingDao()
+    private var database = MediaDatabase.getInstance(context)
+    private var airingDao: MediaDao = database.mediaDao()
     private var favoriteDao: FavoriteAnimeDao = database.favoriteDao()
     private val backend: AnilistApi = AnilistApi.create(AnilistApi.createClient())
 
