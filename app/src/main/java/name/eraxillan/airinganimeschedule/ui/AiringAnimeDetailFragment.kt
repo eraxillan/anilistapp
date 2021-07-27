@@ -25,7 +25,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import name.eraxillan.airinganimeschedule.ui.adapter.AiringAnimeDetailAdapter
+import name.eraxillan.airinganimeschedule.ui.adapter.MediaDetailAdapter
 import name.eraxillan.airinganimeschedule.databinding.FragmentAnimeDetailBinding
 import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
 
@@ -68,7 +68,7 @@ class AiringAnimeDetailFragment : Fragment() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun setupRecyclerView() {
-        val adapter = AiringAnimeDetailAdapter(args.anime!!)
+        val adapter = MediaDetailAdapter(args.anime!!)
 
         binding.animeFieldList.adapter = adapter
     }

@@ -22,13 +22,9 @@ import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeDetailBinding
 import name.eraxillan.airinganimeschedule.model.Media
-import name.eraxillan.airinganimeschedule.model.MediaStatus
 import name.eraxillan.airinganimeschedule.ui.holder.AiringAnimeDetailHolder
 
-class AiringAnimeDetailAdapter(
-    var anime: Media
-)
-    : RecyclerView.Adapter<AiringAnimeDetailHolder>() {
+class MediaDetailAdapter(var media: Media) : RecyclerView.Adapter<AiringAnimeDetailHolder>() {
 
     companion object {
         private const val LOG_TAG = "54BE6C87_AADA" // AADA = AiringAnimeDetailAdapter
@@ -47,42 +43,42 @@ class AiringAnimeDetailAdapter(
     override fun onBindViewHolder(holder: AiringAnimeDetailHolder, position: Int) {
         val PLACEHOLDER_STRING = "?"
 
-        val format = anime.format.toString()
-        val episodes = if (anime.episodeCount != -1) anime.episodeCount.toString() else PLACEHOLDER_STRING
-        val episodeDuration = if (anime.episodeDuration != -1) anime.episodeDuration.toString() else PLACEHOLDER_STRING
-        val status = anime.status.toString()
-        val startDate = anime.startDate?.toString() ?: PLACEHOLDER_STRING
-        val startSeason = anime.startSeason.toString()
-        val startSeasonYear = if (anime.startSeasonYear != -1) anime.startSeasonYear.toString() else PLACEHOLDER_STRING
-        val averageScore = if (anime.averageScore != -1) anime.averageScore.toString() else PLACEHOLDER_STRING
-        val meanScore = if (anime.meanScore != -1) anime.meanScore.toString() else PLACEHOLDER_STRING
-        val popularity = if (anime.popularity != -1) anime.popularity.toString() else PLACEHOLDER_STRING
-        val favorites = if (anime.favorites != -1) anime.favorites.toString() else PLACEHOLDER_STRING
-        val studios = anime.studios.filter { studio -> studio.isAnimationStudio }.joinToString(", ") { studio -> studio.name }
-        val producers = anime.studios.filter { studio -> !studio.isAnimationStudio }.joinToString(", ") { producer -> producer.name }
-        val source = anime.source.toString()
-        val hashtag = if (anime.hashtag.isNotEmpty()) anime.hashtag else PLACEHOLDER_STRING
-        val genres = anime.genres.filter { true }.joinToString(", ") { genre -> genre.genre }
-        val romajiTitle = if (anime.romajiTitle.isNotEmpty()) anime.romajiTitle else PLACEHOLDER_STRING
-        val englishTitle = if (anime.englishTitle.isNotEmpty()) anime.englishTitle else PLACEHOLDER_STRING
-        val nativeTitle = if (anime.nativeTitle.isNotEmpty()) anime.nativeTitle else PLACEHOLDER_STRING
-        val synonyms = anime.titleSynonyms.joinToString(", ") { synonym -> synonym.title }
+        val format = media.format.toString()
+        val episodes = if (media.episodeCount != -1) media.episodeCount.toString() else PLACEHOLDER_STRING
+        val episodeDuration = if (media.episodeDuration != -1) media.episodeDuration.toString() else PLACEHOLDER_STRING
+        val status = media.status.toString()
+        val startDate = media.startDate?.toString() ?: PLACEHOLDER_STRING
+        val startSeason = media.startSeason.toString()
+        val startSeasonYear = if (media.startSeasonYear != -1) media.startSeasonYear.toString() else PLACEHOLDER_STRING
+        val averageScore = if (media.averageScore != -1) media.averageScore.toString() else PLACEHOLDER_STRING
+        val meanScore = if (media.meanScore != -1) media.meanScore.toString() else PLACEHOLDER_STRING
+        val popularity = if (media.popularity != -1) media.popularity.toString() else PLACEHOLDER_STRING
+        val favorites = if (media.favorites != -1) media.favorites.toString() else PLACEHOLDER_STRING
+        val studios = media.studios.filter { studio -> studio.isAnimationStudio }.joinToString(", ") { studio -> studio.name }
+        val producers = media.studios.filter { studio -> !studio.isAnimationStudio }.joinToString(", ") { producer -> producer.name }
+        val source = media.source.toString()
+        val hashtag = if (media.hashtag.isNotEmpty()) media.hashtag else PLACEHOLDER_STRING
+        val genres = media.genres.filter { true }.joinToString(", ") { genre -> genre.genre }
+        val romajiTitle = if (media.romajiTitle.isNotEmpty()) media.romajiTitle else PLACEHOLDER_STRING
+        val englishTitle = if (media.englishTitle.isNotEmpty()) media.englishTitle else PLACEHOLDER_STRING
+        val nativeTitle = if (media.nativeTitle.isNotEmpty()) media.nativeTitle else PLACEHOLDER_STRING
+        val synonyms = media.titleSynonyms.joinToString(", ") { synonym -> synonym.title }
 
         // Airing anime specific fields
-        val nextEpisodeNo = if (anime.nextEpisodeNo != -1) anime.nextEpisodeNo.toString() else PLACEHOLDER_STRING
-        val nextEpisodeDate = if (anime.nextEpisodeAiringAt != null) anime.nextEpisodeAiringAt!!.getDisplayString() else PLACEHOLDER_STRING
+        val nextEpisodeNo = if (media.nextEpisodeNo != -1) media.nextEpisodeNo.toString() else PLACEHOLDER_STRING
+        val nextEpisodeDate = if (media.nextEpisodeAiringAt != null) media.nextEpisodeAiringAt!!.getDisplayString() else PLACEHOLDER_STRING
         // TODO: add remaining time too
 
         // Our custom fields not present on Anilist
-        val season = if (anime.season != -1) anime.season.toString() else PLACEHOLDER_STRING
-        val minAge = if (anime.minAge != -1) anime.minAge.toString() else PLACEHOLDER_STRING
+        val season = if (media.season != -1) media.season.toString() else PLACEHOLDER_STRING
+        val minAge = if (media.minAge != -1) media.minAge.toString() else PLACEHOLDER_STRING
 
-        val imageColor = if (anime.coverImageColor.isNotEmpty()) anime.coverImageColor else "#000000"
+        val imageColor = if (media.coverImageColor.isNotEmpty()) media.coverImageColor else "#000000"
 
         // TODO: extract these strings to resources
         val text = when (position) {
             // NOTE: currently only airing anime requested from Anilist;
-            // else we need to hide airing-specific data fields
+            // else we need to hide airing-specific data fields for non-airing media
             0 -> "Airing\nEpisode $nextEpisodeNo: $nextEpisodeDate"
             1 -> "Format: $format"
             2 -> "Episodes: $episodes"
