@@ -27,7 +27,7 @@ import androidx.paging.cachedIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import name.eraxillan.airinganimeschedule.model.Media
-import name.eraxillan.airinganimeschedule.repository.AiringAnimeRepo
+import name.eraxillan.airinganimeschedule.repository.MediaRepo
 
 
 class AiringAnimeViewModel(application: Application): AndroidViewModel(application) {
@@ -36,14 +36,14 @@ class AiringAnimeViewModel(application: Application): AndroidViewModel(applicati
         private const val LOG_TAG = "54BE6C87_AAVM" // AAVM = AiringAnimeViewModel
     }
 
-    private var repository: AiringAnimeRepo = AiringAnimeRepo(getApplication())
+    private var repository: MediaRepo = MediaRepo(getApplication())
     private var favoriteAnimeList: LiveData<List<Media>>? = null
     private var mediaList: Flow<PagingData<Media>>? = null
 
     fun addAnimeToFavorite(anime: Media, navController: NavController) {
         /*val job =*/ viewModelScope.launch {
             // Save airing anime to database
-            val newId = repository.addAnimeToFavorite(anime)
+            val newId = repository.addMediaToFavorite(anime)
             Log.i(LOG_TAG, "New anime with id=$newId added to the SQLite database")
 
             // TODO: open `Favorites` fragment?
@@ -56,17 +56,17 @@ class AiringAnimeViewModel(application: Application): AndroidViewModel(applicati
 
     fun deleteFavoriteAnime(anime: Media) {
         /*val job =*/ viewModelScope.launch {
-            repository.deleteFavoriteAnime(anime)
+            repository.deleteFavoriteMedia(anime)
         }
         //job.cancelAndJoin()
     }
 
-    fun isAnimeAddedToFavorite(anilistId: Long) = repository.isAnimeAddedToFavorite(anilistId)
+    fun isAnimeAddedToFavorite(anilistId: Long) = repository.isMediaAddedToFavorite(anilistId)
 
     fun getFavoriteAnimeList(): LiveData<List<Media>>? {
         if (favoriteAnimeList == null) {
             /*val job =*/ viewModelScope.launch {
-                favoriteAnimeList = repository.favoriteAnimeList
+                favoriteAnimeList = repository.favoriteMediaList
             }
         }
         return favoriteAnimeList
@@ -77,7 +77,7 @@ class AiringAnimeViewModel(application: Application): AndroidViewModel(applicati
     fun getAiringAnimeListStream(): Flow<PagingData<Media>> {
         if (mediaList == null) {
             mediaList = repository
-                .getAiringAnimeListStream()
+                .getMediaListStream()
                 .cachedIn(viewModelScope)
         }
         return mediaList!!

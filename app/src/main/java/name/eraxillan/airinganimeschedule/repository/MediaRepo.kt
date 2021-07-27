@@ -32,28 +32,28 @@ import name.eraxillan.airinganimeschedule.utilities.NETWORK_PAGE_SIZE
 /**
  * Repository class that works with local and remote data sources
  */
-class AiringAnimeRepo(context: Context) {
+class MediaRepo(context: Context) {
     companion object {
         private const val LOG_TAG = "54BE6C87_Repository"
     }
 
     private var database = MediaDatabase.getInstance(context)
-    private var airingDao: MediaDao = database.mediaDao()
+    private var mediaDao: MediaDao = database.mediaDao()
     private var favoriteDao: FavoriteMediaDao = database.favoriteDao()
     private val backend: AnilistApi = AnilistApi.create(AnilistApi.createClient())
 
-    // Favorite anime list local database API
-    suspend fun addAnimeToFavorite(anime: Media): Long {
-        return favoriteDao.addMediaToFavorite(FavoriteMedia(anilistId = anime.anilistId))
+    // Favorite media list local database API
+    suspend fun addMediaToFavorite(media: Media): Long {
+        return favoriteDao.addMediaToFavorite(FavoriteMedia(anilistId = media.anilistId))
     }
 
-    suspend fun deleteFavoriteAnime(anime: Media) {
-        favoriteDao.deleteFavoriteMedia(FavoriteMedia(anilistId = anime.anilistId))
+    suspend fun deleteFavoriteMedia(media: Media) {
+        favoriteDao.deleteFavoriteMedia(FavoriteMedia(anilistId = media.anilistId))
     }
 
-    fun isAnimeAddedToFavorite(anilistId: Long) = favoriteDao.isMediaAddedToFavorite(anilistId)
+    fun isMediaAddedToFavorite(anilistId: Long) = favoriteDao.isMediaAddedToFavorite(anilistId)
 
-    val favoriteAnimeList: LiveData<List<Media>>
+    val favoriteMediaList: LiveData<List<Media>>
         get() {
             return favoriteDao.getFavoriteMediaList()
         }
@@ -61,19 +61,19 @@ class AiringAnimeRepo(context: Context) {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Get currently airing anime list, exposed as a stream of data that will emit
-     * every time we get more data from the network
+     * Get media list and exposed as a stream of data,
+     * that will emit every time we get more data from the network
      */
-    fun getAiringAnimeListStream(): Flow<PagingData<Media>> {
-        Log.d(LOG_TAG, "Query currently airing anime list from backend...")
+    fun getMediaListStream(): Flow<PagingData<Media>> {
+        Log.d(LOG_TAG, "Query media list from remote backend...")
 
-        val animePagingSourceFactory = { airingDao.getMediaListPages() }
+        val pagingSourceFactory = { mediaDao.getMediaListPages() }
 
         @OptIn(ExperimentalPagingApi::class)
         return Pager(
             config = PagingConfig(enablePlaceholders = false, pageSize = NETWORK_PAGE_SIZE),
             remoteMediator = AnilistRemoteMediator(database, backend),
-            pagingSourceFactory = animePagingSourceFactory
+            pagingSourceFactory = pagingSourceFactory
         ).flow
     }
 }
