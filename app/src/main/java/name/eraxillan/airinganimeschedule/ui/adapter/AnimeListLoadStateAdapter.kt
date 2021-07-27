@@ -23,7 +23,7 @@ import name.eraxillan.airinganimeschedule.ui.holder.NetworkStateItemViewHolder
 
 
 class AnimeListLoadStateAdapter(
-    private val adapter: AiringAnimeListAdapter
+    private val adapter: MediaListAdapter
 ) : LoadStateAdapter<NetworkStateItemViewHolder>() {
 
     override fun onBindViewHolder(holder: NetworkStateItemViewHolder, loadState: LoadState) {

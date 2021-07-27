@@ -24,7 +24,7 @@ import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeBinding
 import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.ui.holder.AiringAnimeListHolder
 
-class AiringAnimeListAdapter
+class MediaListAdapter
     : PagingDataAdapter<Media, AiringAnimeListHolder>(AiringAnimeDiffCallback()) {
 
     companion object {

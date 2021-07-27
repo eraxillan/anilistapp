@@ -27,12 +27,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.filter
 import name.eraxillan.airinganimeschedule.R
-import name.eraxillan.airinganimeschedule.ui.adapter.AiringAnimeListAdapter
+import name.eraxillan.airinganimeschedule.ui.adapter.MediaListAdapter
 import name.eraxillan.airinganimeschedule.databinding.FragmentAiringAnimeListBinding
 import name.eraxillan.airinganimeschedule.ui.adapter.AnimeListLoadStateAdapter
 import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
@@ -56,7 +53,7 @@ class AiringAnimeListFragment : Fragment() {
     private val viewModel by viewModels<AiringAnimeViewModel>()
 
     private var searchJob: Job? = null
-    private val listAdapter: AiringAnimeListAdapter = AiringAnimeListAdapter()
+    private val listAdapter: MediaListAdapter = MediaListAdapter()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
