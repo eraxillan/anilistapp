@@ -31,7 +31,7 @@ import name.eraxillan.airinganimeschedule.model.MediaRankType as MediaRankType
 import java.net.URL
 import java.time.*
 
-fun mediumToAiringAnime(input: AiringAnimeQuery.Medium): Media {
+fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
 
     fun convertFormat(value: AnilistMediaFormat?) = when (value) {
         AnilistMediaFormat.TV -> MediaFormat.TV

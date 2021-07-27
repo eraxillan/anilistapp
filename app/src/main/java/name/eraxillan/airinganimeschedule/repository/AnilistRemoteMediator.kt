@@ -26,7 +26,7 @@ import androidx.room.withTransaction
 import name.eraxillan.airinganimeschedule.api.AnilistApi
 import name.eraxillan.airinganimeschedule.db.MediaDatabase
 import name.eraxillan.airinganimeschedule.db.RemoteKeys
-import name.eraxillan.airinganimeschedule.db.mediumToAiringAnime
+import name.eraxillan.airinganimeschedule.db.convertAnilistMedia
 import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.utilities.NETWORK_PAGE_SIZE
 import java.io.IOException
@@ -133,7 +133,7 @@ class AnilistRemoteMediator(
             )
 
             val serverAnimeList = backendResponse.data?.page?.media?.filterNotNull() ?: emptyList()
-            val animeList = serverAnimeList.map { medium -> mediumToAiringAnime(medium) }
+            val animeList = serverAnimeList.map { medium -> convertAnilistMedia(medium) }
 
             // FIXME: move to background worker
             backend.fillEpisodeCount(serverAnimeList, animeList)

@@ -57,7 +57,7 @@ class AnilistPagingSource(
             )
 
             val serverAnimeList = response.data?.page?.media?.filterNotNull() ?: emptyList()
-            val animeList = serverAnimeList.map { medium -> mediumToAiringAnime(medium) }
+            val animeList = serverAnimeList.map { medium -> convertAnilistMedia(medium) }
 
             // FIXME: move to background worker
             service.fillEpisodeCount(serverAnimeList, animeList)
