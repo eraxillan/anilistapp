@@ -18,8 +18,8 @@ package name.eraxillan.airinganimeschedule.db
 
 import android.os.Parcel
 import android.os.Parcelable
-import android.util.Log
 import androidx.core.os.LocaleListCompat
+import timber.log.Timber
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -156,8 +156,8 @@ class ZonedScheduledTime private constructor(
         fun parse(input: CharSequence): ZonedScheduledTime? {
             val dt = DayOfWeekTimeParser.parse(input)
             if (dt == null) {
-                Log.e(LOG_TAG, "Invalid zoned scheduled format!")
-                Log.e(LOG_TAG, "Input: '$input'")
+                Timber.e("Invalid zoned scheduled format!")
+                Timber.e("Input: '$input'")
                 return null
             }
 

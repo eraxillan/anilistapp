@@ -142,6 +142,9 @@ dependencies {
     //implementation "com.apollographql.apollo:apollo-rx3-support:$apollo_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_logging_version"
 
+    // Advanced logging
+    implementation "com.jakewharton.timber:timber:$timber_version"
+
     //kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
 
     testImplementation "junit:junit:$junit_version"

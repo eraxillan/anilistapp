@@ -17,7 +17,6 @@
 package name.eraxillan.airinganimeschedule.workers
 
 import android.content.Context
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +25,7 @@ import kotlinx.coroutines.withContext
 import name.eraxillan.airinganimeschedule.db.MediaDatabase
 import name.eraxillan.airinganimeschedule.utilities.ANIME_DATA_FILENAME
 import name.eraxillan.airinganimeschedule.utilities.mediaListFromJson
+import timber.log.Timber
 
 
 class MediaDatabaseWorker(
@@ -38,23 +38,18 @@ class MediaDatabaseWorker(
             val result = kotlin.runCatching {
                 applicationContext.assets.open(ANIME_DATA_FILENAME).use { inputStream ->
                     val mediaList = mediaListFromJson(inputStream.reader())
-                    Log.e(LOG_TAG, "Mock media list loaded: ${mediaList.size}")
+                    Timber.e("Mock media list loaded: ${mediaList.size}")
 
                     val database = MediaDatabase.getInstance(applicationContext)
                     database.mediaDao().insertMediaList(mediaList)
                     Result.success()
                 }
             }.onFailure {
-                Log.e(LOG_TAG, "Unable to add mock media list to database", it)
+                Timber.e(it, "Unable to add mock media list to database")
                 Result.failure()
             }
 
             result.getOrNull() ?: Result.failure()
         }
-    }
-
-    companion object {
-        // 54BE6C87 = crc32("name.eraxillan.airinganimeschedule")
-        private const val LOG_TAG = "54BE6C87_DBW" // DBW = DatabaseWorker
     }
 }

@@ -16,20 +16,18 @@
 
 package name.eraxillan.airinganimeschedule.utilities
 
-import android.util.Log
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import name.eraxillan.airinganimeschedule.db.ZonedScheduledTime
 import name.eraxillan.airinganimeschedule.model.Media
+import timber.log.Timber
 import java.io.InputStreamReader
 import java.lang.ClassCastException
 import java.lang.IllegalStateException
 import java.net.URL
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
-
-private const val LOG_TAG = "54BE6C87_JSD" // JSD = JsonSerializerDeserializer
 
 private const val AA_ID = "id"
 private const val AA_URL = "url"
@@ -61,7 +59,7 @@ private val gson: Gson by lazy {
         .registerTypeAdapter(Media::class.java,
             JsonDeserializer { dst, _, _ ->
                 if (!dst.isJsonObject) {
-                    Log.e(LOG_TAG, "Specified JSON text is not an object!")
+                    Timber.e("Specified JSON text is not an object!")
                     return@JsonDeserializer null
                 }
 
@@ -73,7 +71,7 @@ private val gson: Gson by lazy {
                 )
                 keys.forEach {
                     if (!jsonObject.has(it)) {
-                        Log.e(LOG_TAG, "Required key `$it` is absent in specified JSON object!")
+                        Timber.e("Required key `$it` is absent in specified JSON object!")
                         return@JsonDeserializer null
                     }
                 }
@@ -96,23 +94,22 @@ private val gson: Gson by lazy {
                         coverImageLarge = jsonObject.get("imageUrl").asString
                         coverImageColor = jsonObject.get("imageColor").asString
                     } catch (exc: ClassCastException) {
-                        Log.e(LOG_TAG, "Invalid JSON value type: `${exc.message}`")
+                        Timber.e( "Invalid JSON value type: `${exc.message}`")
                         return@JsonDeserializer null
                     } catch (exc: IllegalStateException) {
-                        Log.e(LOG_TAG, "Found JSON array instead of primitive: `${exc.message}`")
+                        Timber.e("Found JSON array instead of primitive: `${exc.message}`")
                         return@JsonDeserializer null
                     }
 
                     try {
                         startDate = LocalDate.parse(releaseDateString)
                     } catch (exc: DateTimeParseException) {
-                        Log.e(LOG_TAG, "Unable to parse release date string: `$releaseDateString`")
+                        Timber.e("Unable to parse release date string: `$releaseDateString`")
                     }
 
                     nextEpisodeAiringAt = ZonedScheduledTime.parse(nextEpisodeDateString)
                     if (nextEpisodeAiringAt == null) {
-                        Log.e(
-                            LOG_TAG,
+                        Timber.e(
                             "Unable to parse next episode date string: `$nextEpisodeDateString`"
                         )
                         return@JsonDeserializer null

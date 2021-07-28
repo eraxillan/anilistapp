@@ -16,12 +16,12 @@
 
 package name.eraxillan.airinganimeschedule.db
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import name.eraxillan.airinganimeschedule.api.AnilistApi
 import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.utilities.NETWORK_PAGE_SIZE
+import timber.log.Timber
 
 private const val ANILIST_STARTING_PAGE_INDEX = 1
 
@@ -29,25 +29,20 @@ class AnilistPagingSource(
     private val service: AnilistApi
 ) : PagingSource<Int, Media>() {
 
-    companion object {
-        private const val LOG_TAG = "54BE6C87_APS" // APS = AnilistPagingSource
-    }
-
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Media> {
         // Start refresh at first page if undefined
         val page = params.key ?: ANILIST_STARTING_PAGE_INDEX
 
         return try {
-            Log.d(LOG_TAG, "Requesting ${page}st page with ${params.loadSize} items per page...")
+            Timber.d( "Requesting ${page}st page with ${params.loadSize} items per page...")
             // TODO: how to sync `params.loadSize` here and in `MediaRepo.getMediaListStream`?
             val response = service.getAiringAnimeList(page, /*params.loadSize*/ NETWORK_PAGE_SIZE)
 
             val rateLimit = service.getResponseRateLimit(response)
-            Log.d(LOG_TAG, "Rate limit: ${rateLimit.remaining} from ${rateLimit.total}")
+            Timber.d("Rate limit: ${rateLimit.remaining} from ${rateLimit.total}")
 
             val pagination = service.getResponsePagination(response)
-            Log.d(
-                LOG_TAG,
+            Timber.d(
                 """
                     Media list size: ${pagination.totalItems},
                     current page: ${pagination.currentPage},
@@ -63,7 +58,7 @@ class AnilistPagingSource(
             service.fillEpisodeCount(serverMediaList, mediaList)
 
             /*val test = if (pagination.hasNextPage) pagination.currentPage + 1 else null
-            Log.d(LOG_TAG, "prevKey=null, nextKey=$test")*/
+            Timber.d("prevKey=null, nextKey=$test")*/
 
             LoadResult.Page(
                 data = mediaList,

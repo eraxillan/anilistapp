@@ -16,8 +16,7 @@
 
 package name.eraxillan.airinganimeschedule.db
 
-import android.util.Log
-import name.eraxillan.airinganimeschedule.BuildConfig
+import timber.log.Timber
 import java.lang.NumberFormatException
 import java.time.*
 import java.time.format.DateTimeParseException
@@ -27,8 +26,6 @@ import java.util.*
 
 class DayOfWeekTimeParser {
     companion object {
-        private const val LOG_TAG = "54BE6C87_DoWTP" // DoWTP = DayOfWeekTimeParser
-
         data class DowTime(
             val dow: DayOfWeek,
             val lt: LocalTime,
@@ -43,8 +40,8 @@ class DayOfWeekTimeParser {
             // Time zone can contain 'w' and 't' chars, so first of all extract it
             val baseTokens = input.split("[", "]").filter { it.isNotEmpty() }
             if (baseTokens.size != 2) {
-                Log.e(LOG_TAG, "Invalid scheduled time format!")
-                Log.e(LOG_TAG, "Tokens (${baseTokens.size}):\n ${baseTokens.joinToString("\n")}")
+                Timber.e("Invalid scheduled time format!")
+                Timber.e("Tokens (${baseTokens.size}):\n ${baseTokens.joinToString("\n")}")
                 return null
             }
 
@@ -54,15 +51,15 @@ class DayOfWeekTimeParser {
                 .split("W-", "T")
                 .filter { it.isNotEmpty() }
             if (sctTokens.size != 2) {
-                Log.e(LOG_TAG, "Invalid scheduled time format!")
-                Log.e(LOG_TAG, "Tokens = \n" + sctTokens.joinToString("\n"))
+                Timber.e("Invalid scheduled time format!")
+                Timber.e("Tokens = \n${sctTokens.joinToString("\n")}")
                 return null
             }
 
             val tzTokens = sctTokens[1].split(Regex("(?=[+-])"))
             if (tzTokens.size != 2) {
-                Log.e(LOG_TAG, "Invalid scheduled time format!")
-                Log.e(LOG_TAG, "Tokens = \n" + tzTokens.joinToString("\n"))
+                Timber.e("Invalid scheduled time format!")
+                Timber.e("Tokens = \n${tzTokens.joinToString("\n")}")
                 return null
             }
 
@@ -72,50 +69,50 @@ class DayOfWeekTimeParser {
             val tzNameStr = baseTokens[1]
 
             /*if (BuildConfig.DEBUG) {
-                Log.d(LOG_TAG, "Raw day of week: $dowStr")
-                Log.d(LOG_TAG, "Raw local time: $ltStr")
-                Log.d(LOG_TAG, "Raw tz offset: $tzOffsetStr")
-                Log.d(LOG_TAG, "Raw tz name: $tzNameStr")
+                Timber.d("Raw day of week: $dowStr")
+                Timber.d("Raw local time: $ltStr")
+                Timber.d("Raw tz offset: $tzOffsetStr")
+                Timber.d("Raw tz name: $tzNameStr")
             }*/
 
             val dowInt = try {
                 dowStr.toInt()
             } catch (exc: NumberFormatException) {
-                Log.e(LOG_TAG, "Invalid day of week string '$dowStr'!")
+                Timber.e("Invalid day of week string '$dowStr'!")
                 return null
             }
 
             val dow = try {
                 DayOfWeek.of(dowInt)
             } catch (exc: DateTimeException) {
-                Log.e(LOG_TAG, "Invalid day of week integer '$dowInt'!")
+                Timber.e("Invalid day of week integer '$dowInt'!")
                 return null
             }
 
             val lt = try {
                 LocalTime.parse(ltStr)
             } catch (exc: DateTimeParseException) {
-                Log.e(LOG_TAG, "Invalid local time string '$ltStr'!")
+                Timber.e("Invalid local time string '$ltStr'!")
                 return null
             }
 
             val tzOffset = try {
                 ZoneOffset.of(tzOffsetStr)
             } catch (exc: DateTimeException) {
-                Log.e(LOG_TAG, "Invalid time zone offset string '$tzOffsetStr'!")
+                Timber.e("Invalid time zone offset string '$tzOffsetStr'!")
                 return null
             } catch (exc: ZoneRulesException) {
-                Log.e(LOG_TAG, "Time zone configuration problem found!")
+                Timber.e("Time zone configuration problem found!")
                 return null
             }
 
             val tzName = try {
                 ZoneId.of(tzNameStr)
             } catch (exc: DateTimeException) {
-                Log.e(LOG_TAG, "Invalid time zone offset string '$tzOffsetStr'!")
+                Timber.e("Invalid time zone offset string '$tzOffsetStr'!")
                 return null
             } catch (exc: ZoneRulesException) {
-                Log.e(LOG_TAG, "Time zone configuration problem found!")
+                Timber.e("Time zone configuration problem found!")
                 return null
             }
 

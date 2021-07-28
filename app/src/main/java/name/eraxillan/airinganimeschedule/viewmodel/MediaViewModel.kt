@@ -17,7 +17,6 @@
 package name.eraxillan.airinganimeschedule.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
@@ -28,14 +27,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.repository.MediaRepo
+import timber.log.Timber
 
 
 class MediaViewModel(application: Application): AndroidViewModel(application) {
-
-    companion object {
-        private const val LOG_TAG = "54BE6C87_MVM" // MVM = MediaViewModel
-    }
-
     private var repository: MediaRepo = MediaRepo(getApplication())
     private var favoriteMediaList: LiveData<List<Media>>? = null
     private var mediaList: Flow<PagingData<Media>>? = null
@@ -44,7 +39,7 @@ class MediaViewModel(application: Application): AndroidViewModel(application) {
         /*val job =*/ viewModelScope.launch {
             // Save media to database
             val newId = repository.addMediaToFavorite(media)
-            Log.i(LOG_TAG, "New media with id=$newId added to the SQLite database")
+            Timber.i("New media with id=$newId added to the SQLite database")
 
             // TODO: open `Favorites` fragment?
             /*withContext(Dispatchers.Main) {

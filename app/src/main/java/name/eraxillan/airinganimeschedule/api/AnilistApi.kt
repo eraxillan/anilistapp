@@ -17,7 +17,6 @@
 package name.eraxillan.airinganimeschedule.api
 
 import android.os.Looper
-import android.util.Log
 import androidx.core.text.isDigitsOnly
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.ApolloExperimental
@@ -34,6 +33,7 @@ import name.eraxillan.airinganimeschedule.type.MediaStatus
 import name.eraxillan.airinganimeschedule.type.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import timber.log.Timber
 import java.lang.NumberFormatException
 import java.time.LocalDate
 
@@ -92,7 +92,7 @@ class AnilistApi(private val client: ApolloClient) {
                 edge.node.status == MediaStatus.FINISHED
             ) {
                 val title = edge.node.title?.romaji
-                Log.d(LOG_TAG, "Prequel anime found: $title")
+                Timber.d("Prequel anime found: $title")
                 true
             } else
                 false
@@ -111,32 +111,31 @@ class AnilistApi(private val client: ApolloClient) {
 
         // Recursion stop condition: all anime in list marked with special stop-value (-1)
         val finishedCount = relations.count { entry -> entry.value.last() == -1L }
-        Log.d(LOG_TAG, "Relations search progress: $finishedCount from ${relations.size}")
+        Timber.d("Relations search progress: $finishedCount from ${relations.size}")
         if (finishedCount == relations.size) return 0
 
         val ids = relations.map { entry -> entry.value.last() }.filter { entry -> entry != -1L }
-        Log.d(LOG_TAG, "Remaining anime ids: ${ids.toString()}")
+        Timber.d("Remaining anime ids: ${ids.toString()}")
 
         val responseInner = getAnimeRelations(ids = ids, page = 1, perPage = 30)
 
         val rateLimit = getResponseRateLimit(responseInner)
-        Log.d(
-            LOG_TAG,
+        Timber.d(
             "Network query rate limit status: ${rateLimit.remaining} from ${rateLimit.total}"
         )
 
         delay(100)
 
         if (responseInner.hasErrors()) {
-            Log.e(LOG_TAG, "Relations request failed: `${responseInner.errors.toString()}`!")
+            Timber.e("Relations request failed: `${responseInner.errors.toString()}`!")
             return -1
         }
-        Log.d(LOG_TAG, "Relations response succeed: ${responseInner.data?.page?.media?.size} anime found")
+        Timber.d("Relations response succeed: ${responseInner.data?.page?.media?.size} anime found")
         if (responseInner.data?.page?.media?.isEmpty() == true) return -1
 
         val animeList = responseInner.data?.page?.media?.filterNotNull() ?: emptyList()
         animeList.forEach { medium ->
-            Log.d(LOG_TAG, "Calculation episode count for anime '${medium.title?.romaji}'...")
+            Timber.d("Calculation episode count for anime '${medium.title?.romaji}'...")
 
             // Find key with value
             val parent = relations.entries.find { entry -> entry.value.indexOf(medium.id.toLong()) != -1 }
@@ -165,8 +164,7 @@ class AnilistApi(private val client: ApolloClient) {
             val seasonCount = entry.value.size - 1
 
             val medium = serverAnimeList.find { medium -> medium.id.toLong() == entry.key }
-            Log.d(
-                LOG_TAG,
+            Timber.d(
                 "Id=${entry.key} name '${medium?.title?.romaji}' season count: $seasonCount"
             )
 
@@ -190,7 +188,7 @@ class AnilistApi(private val client: ApolloClient) {
         val headers = httpContext?.response?.headers
 
         /*headers?.names()?.forEach { name ->
-            Log.d(LOG_TAG, "Response HTTP header: '${name}' => '${headers.get(name)}'")
+            Timber.d("Response HTTP header: '${name}' => '${headers.get(name)}'")
         }*/
 
         val totalStr = headers?.get(RATE_LIMIT_TOTAL_KEY).orEmpty()
@@ -199,14 +197,14 @@ class AnilistApi(private val client: ApolloClient) {
         val total = try {
             if (totalStr.isEmpty() || !totalStr.isDigitsOnly()) DEFAULT_RATE_LIMIT else totalStr.toInt()
         } catch (exc: NumberFormatException) {
-            Log.e(LOG_TAG, "Invalid total rate limit value: '$totalStr'!")
+            Timber.e("Invalid total rate limit value: '$totalStr'!")
             DEFAULT_RATE_LIMIT
         }
 
         val remaining = try {
             if (remainingStr.isEmpty() || !remainingStr.isDigitsOnly()) 0 else remainingStr.toInt()
         } catch (exc: NumberFormatException) {
-            Log.e(LOG_TAG, "Invalid remaining rate limit value: '$remainingStr'!")
+            Timber.e("Invalid remaining rate limit value: '$remainingStr'!")
             0
         }
 
@@ -234,7 +232,6 @@ class AnilistApi(private val client: ApolloClient) {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     companion object {
-        private const val LOG_TAG = "54BE6C87_ANILIST"
         private const val BASE_URL = "https://graphql.anilist.co"
 
         fun createClient(): ApolloClient {
@@ -242,7 +239,7 @@ class AnilistApi(private val client: ApolloClient) {
                 "Only the main thread can get the apolloClient instance!"
             }
 
-            val logger = HttpLoggingInterceptor { Log.d(LOG_TAG, it) }
+            val logger = HttpLoggingInterceptor { Timber.d(it) }
             logger.level = HttpLoggingInterceptor.Level.BASIC
 
             val okHttpClient = OkHttpClient.Builder()

@@ -17,7 +17,6 @@
 package name.eraxillan.airinganimeschedule.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -30,13 +29,10 @@ import name.eraxillan.airinganimeschedule.R
 import name.eraxillan.airinganimeschedule.databinding.FragmentFavoriteListBinding
 import name.eraxillan.airinganimeschedule.ui.adapter.FavoriteListAdapter
 import name.eraxillan.airinganimeschedule.viewmodel.MediaViewModel
+import timber.log.Timber
 
 
 class FavoriteListFragment : Fragment() {
-    companion object {
-        private const val LOG_TAG = "54BE6C87_FLF" // FLF = FavoriteListFragment
-    }
-
     private var _binding: FragmentFavoriteListBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!
@@ -112,7 +108,7 @@ class FavoriteListFragment : Fragment() {
         return when (item.itemId) {
             // https://developer.android.com/training/swipe/respond-refresh-request
             R.id.action_refresh -> {
-                Log.i(LOG_TAG, "Refresh menu item selected")
+                Timber.i("Refresh menu item selected")
 
                 // Start the refresh background task.
                 // This method calls `setRefreshing(false)` when it's finished
@@ -154,7 +150,7 @@ class FavoriteListFragment : Fragment() {
             // Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked
             // when the user performs a swipe-to-refresh gesture.
             this.setOnRefreshListener {
-                Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout")
+                Timber.i("onRefresh called from SwipeRefreshLayout")
 
                 // This method performs the actual data-refresh operation.
                 // The method calls `setRefreshing(false)` when it's finished

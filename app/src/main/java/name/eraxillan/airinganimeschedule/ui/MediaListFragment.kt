@@ -17,7 +17,6 @@
 package name.eraxillan.airinganimeschedule.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.view.isVisible
@@ -33,13 +32,10 @@ import name.eraxillan.airinganimeschedule.ui.adapter.MediaListAdapter
 import name.eraxillan.airinganimeschedule.databinding.FragmentMediaListBinding
 import name.eraxillan.airinganimeschedule.ui.adapter.MediaListLoadStateAdapter
 import name.eraxillan.airinganimeschedule.viewmodel.MediaViewModel
+import timber.log.Timber
 
 
 class MediaListFragment : Fragment() {
-    companion object {
-        private const val LOG_TAG = "54BE6C87_MLF" // MLF = MediaListFragment
-    }
-
     private var _binding: FragmentMediaListBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!
@@ -121,7 +117,7 @@ class MediaListFragment : Fragment() {
         return when (item.itemId) {
             // https://developer.android.com/training/swipe/respond-refresh-request
             R.id.action_refresh -> {
-                Log.i(LOG_TAG, "Refresh menu item selected")
+                Timber.i("Refresh menu item selected")
 
                 // Start the refresh background task.
                 // This method calls `setRefreshing(false)` when it's finished
@@ -208,7 +204,7 @@ class MediaListFragment : Fragment() {
             // Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked
             // when the user performs a swipe-to-refresh gesture.
             this.setOnRefreshListener {
-                Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout")
+                Timber.i("onRefresh called from SwipeRefreshLayout")
 
                 // This method performs the actual data-refresh operation.
                 // The method calls `setRefreshing(false)` when it's finished

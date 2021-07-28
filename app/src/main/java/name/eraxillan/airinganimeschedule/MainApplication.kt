@@ -19,8 +19,8 @@ package name.eraxillan.airinganimeschedule
 import android.app.Application
 import android.os.Build
 import android.os.StrictMode
-import android.util.Log
 import androidx.annotation.RequiresApi
+import timber.log.Timber
 import java.util.concurrent.Executors
 //import dagger.hilt.android.HiltAndroidApp
 
@@ -31,7 +31,7 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
-            //Timber.plant(Timber.DebugTree())
+            initLogger()
 
             // NOTE: okhttp3 library violates the Strict Mode with "untagged socket" error;
             // no fix yet available neither in library itself nor in client app
@@ -46,6 +46,22 @@ class MainApplication : Application() {
             }
         }
     }
+
+    private fun initLogger() {
+        if (BuildConfig.DEBUG) {
+            //Timber.plant(Timber.DebugTree())
+
+            // Write to Logcat full info:
+            // source file name, line number and method name to simplify further debugging.
+            // Output example:
+            // D/MediaRepo.kt:65#getMediaListStream: Query media list from remote backend...
+            Timber.plant(object : Timber.DebugTree() {
+                override fun createStackElementTag(element: StackTraceElement): String {
+                    return "${element.fileName}:${element.lineNumber}#${element.methodName}"
+                }
+            })
+        }
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
@@ -57,8 +73,7 @@ fun enableStrictMode() {
     StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
         .detectAll().penaltyListener(Executors.newSingleThreadExecutor()) { violation ->
             if (violation.javaClass.name.equals("android.os.strictmode.untaggedsocketviolation", ignoreCase = true)) {
-                //Timber.v(violation)
-                Log.d("name.eraxillan.animeapp", violation.toString())
+                Timber.v(violation)
             }
         }
         .build()

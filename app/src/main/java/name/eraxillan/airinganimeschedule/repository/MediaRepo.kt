@@ -17,7 +17,6 @@
 package name.eraxillan.airinganimeschedule.repository
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
@@ -28,14 +27,12 @@ import name.eraxillan.airinganimeschedule.db.FavoriteMediaDao
 import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.model.FavoriteMedia
 import name.eraxillan.airinganimeschedule.utilities.NETWORK_PAGE_SIZE
+import timber.log.Timber
 
 /**
  * Repository class that works with local and remote data sources
  */
 class MediaRepo(context: Context) {
-    companion object {
-        private const val LOG_TAG = "54BE6C87_Repository"
-    }
 
     private var database = MediaDatabase.getInstance(context)
     private var mediaDao: MediaDao = database.mediaDao()
@@ -65,7 +62,7 @@ class MediaRepo(context: Context) {
      * that will emit every time we get more data from the network
      */
     fun getMediaListStream(): Flow<PagingData<Media>> {
-        Log.d(LOG_TAG, "Query media list from remote backend...")
+        Timber.d("Query media list from remote backend...")
 
         val pagingSourceFactory = { mediaDao.getMediaListPages() }
 

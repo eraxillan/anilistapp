@@ -16,9 +16,9 @@
 
 package name.eraxillan.airinganimeschedule.db
 
-import android.util.Log
 import name.eraxillan.airinganimeschedule.AiringAnimeQuery
 import name.eraxillan.airinganimeschedule.model.*
+import timber.log.Timber
 import name.eraxillan.airinganimeschedule.type.MediaFormat as AnilistMediaFormat
 import name.eraxillan.airinganimeschedule.type.MediaStatus as AnilistMediaStatus
 import name.eraxillan.airinganimeschedule.type.MediaSeason as AnilistMediaSeason
@@ -85,7 +85,7 @@ fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
     fun hasAdultTags(): Boolean {
         return input.tags?.any { tag ->
             if (tag?.isAdult == true) {
-                Log.e("name.eraxillan.animeapp", "Adult tag detected: '${tag.name}'")
+                Timber.e("Adult tag detected: '${tag.name}'")
                 tag.isAdult
             } else false
         } == true
@@ -126,8 +126,8 @@ fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
     else INVALID_URL
 
     // Get currently used time zone and offset
-    //Log.f(LOG_TAG, "Current timezone name is '${TimeZone.getDefault().displayName}'")
-    //Log.f(LOG_TAG, "Current timezone ID is '${TimeZone.getDefault().id}'")
+    //Timber.d("Current timezone name is '${TimeZone.getDefault().displayName}'")
+    //Timber.d("Current timezone ID is '${TimeZone.getDefault().id}'")
     val zoneId = ZoneId.systemDefault()
     val zoneOffset = LocalDateTime.now().atZone(zoneId).offset
 

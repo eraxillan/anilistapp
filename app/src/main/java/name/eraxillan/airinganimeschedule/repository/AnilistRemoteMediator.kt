@@ -16,7 +16,6 @@
 
 package name.eraxillan.airinganimeschedule.repository
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.LoadType.*
@@ -29,6 +28,7 @@ import name.eraxillan.airinganimeschedule.db.RemoteKeys
 import name.eraxillan.airinganimeschedule.db.convertAnilistMedia
 import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.utilities.NETWORK_PAGE_SIZE
+import timber.log.Timber
 import java.io.IOException
 import java.lang.Exception
 
@@ -43,10 +43,6 @@ class AnilistRemoteMediator(
     private val database: MediaDatabase,
     private val backend: AnilistApi
 ) : RemoteMediator<Int, Media>() {
-
-    companion object {
-        private const val LOG_TAG = "54BE6C87_Mediator"
-    }
 
     override suspend fun initialize(): InitializeAction {
         // Launch remote refresh as soon as paging starts and do not trigger remote prepend or
@@ -74,7 +70,7 @@ class AnilistRemoteMediator(
             REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
                 val temp = remoteKeys?.nextKey?.minus(1) ?: ANILIST_STARTING_PAGE_INDEX
-                Log.d(LOG_TAG, "Got LoadType.REFRESH request: pageNo=$temp")
+                Timber.d("Got LoadType.REFRESH request: pageNo=$temp")
                 temp
             }
             PREPEND -> {
@@ -86,7 +82,7 @@ class AnilistRemoteMediator(
                 // the end of pagination for prepend
                 val prevKey = remoteKeys?.prevKey
                     ?: return MediatorResult.Success(endOfPaginationReached = (remoteKeys != null))
-                Log.d(LOG_TAG, "Got LoadType.PREPEND request: pageNo=$prevKey")
+                Timber.d("Got LoadType.PREPEND request: pageNo=$prevKey")
                 prevKey
             }
             APPEND -> {
@@ -98,7 +94,7 @@ class AnilistRemoteMediator(
                 // the end of pagination for append
                 val nextKey = remoteKeys?.nextKey
                     ?: return MediatorResult.Success(endOfPaginationReached = (remoteKeys != null))
-                Log.d(LOG_TAG, "Got LoadType.APPEND request: pageNo=$nextKey")
+                Timber.d("Got LoadType.APPEND request: pageNo=$nextKey")
                 nextKey
             }
         }
@@ -109,20 +105,18 @@ class AnilistRemoteMediator(
                 REFRESH -> state.config.initialLoadSize
                 else -> state.config.pageSize
             }
-            Log.d(LOG_TAG, "Querying server: pageNo=$page with $pageSize per page...")
+            Timber.d("Querying server: pageNo=$page with $pageSize per page...")
             val backendResponse = backend.getAiringAnimeList(page, pageSize)
-            Log.d(LOG_TAG, "Successfully got response from server")
+            Timber.d("Successfully got response from server")
 
             val rateLimit = backend.getResponseRateLimit(backendResponse)
-            Log.d(
-                LOG_TAG,
+            Timber.d(
                 "Network query rate limit status: ${rateLimit.remaining} from ${rateLimit.total}"
             )
 
             val pagination = backend.getResponsePagination(backendResponse)
             val endOfPaginationReached = !pagination.hasNextPage
-            Log.d(
-                LOG_TAG,
+            Timber.d(
                 """
                     Media list total size: ${pagination.totalItems},
                     current page: ${pagination.currentPage},
@@ -138,14 +132,14 @@ class AnilistRemoteMediator(
             // FIXME: move to background worker
             backend.fillEpisodeCount(serverMediaList, mediaList)
 
-            Log.d(LOG_TAG, "mediaList.size=${mediaList.size}")
+            Timber.d("mediaList.size=${mediaList.size}")
 
             database.withTransaction {
                 // Clear all tables in the database
                 if (loadType == REFRESH) {
                     database.remoteKeysDao().clearRemoteKeys()
                     database.mediaDao().deleteAllMedia()
-                    Log.d(LOG_TAG, "Cache database cleared!")
+                    Timber.d("Cache database cleared!")
                 }
 
                 val prevKey = if (page == ANILIST_STARTING_PAGE_INDEX) null else (page - 1)
@@ -155,27 +149,26 @@ class AnilistRemoteMediator(
                 // not be 2, because that would load items 20-39, which overlaps our initial load
                 // instead of fetching new data as intended
                 val nextKey = if (endOfPaginationReached) null else page + (pageSize / state.config.pageSize)
-                Log.d(LOG_TAG, "prevKey=$prevKey, nextKey=$nextKey")
+                Timber.d("prevKey=$prevKey, nextKey=$nextKey")
 
                 val keys = mediaList.map {
                     RemoteKeys(anilistId = it.anilistId, prevKey = prevKey, nextKey = nextKey)
                 }
                 database.remoteKeysDao().insertAll(keys)
                 database.mediaDao().insertMediaList(mediaList)
-                Log.d(
-                    LOG_TAG,
+                Timber.d(
                     "Cache updated: ${keys.size} keys and ${mediaList.size} records added"
                 )
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (exception: IOException) {
-            Log.e(LOG_TAG, "Unable to fetch data from network (IOException): ${exception.localizedMessage}")
+            Timber.e("Unable to fetch data from network (IOException): ${exception.localizedMessage}")
             return MediatorResult.Error(exception)
         } catch (exception: java.net.UnknownHostException) {
-            Log.e(LOG_TAG, "Unable to fetch data from network (UnknownHostException): ${exception.localizedMessage}")
+            Timber.e("Unable to fetch data from network (UnknownHostException): ${exception.localizedMessage}")
             return MediatorResult.Error(exception)
         } catch (exception: Exception) {
-            Log.e(LOG_TAG, "Unable to fetch data from network (unknown exception): ${exception.localizedMessage}")
+            Timber.e("Unable to fetch data from network (unknown exception): ${exception.localizedMessage}")
             return MediatorResult.Error(exception)
         }
     }
