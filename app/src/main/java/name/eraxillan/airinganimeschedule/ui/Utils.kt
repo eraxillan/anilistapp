@@ -21,7 +21,7 @@ import name.eraxillan.airinganimeschedule.NavGraphDirections
 import name.eraxillan.airinganimeschedule.model.Media
 
 fun showMediaInfo(media: Media, navController: NavController) {
-    val directions = NavGraphDirections.actionAiringAnimeDetails(
+    val directions = NavGraphDirections.actionMediaDetails(
         media, media.romajiTitle
     )
     navController.navigate(directions)

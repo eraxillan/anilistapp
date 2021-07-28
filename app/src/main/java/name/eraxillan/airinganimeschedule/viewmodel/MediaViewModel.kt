@@ -30,51 +30,51 @@ import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.repository.MediaRepo
 
 
-class AiringAnimeViewModel(application: Application): AndroidViewModel(application) {
+class MediaViewModel(application: Application): AndroidViewModel(application) {
 
     companion object {
-        private const val LOG_TAG = "54BE6C87_AAVM" // AAVM = AiringAnimeViewModel
+        private const val LOG_TAG = "54BE6C87_MVM" // MVM = MediaViewModel
     }
 
     private var repository: MediaRepo = MediaRepo(getApplication())
-    private var favoriteAnimeList: LiveData<List<Media>>? = null
+    private var favoriteMediaList: LiveData<List<Media>>? = null
     private var mediaList: Flow<PagingData<Media>>? = null
 
-    fun addAnimeToFavorite(anime: Media, navController: NavController) {
+    fun addMediaToFavorite(media: Media, navController: NavController) {
         /*val job =*/ viewModelScope.launch {
-            // Save airing anime to database
-            val newId = repository.addMediaToFavorite(anime)
-            Log.i(LOG_TAG, "New anime with id=$newId added to the SQLite database")
+            // Save media to database
+            val newId = repository.addMediaToFavorite(media)
+            Log.i(LOG_TAG, "New media with id=$newId added to the SQLite database")
 
             // TODO: open `Favorites` fragment?
             /*withContext(Dispatchers.Main) {
-                showAiringAnimeInfo(anime, navController)
+                showMediaInfo(media, navController)
             }*/
         }
         //job.cancelAndJoin()
     }
 
-    fun deleteFavoriteAnime(anime: Media) {
+    fun deleteFavoriteMedia(media: Media) {
         /*val job =*/ viewModelScope.launch {
-            repository.deleteFavoriteMedia(anime)
+            repository.deleteFavoriteMedia(media)
         }
         //job.cancelAndJoin()
     }
 
-    fun isAnimeAddedToFavorite(anilistId: Long) = repository.isMediaAddedToFavorite(anilistId)
+    fun isMediaAddedToFavorite(anilistId: Long) = repository.isMediaAddedToFavorite(anilistId)
 
-    fun getFavoriteAnimeList(): LiveData<List<Media>>? {
-        if (favoriteAnimeList == null) {
+    fun getFavoriteMediaList(): LiveData<List<Media>>? {
+        if (favoriteMediaList == null) {
             /*val job =*/ viewModelScope.launch {
-                favoriteAnimeList = repository.favoriteMediaList
+                favoriteMediaList = repository.favoriteMediaList
             }
         }
-        return favoriteAnimeList
+        return favoriteMediaList
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun getAiringAnimeListStream(): Flow<PagingData<Media>> {
+    fun getMediaListStream(): Flow<PagingData<Media>> {
         if (mediaList == null) {
             mediaList = repository
                 .getMediaListStream()

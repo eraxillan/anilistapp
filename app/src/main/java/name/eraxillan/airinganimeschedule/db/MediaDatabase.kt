@@ -63,7 +63,7 @@ abstract class MediaDatabase : RoomDatabase() {
                 object : RoomDatabase.Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
-                        /*val request = OneTimeWorkRequestBuilder<AiringAnimeDatabaseWorker>()
+                        /*val request = OneTimeWorkRequestBuilder<MediaDatabaseWorker>()
                                 .build()
                             WorkManager.getInstance(context).enqueue(request)*/
                     }

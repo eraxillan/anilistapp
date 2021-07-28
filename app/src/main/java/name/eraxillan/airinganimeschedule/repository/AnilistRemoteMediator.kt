@@ -33,7 +33,7 @@ import java.io.IOException
 import java.lang.Exception
 
 
-typealias AnimePagingState = PagingState<Int, Media>
+typealias MediaPagingState = PagingState<Int, Media>
 
 // Anilist page API is 1 based: https://anilist.gitbook.io/anilist-apiv2-docs/overview/graphql/pagination
 private const val ANILIST_STARTING_PAGE_INDEX = 1
@@ -55,10 +55,10 @@ class AnilistRemoteMediator(
         // triggering remote refresh.
         return InitializeAction.LAUNCH_INITIAL_REFRESH
 
-        // TODO: implement caching with timeout, because anime information can be updated on server side
+        // TODO: implement caching with timeout, because media information can be updated on server side
         /*
         val cacheTimeout = TimeUnit.HOURS.convert(1, TimeUnit.MILLISECONDS)
-        return if (System.currentTimeMillis() - animeDao.lastUpdated() >= cacheTimeout) {
+        return if (System.currentTimeMillis() - mediaDao.lastUpdated() >= cacheTimeout) {
             // Cached data is up-to-date, so there is no need to re-fetch from network
             InitializeAction.SKIP_INITIAL_REFRESH
         } else {
@@ -69,7 +69,7 @@ class AnilistRemoteMediator(
         }*/
     }
 
-    override suspend fun load(loadType: LoadType, state: AnimePagingState): MediatorResult {
+    override suspend fun load(loadType: LoadType, state: MediaPagingState): MediatorResult {
         val page = when (loadType) {
             REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
@@ -124,7 +124,7 @@ class AnilistRemoteMediator(
             Log.d(
                 LOG_TAG,
                 """
-                    Anime list total size: ${pagination.totalItems},
+                    Media list total size: ${pagination.totalItems},
                     current page: ${pagination.currentPage},
                     items per page: ${pagination.perPage},
                     total pages: ${pagination.totalPages}
@@ -132,13 +132,13 @@ class AnilistRemoteMediator(
                 """.trimIndent()
             )
 
-            val serverAnimeList = backendResponse.data?.page?.media?.filterNotNull() ?: emptyList()
-            val animeList = serverAnimeList.map { medium -> convertAnilistMedia(medium) }
+            val serverMediaList = backendResponse.data?.page?.media?.filterNotNull() ?: emptyList()
+            val mediaList = serverMediaList.map { medium -> convertAnilistMedia(medium) }
 
             // FIXME: move to background worker
-            backend.fillEpisodeCount(serverAnimeList, animeList)
+            backend.fillEpisodeCount(serverMediaList, mediaList)
 
-            Log.d(LOG_TAG, "animeList.size=${animeList.size}")
+            Log.d(LOG_TAG, "mediaList.size=${mediaList.size}")
 
             database.withTransaction {
                 // Clear all tables in the database
@@ -157,14 +157,14 @@ class AnilistRemoteMediator(
                 val nextKey = if (endOfPaginationReached) null else page + (pageSize / state.config.pageSize)
                 Log.d(LOG_TAG, "prevKey=$prevKey, nextKey=$nextKey")
 
-                val keys = animeList.map {
+                val keys = mediaList.map {
                     RemoteKeys(anilistId = it.anilistId, prevKey = prevKey, nextKey = nextKey)
                 }
                 database.remoteKeysDao().insertAll(keys)
-                database.mediaDao().insertMediaList(animeList)
+                database.mediaDao().insertMediaList(mediaList)
                 Log.d(
                     LOG_TAG,
-                    "Cache updated: ${keys.size} keys and ${animeList.size} records added"
+                    "Cache updated: ${keys.size} keys and ${mediaList.size} records added"
                 )
             }
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
@@ -182,32 +182,32 @@ class AnilistRemoteMediator(
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private suspend fun getRemoteKeyForLastItem(state: AnimePagingState): RemoteKeys? {
+    private suspend fun getRemoteKeyForLastItem(state: MediaPagingState): RemoteKeys? {
         // Get the last page that was retrieved, that contained items.
         // From that last page, get the last item
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
-            ?.let { anime ->
+            ?.let { media ->
                 // Get the remote keys of the last item retrieved
-                database.remoteKeysDao().remoteKeysAnimeId(anime.anilistId)
+                database.remoteKeysDao().remoteKeysById(media.anilistId)
             }
     }
 
-    private suspend fun getRemoteKeyForFirstItem(state: AnimePagingState): RemoteKeys? {
+    private suspend fun getRemoteKeyForFirstItem(state: MediaPagingState): RemoteKeys? {
         // Get the first page that was retrieved, that contained items.
         // From that first page, get the first item
         return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
-            ?.let { anime ->
+            ?.let { media ->
                 // Get the remote keys of the first items retrieved
-                database.remoteKeysDao().remoteKeysAnimeId(anime.anilistId)
+                database.remoteKeysDao().remoteKeysById(media.anilistId)
             }
     }
 
-    private suspend fun getRemoteKeyClosestToCurrentPosition(state: AnimePagingState): RemoteKeys? {
+    private suspend fun getRemoteKeyClosestToCurrentPosition(state: MediaPagingState): RemoteKeys? {
         // The paging library is trying to load data after the anchor position.
         // Get the item closest to the anchor position
         return state.anchorPosition?.let { position ->
             state.closestItemToPosition(position)?.anilistId?.let { anilistId ->
-                database.remoteKeysDao().remoteKeysAnimeId(anilistId)
+                database.remoteKeysDao().remoteKeysById(anilistId)
             }
         }
     }

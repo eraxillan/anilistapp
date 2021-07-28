@@ -39,7 +39,7 @@ class AnilistPagingSource(
 
         return try {
             Log.d(LOG_TAG, "Requesting ${page}st page with ${params.loadSize} items per page...")
-            // TODO: how to sync `params.loadSize` here and in `AiringAnimeRepo.remoteAiringAnimeList`?
+            // TODO: how to sync `params.loadSize` here and in `MediaRepo.getMediaListStream`?
             val response = service.getAiringAnimeList(page, /*params.loadSize*/ NETWORK_PAGE_SIZE)
 
             val rateLimit = service.getResponseRateLimit(response)
@@ -49,24 +49,24 @@ class AnilistPagingSource(
             Log.d(
                 LOG_TAG,
                 """
-                    Anime list size: ${pagination.totalItems},
+                    Media list size: ${pagination.totalItems},
                     current page: ${pagination.currentPage},
                     items per page: ${pagination.perPage},
                     total pages: ${pagination.totalPages}
                 """.trimIndent()
             )
 
-            val serverAnimeList = response.data?.page?.media?.filterNotNull() ?: emptyList()
-            val animeList = serverAnimeList.map { medium -> convertAnilistMedia(medium) }
+            val serverMediaList = response.data?.page?.media?.filterNotNull() ?: emptyList()
+            val mediaList = serverMediaList.map { medium -> convertAnilistMedia(medium) }
 
             // FIXME: move to background worker
-            service.fillEpisodeCount(serverAnimeList, animeList)
+            service.fillEpisodeCount(serverMediaList, mediaList)
 
             /*val test = if (pagination.hasNextPage) pagination.currentPage + 1 else null
             Log.d(LOG_TAG, "prevKey=null, nextKey=$test")*/
 
             LoadResult.Page(
-                data = animeList,
+                data = mediaList,
                 prevKey = null, // only paging forward
                 nextKey = if (pagination.hasNextPage) pagination.currentPage + 1 else null
             )

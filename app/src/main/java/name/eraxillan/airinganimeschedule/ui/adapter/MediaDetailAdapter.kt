@@ -20,21 +20,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
-import name.eraxillan.airinganimeschedule.databinding.ListItemAiringAnimeDetailBinding
+import name.eraxillan.airinganimeschedule.databinding.ListItemMediaDetailBinding
 import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.ui.holder.MediaDetailHolder
 
 class MediaDetailAdapter(var media: Media) : RecyclerView.Adapter<MediaDetailHolder>() {
 
     companion object {
-        private const val LOG_TAG = "54BE6C87_AADA" // AADA = AiringAnimeDetailAdapter
+        private const val LOG_TAG = "54BE6C87_MDA" // MDA = MediaDetailAdapter
         private const val fieldCount = 22
     }
 
     // Create a `View` from the `Layout`
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaDetailHolder {
         return MediaDetailHolder(
-            ListItemAiringAnimeDetailBinding.inflate(
+            ListItemMediaDetailBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             )
         )

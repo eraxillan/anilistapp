@@ -24,7 +24,7 @@ import name.eraxillan.airinganimeschedule.model.Media
 import name.eraxillan.airinganimeschedule.ui.ItemTouchHelperCallback
 import name.eraxillan.airinganimeschedule.ui.holder.MediaListHolder
 
-// TODO: favorite airing anime list adapter with CRUD support (AiringAnimeListAdapter stay read-only)
+// TODO: favorite media list adapter with CRUD support (MediaListAdapter will stay read-only)
 // `PagingDataAdapter` have read-only data, and there is no way to remove item in-place
 
 class FavoriteListAdapter(
@@ -36,7 +36,7 @@ class FavoriteListAdapter(
         private const val LOG_TAG = "54BE6C87_FLAd" // FLAd = FavoriteListAdapter
     }
 
-    private val animeList : MutableList<Media> = mutableListOf()
+    private val mediaList : MutableList<Media> = mutableListOf()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -49,17 +49,16 @@ class FavoriteListAdapter(
     }
 
     override fun onBindViewHolder(holder: MediaListHolder, position: Int) {
-        // FIXME: load anime image from URL, see Sunflower for example code
-        holder.bind(position, animeList[position])
+        holder.bind(position, mediaList[position])
     }
 
-    override fun getItemCount() = animeList.size
+    override fun getItemCount() = mediaList.size
 
     // TODO: uncomment to implement drag-and-drop for list view items
     //override fun onItemMoved(fromPosition: Int, toPosition: Int) = swapItems(fromPosition, toPosition)
     override fun onItemMoved(fromPosition: Int, toPosition: Int) {}
 
-    override fun onItemDismiss(position: Int) = deleteAiringAnime(position)
+    override fun onItemDismiss(position: Int) = deleteMedia(position)
 
     // Override to show header/footer
     //override fun getItemViewType(position: Int): Int = 0
@@ -67,32 +66,32 @@ class FavoriteListAdapter(
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private fun deleteAiringAnime(position: Int) {
-        deleteDelegate(animeList[position])
-        animeList.removeAt(position)
+    private fun deleteMedia(position: Int) {
+        deleteDelegate(mediaList[position])
+        mediaList.removeAt(position)
         notifyItemRemoved(position)
     }
 
     /*private fun swapItems(positionFrom: Int, positionTo: Int) {
-        Collections.swap(animeList, positionFrom, positionTo)
+        Collections.swap(mediaList, positionFrom, positionTo)
         notifyItemMoved(positionFrom, positionTo)
     }*/
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun addAiringAnime(anime: Media) {
-        animeList.add(anime)
-        notifyItemInserted(animeList.size - 1)
+    fun addMedia(media: Media) {
+        mediaList.add(media)
+        notifyItemInserted(mediaList.size - 1)
     }
 
-    fun deleteAiringAnime(anime: Media) {
-        val position = animeList.indexOf(anime)
-        animeList.remove(anime)
+    fun deleteMedia(media: Media) {
+        val position = mediaList.indexOf(media)
+        mediaList.remove(media)
         notifyItemRemoved(position)
     }
 
-    fun clearAiringAnimeList() {
-        animeList.clear()
+    fun clearMediaList() {
+        mediaList.clear()
         notifyDataSetChanged()
     }
 }

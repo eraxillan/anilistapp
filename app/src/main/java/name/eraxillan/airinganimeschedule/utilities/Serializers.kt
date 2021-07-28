@@ -78,10 +78,10 @@ private val gson: Gson by lazy {
                     }
                 }
 
-                val anime = Media()
+                val media = Media()
                 var releaseDateString: String
                 var nextEpisodeDateString: String
-                with(anime) {
+                with (media) {
                     try {
                         anilistId = jsonObject.get("id").asLong
                         anilistUrl = URL(jsonObject.get("url").asString)
@@ -118,14 +118,14 @@ private val gson: Gson by lazy {
                         return@JsonDeserializer null
                     }
                 }
-                anime
+                media
             }
         ).create()
 }
 
-fun airingAnimeListFromJson(inputStreamReader: InputStreamReader): List<Media> {
+fun mediaListFromJson(inputStreamReader: InputStreamReader): List<Media> {
     JsonReader(inputStreamReader).use { jsonReader ->
-        val animeType = object : TypeToken<List<Media>>() {}.type
-        return gson.fromJson(jsonReader, animeType)
+        val mediaType = object : TypeToken<List<Media>>() {}.type
+        return gson.fromJson(jsonReader, mediaType)
     }
 }

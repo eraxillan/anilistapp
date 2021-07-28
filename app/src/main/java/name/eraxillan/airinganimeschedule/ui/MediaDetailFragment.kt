@@ -26,22 +26,22 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import name.eraxillan.airinganimeschedule.ui.adapter.MediaDetailAdapter
-import name.eraxillan.airinganimeschedule.databinding.FragmentAnimeDetailBinding
-import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
+import name.eraxillan.airinganimeschedule.databinding.FragmentMediaDetailBinding
+import name.eraxillan.airinganimeschedule.viewmodel.MediaViewModel
 
 
-class AiringAnimeDetailFragment : Fragment() {
+class MediaDetailFragment : Fragment() {
     companion object {
-        private const val LOG_TAG = "54BE6C87_AADF" // AADF = AiringAnimeDetailFragment
+        private const val LOG_TAG = "54BE6C87_MDF" // MDF = MediaDetailFragment
     }
 
-    private var _binding: FragmentAnimeDetailBinding? = null
+    private var _binding: FragmentMediaDetailBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!
 
-    private val args: AiringAnimeDetailFragmentArgs by navArgs()
+    private val args: MediaDetailFragmentArgs by navArgs()
 
-    private val viewModel by viewModels<AiringAnimeViewModel>()
+    private val viewModel by viewModels<MediaViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +49,7 @@ class AiringAnimeDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentAnimeDetailBinding.inflate(inflater, container, false)
+        _binding = FragmentMediaDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -68,19 +68,19 @@ class AiringAnimeDetailFragment : Fragment() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun setupRecyclerView() {
-        val adapter = MediaDetailAdapter(args.anime!!)
+        val adapter = MediaDetailAdapter(args.media!!)
 
-        binding.animeFieldList.adapter = adapter
+        binding.mediaFieldList.adapter = adapter
     }
 
     private fun setupFab() {
-        val animeId = (args.anime!!).anilistId
+        val mediaId = (args.media!!).anilistId
 
         binding.addToFavoriteButton.setOnClickListener {
-            viewModel.addAnimeToFavorite(args.anime!!, findNavController())
+            viewModel.addMediaToFavorite(args.media!!, findNavController())
         }
 
-        viewModel.isAnimeAddedToFavorite(animeId).observe(
+        viewModel.isMediaAddedToFavorite(mediaId).observe(
             viewLifecycleOwner, { isFav ->
                 binding.addToFavoriteButton.isVisible = !isFav
             })

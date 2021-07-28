@@ -32,7 +32,7 @@
         android:id="@+id/favorite_motion_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layoutDescription="@xml/view_holder_airing_anime_item_scene">
+        app:layoutDescription="@xml/view_holder_media_item_scene">
 
         <ImageView
             android:id="@+id/favorite_logo_image"
@@ -45,7 +45,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_image_not_supported_24"
-            android:contentDescription="@string/airing_anime_logo_hint" />
+            android:contentDescription="@string/media_logo_hint" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/favorite_card_view"

@@ -27,7 +27,7 @@ class MediaListHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     companion object {
-        private const val LOG_TAG = "54BE6C87_MLH" // AALH = MediaListHolder
+        private const val LOG_TAG = "54BE6C87_MLH" // MLH = MediaListHolder
     }
 
     init {

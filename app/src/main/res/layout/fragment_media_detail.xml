@@ -21,14 +21,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.AiringAnimeDetailFragment" >
+    tools:context=".ui.MediaDetailFragment" >
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/anime_field_list"
+        android:id="@+id/media_field_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/list_item_airing_anime_detail"
+        tools:listitem="@layout/list_item_media_detail"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -41,6 +41,6 @@
         android:layout_margin="@dimen/fab_margin"
         android:layout_gravity="bottom|end"
         app:srcCompat="@android:drawable/ic_menu_add"
-        android:contentDescription="@string/add_airing_anime_button_hint" />
+        android:contentDescription="@string/add_media_button_hint" />
 
 </FrameLayout>

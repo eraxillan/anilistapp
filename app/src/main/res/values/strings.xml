@@ -17,11 +17,8 @@
 <resources>
     <string name="app_name">Airing anime schedule</string>
 
-    <!-- Add airing anime dialog -->
+    <!-- TODO: global constants -->
     <string name="invalid_url">https://www.invalid.com</string>
-    <string name="add_airing_anime_dialog_title">Add new airing anime by URL</string>
-    <string name="add_airing_anime_hint">Enter airing anime URL here</string>
-    <string name="invalid_airing_anime_url_msg">Invalid airing anime URL!</string>
 
     <!-- Menu actions -->
     <string name="action_settings">Settings</string>
@@ -36,25 +33,26 @@
     <string name="nav_header_subtitle">ivan.petrov@gmail.com</string>
     <string name="nav_header_desc">Navigation header</string>
 
-    <!-- Anime list item -->
-    <string name="airing_anime_logo_hint">Airing anime logo</string>
+    <!-- Media list item -->
+    <string name="media_logo_hint">Media logo image</string>
 
-    <!-- Anime details item -->
+    <!-- Media details item -->
 
-    <!-- Anime list fragment -->
-    <string name="add_airing_anime_button_hint">Add airing anime</string>
+    <!-- Media list fragment -->
+    <string name="add_media_button_hint">Add media to favorites</string>
 
-    <!-- Anime details fragment -->
+    <!-- Media details fragment -->
 
     <!-- About fragment -->
-    <string name="about_fragment_title">About</string>
+    <string name="about_fragment_title">About app</string>
     <string name="about_fragment_description">
         This app allows you to watch currently airing anime list,
         manage your personal list, and save your watch progress.
-        All data are persisted.
+        All data will be persisted.
     </string>
 
     <!-- Preferences screen -->
+    <!-- TODO: implement -->
     <!-- Preference Titles -->
     <string name="preferences_messages_header">Messages</string>
     <string name="preferences_sync_header">Sync</string>

@@ -30,27 +30,27 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import name.eraxillan.airinganimeschedule.R
 import name.eraxillan.airinganimeschedule.ui.adapter.MediaListAdapter
-import name.eraxillan.airinganimeschedule.databinding.FragmentAiringAnimeListBinding
+import name.eraxillan.airinganimeschedule.databinding.FragmentMediaListBinding
 import name.eraxillan.airinganimeschedule.ui.adapter.MediaListLoadStateAdapter
-import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
+import name.eraxillan.airinganimeschedule.viewmodel.MediaViewModel
 
 
-class AiringAnimeListFragment : Fragment() {
+class MediaListFragment : Fragment() {
     companion object {
-        private const val LOG_TAG = "54BE6C87_AALF" // AALF = AiringAnimeListFragment
+        private const val LOG_TAG = "54BE6C87_MLF" // MLF = MediaListFragment
     }
 
-    private var _binding: FragmentAiringAnimeListBinding? = null
+    private var _binding: FragmentMediaListBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!
 
     /**
-     * `by viewModels<MainViewModel>()` is a lazy delegate that creates a new `mainViewModel`
+     * `by viewModels<MediaViewModel>()` is a lazy delegate that creates a new `viewModel`
      * only the first time the `Activity` is created.
      * If a configuration change happens, such as a screen rotation,
-     * it returns the previously created `AiringAnimeViewModel`
+     * it returns the previously created `MediaViewModel`
      */
-    private val viewModel by viewModels<AiringAnimeViewModel>()
+    private val viewModel by viewModels<MediaViewModel>()
 
     private var searchJob: Job? = null
     private val listAdapter: MediaListAdapter = MediaListAdapter()
@@ -58,7 +58,7 @@ class AiringAnimeListFragment : Fragment() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     // See https://developer.android.com/training/swipe/add-swipe-interface
-    private fun updateAiringAnimeList(fromMenu: Boolean) {
+    private fun updateMediaList(fromMenu: Boolean) {
         // Signal SwipeRefreshLayout to start the progress indicator
         // NOTE: required only when called explicitly, e.g. from a menu item
         if (fromMenu)
@@ -83,7 +83,7 @@ class AiringAnimeListFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-        _binding = FragmentAiringAnimeListBinding.inflate(inflater, container, false)
+        _binding = FragmentMediaListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -125,7 +125,7 @@ class AiringAnimeListFragment : Fragment() {
 
                 // Start the refresh background task.
                 // This method calls `setRefreshing(false)` when it's finished
-                updateAiringAnimeList(true)
+                updateMediaList(true)
 
                 true
             }
@@ -212,7 +212,7 @@ class AiringAnimeListFragment : Fragment() {
 
                 // This method performs the actual data-refresh operation.
                 // The method calls `setRefreshing(false)` when it's finished
-                updateAiringAnimeList(false)
+                updateMediaList(false)
             }
         }
     }
@@ -221,9 +221,9 @@ class AiringAnimeListFragment : Fragment() {
         // Make sure we cancel the previous job before creating a new one
         searchJob?.cancel()
 
-        // Observe airing anime list loading
+        // Observe media list loading
         searchJob = viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getAiringAnimeListStream().collectLatest {
+            viewModel.getMediaListStream().collectLatest {
                 listAdapter.submitData(it)
             }
         }

@@ -25,7 +25,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import name.eraxillan.airinganimeschedule.db.MediaDatabase
 import name.eraxillan.airinganimeschedule.utilities.ANIME_DATA_FILENAME
-import name.eraxillan.airinganimeschedule.utilities.airingAnimeListFromJson
+import name.eraxillan.airinganimeschedule.utilities.mediaListFromJson
 
 
 class MediaDatabaseWorker(
@@ -37,15 +37,15 @@ class MediaDatabaseWorker(
         withContext(Dispatchers.IO) {
             val result = kotlin.runCatching {
                 applicationContext.assets.open(ANIME_DATA_FILENAME).use { inputStream ->
-                    val animeList = airingAnimeListFromJson(inputStream.reader())
-                    Log.e(LOG_TAG, "Mock airing anime list loaded: ${animeList.size}")
+                    val mediaList = mediaListFromJson(inputStream.reader())
+                    Log.e(LOG_TAG, "Mock media list loaded: ${mediaList.size}")
 
                     val database = MediaDatabase.getInstance(applicationContext)
-                    database.mediaDao().insertMediaList(animeList)
+                    database.mediaDao().insertMediaList(mediaList)
                     Result.success()
                 }
             }.onFailure {
-                Log.e(LOG_TAG, "Unable to add mock airing anime list to database", it)
+                Log.e(LOG_TAG, "Unable to add mock media list to database", it)
                 Result.failure()
             }
 

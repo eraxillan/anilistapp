@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 import name.eraxillan.airinganimeschedule.R
 import name.eraxillan.airinganimeschedule.databinding.FragmentFavoriteListBinding
 import name.eraxillan.airinganimeschedule.ui.adapter.FavoriteListAdapter
-import name.eraxillan.airinganimeschedule.viewmodel.AiringAnimeViewModel
+import name.eraxillan.airinganimeschedule.viewmodel.MediaViewModel
 
 
 class FavoriteListFragment : Fragment() {
@@ -42,24 +42,24 @@ class FavoriteListFragment : Fragment() {
     private val binding get() = _binding!!
 
     /**
-     * `by viewModels<MainViewModel>()` is a lazy delegate that creates a new `mainViewModel`
-     * only the first time the `Activity` is created.
+     * `by viewModels<MediaViewModel>()` is a lazy delegate that creates a new `viewModel`
+     * only the first time the `Fragment` is created.
      * If a configuration change happens, such as a screen rotation,
-     * it returns the previously created `AiringAnimeViewModel`
+     * it returns the previously created `MediaViewModel`
      */
-    private val viewModel by viewModels<AiringAnimeViewModel>()
+    private val viewModel by viewModels<MediaViewModel>()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     // See https://developer.android.com/training/swipe/add-swipe-interface
-    private fun updateAiringAnimeList(fromMenu: Boolean) {
+    private fun updateMediaList(fromMenu: Boolean) {
         // Signal SwipeRefreshLayout to start the progress indicator
         // NOTE: required only when called explicitly, e.g. from a menu item
         if (fromMenu)
             binding.favoriteSwipeRefresh.isRefreshing = true
 
         lifecycleScope.launch {
-            // FIXME: implement airing anime list force loading from Anilist/Database
+            // FIXME: implement media list force loading from Anilist/Database
             delay(1000)
 
             activity?.runOnUiThread {
@@ -94,7 +94,7 @@ class FavoriteListFragment : Fragment() {
 
         setupRecyclerView()
         setupSwipeOnRefresh()
-        createAiringAnimeObserver()
+        createMediaListObserver()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -116,7 +116,7 @@ class FavoriteListFragment : Fragment() {
 
                 // Start the refresh background task.
                 // This method calls `setRefreshing(false)` when it's finished
-                updateAiringAnimeList(true)
+                updateMediaList(true)
 
                 true
             }
@@ -131,7 +131,7 @@ class FavoriteListFragment : Fragment() {
 
     private fun setupRecyclerView() {
         val adapter = FavoriteListAdapter {
-            viewModel.deleteFavoriteAnime(it)
+            viewModel.deleteFavoriteMedia(it)
         }
 
         val divider = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
@@ -139,7 +139,7 @@ class FavoriteListFragment : Fragment() {
         val itemTouchHelperCallback = ItemTouchHelperCallback(adapter)
         val touchHelper = ItemTouchHelper(itemTouchHelperCallback)
 
-        with (binding.favoriteAnimeList) {
+        with (binding.favoriteMediaList) {
             this.adapter = adapter
             this.addItemDecoration(divider)
             this.setHasFixedSize(true)
@@ -158,27 +158,27 @@ class FavoriteListFragment : Fragment() {
 
                 // This method performs the actual data-refresh operation.
                 // The method calls `setRefreshing(false)` when it's finished
-                updateAiringAnimeList(false)
+                updateMediaList(false)
             }
         }
     }
 
-    private fun createAiringAnimeObserver() {
-        viewModel.getFavoriteAnimeList()?.observe(
-            viewLifecycleOwner, { animeList ->
+    private fun createMediaListObserver() {
+        viewModel.getFavoriteMediaList()?.observe(
+            viewLifecycleOwner, { mediaList ->
                 // FIXME: add this call to beginning of db/anilist load function
                 binding.favoriteSwipeRefresh.isRefreshing = true
 
-                // Clean old anime list
-                getAdapter().clearAiringAnimeList()
+                // Clean old media list
+                getAdapter().clearMediaList()
 
-                // Add new anime list
-                animeList.forEach { anime -> getAdapter().addAiringAnime(anime) }
+                // Add new media list
+                mediaList.forEach { media -> getAdapter().addMedia(media) }
 
                 binding.favoriteSwipeRefresh.isRefreshing = false
             }
         )
     }
 
-    private fun getAdapter() = binding.favoriteAnimeList.adapter as FavoriteListAdapter
+    private fun getAdapter() = binding.favoriteMediaList.adapter as FavoriteListAdapter
 }

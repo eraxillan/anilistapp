@@ -35,7 +35,7 @@
         android:id="@+id/clMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layoutDescription="@xml/view_holder_airing_anime_item_scene">
+        app:layoutDescription="@xml/view_holder_media_item_scene">
 
         <ImageView
             android:id="@+id/ivFood"
@@ -49,7 +49,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_image_not_supported_24"
-            android:contentDescription="@string/airing_anime_logo_hint" />
+            android:contentDescription="@string/media_logo_hint" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView"
@@ -72,13 +72,13 @@
                 android:layout_height="match_parent">
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/airing_anime_number_text"
+                    android:id="@+id/media_no_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:textSize="@dimen/anime_number_size"
+                    android:textSize="@dimen/media_number_size"
                     android:textStyle="bold"
                     android:text="@{position}"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -87,18 +87,18 @@
                     tools:text="1" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/airing_anime_name_text"
+                    android:id="@+id/media_name_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:textSize="@dimen/anime_title_size"
+                    android:textSize="@dimen/media_title_size"
                     android:text="@{media.romajiTitle}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/airing_anime_number_text"
+                    app:layout_constraintTop_toBottomOf="@+id/media_no_text"
                     tools:text="Fruits Basket" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>

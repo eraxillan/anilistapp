@@ -28,7 +28,7 @@ class MediaListAdapter
     : PagingDataAdapter<Media, MediaListHolder>(AiringAnimeDiffCallback()) {
 
     companion object {
-        private const val LOG_TAG = "54BE6C87_AALAd" // AALAd = AiringAnimeListAdapter
+        private const val LOG_TAG = "54BE6C87_MLAd" // AALAd = MediaListAdapter
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaListHolder {
