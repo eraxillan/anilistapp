@@ -25,7 +25,7 @@
             type="android.view.View.OnClickListener" />
         <variable
             name="media"
-            type="name.eraxillan.airinganimeschedule.model.Media" />
+            type="name.eraxillan.anilistapp.model.Media" />
     </data>
 
     <androidx.constraintlayout.motion.widget.MotionLayout

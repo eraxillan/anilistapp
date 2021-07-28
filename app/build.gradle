@@ -29,7 +29,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "name.eraxillan.airinganimeschedule"
+        applicationId "name.eraxillan.anilistapp"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         versionCode 1
