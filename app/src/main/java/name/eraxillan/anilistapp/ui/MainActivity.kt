@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // NOTE: return to basic app theme from splash screen one;
         //       see https://medium.com/android-news/launch-screen-in-android-the-right-way-aca7e8c31f52
-        setTheme(R.style.AppTheme_NoActionBar)
+        setTheme(R.style.AppTheme)
 
         super.onCreate(savedInstanceState)
 
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupActionBar(binding: ActivityMainBinding) {
         // NOTE: see https://developer.android.com/guide/navigation/navigation-ui#action_bar
 
-        setSupportActionBar(binding.toolbarMain)
+        /* setSupportActionBar(binding.toolbarMain) */
 
         appBarConfiguration = AppBarConfiguration(findNavController().graph, binding.drawerLayout)
         setupActionBarWithNavController(findNavController(), appBarConfiguration)

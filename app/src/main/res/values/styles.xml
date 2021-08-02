@@ -24,6 +24,7 @@
         <item name="colorAccent">@color/secondaryColor</item>
     </style>
 
+    <!--
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -32,6 +33,7 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
+    -->
 
     <style name="AppTheme.Splash">
         <item name="android:windowBackground">@drawable/splash</item>
