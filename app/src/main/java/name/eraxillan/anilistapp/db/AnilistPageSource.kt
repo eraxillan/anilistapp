@@ -20,13 +20,15 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import name.eraxillan.anilistapp.api.AnilistApi
 import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.utilities.NETWORK_PAGE_SIZE
 import timber.log.Timber
 
 private const val ANILIST_STARTING_PAGE_INDEX = 1
 
 class AnilistPagingSource(
-    private val service: AnilistApi
+    private val service: AnilistApi,
+    private val sortBy: MediaSort
 ) : PagingSource<Int, Media>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Media> {
@@ -36,7 +38,11 @@ class AnilistPagingSource(
         return try {
             Timber.d( "Requesting ${page}st page with ${params.loadSize} items per page...")
             // TODO: how to sync `params.loadSize` here and in `MediaRepo.getMediaListStream`?
-            val response = service.getAiringAnimeList(page, /*params.loadSize*/ NETWORK_PAGE_SIZE)
+            val response = service.getAiringAnimeList(
+                page,
+                /*params.loadSize*/ NETWORK_PAGE_SIZE,
+                sortBy
+            )
 
             val rateLimit = service.getResponseRateLimit(response)
             Timber.d("Rate limit: ${rateLimit.remaining} from ${rateLimit.total}")

@@ -26,9 +26,11 @@ import com.apollographql.apollo.http.OkHttpExecutionContext
 import kotlinx.coroutines.delay
 import name.eraxillan.anilistapp.AiringAnimeQuery
 import name.eraxillan.anilistapp.AnimeRelationsQuery
+import name.eraxillan.anilistapp.db.convertSortType
 import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.model.MediaSort as MediaSort
 import name.eraxillan.anilistapp.type.MediaRelation
-import name.eraxillan.anilistapp.type.MediaSort
+import name.eraxillan.anilistapp.type.MediaSort as AnilistMediaSort
 import name.eraxillan.anilistapp.type.MediaStatus
 import name.eraxillan.anilistapp.type.MediaType
 import okhttp3.OkHttpClient
@@ -45,15 +47,20 @@ class AnilistApi(private val client: ApolloClient) {
     /**
      * Get currently airing anime list, ordered by popularity (must popular first)
      */
-    suspend fun getAiringAnimeList(page: Int, perPage: Int): Response<AiringAnimeQuery.Data> {
+    suspend fun getAiringAnimeList(page: Int, perPage: Int, sortBy: MediaSort):
+            Response<AiringAnimeQuery.Data> {
         check(page >= 1)
         check(perPage >= 1)
+        check(sortBy != MediaSort.UNKNOWN)
+
+        val sortByAnilist = convertSortType(sortBy)
+        check(sortByAnilist != AnilistMediaSort.UNKNOWN__)
 
         val airingAnimeQuery = AiringAnimeQuery(
             page = page,
             perPage = perPage,
             seasonYear = LocalDate.now().year,
-            sort = listOf(MediaSort.POPULARITY_DESC),
+            sort = listOf(sortByAnilist),
             status = MediaStatus.RELEASING
         )
 

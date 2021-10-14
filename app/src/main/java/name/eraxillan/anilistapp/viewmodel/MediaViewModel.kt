@@ -26,6 +26,7 @@ import androidx.paging.cachedIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.repository.MediaRepo
 import timber.log.Timber
 
@@ -33,7 +34,7 @@ import timber.log.Timber
 class MediaViewModel(application: Application): AndroidViewModel(application) {
     private var repository: MediaRepo = MediaRepo(getApplication())
     private var favoriteMediaList: LiveData<List<Media>>? = null
-    private var mediaList: Flow<PagingData<Media>>? = null
+    private val media = HashMap<MediaSort, Flow<PagingData<Media>>?>()
 
     fun addMediaToFavorite(media: Media, navController: NavController) {
         /*val job =*/ viewModelScope.launch {
@@ -69,12 +70,13 @@ class MediaViewModel(application: Application): AndroidViewModel(application) {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun getMediaListStream(): Flow<PagingData<Media>> {
-        if (mediaList == null) {
-            mediaList = repository
-                .getMediaListStream()
+    fun getMediaListStream(sortBy: MediaSort): Flow<PagingData<Media>> {
+        if (!media.containsKey(sortBy)) {
+            media[sortBy] = repository
+                .getMediaListStream(sortBy)
                 .cachedIn(viewModelScope)
         }
-        return mediaList!!
+        check(media.containsKey(sortBy))
+        return media[sortBy]!!
     }
 }

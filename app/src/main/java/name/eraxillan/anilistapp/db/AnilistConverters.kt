@@ -24,12 +24,26 @@ import name.eraxillan.anilistapp.type.MediaStatus as AnilistMediaStatus
 import name.eraxillan.anilistapp.type.MediaSeason as AnilistMediaSeason
 import name.eraxillan.anilistapp.type.MediaSource as AnilistMediaSource
 import name.eraxillan.anilistapp.type.MediaRankType as AnilistMediaRankType
+import name.eraxillan.anilistapp.type.MediaSort as AnilistMediaSort
 import name.eraxillan.anilistapp.model.MediaFormat as MediaFormat
 import name.eraxillan.anilistapp.model.MediaStatus as MediaStatus
 import name.eraxillan.anilistapp.model.MediaSource as MediaSource
 import name.eraxillan.anilistapp.model.MediaRankType as MediaRankType
+import name.eraxillan.anilistapp.model.MediaSort as MediaSort
 import java.net.URL
 import java.time.*
+
+
+fun convertSortType(value: MediaSort) = when (value) {
+    MediaSort.BY_TITLE -> AnilistMediaSort.TITLE_ROMAJI
+    MediaSort.BY_POPULARITY -> AnilistMediaSort.POPULARITY_DESC
+    MediaSort.BY_AVERAGE_SCORE -> AnilistMediaSort.SCORE_DESC
+    MediaSort.BY_TRENDING -> AnilistMediaSort.TRENDING_DESC
+    MediaSort.BY_FAVORITES -> AnilistMediaSort.FAVOURITES_DESC
+    MediaSort.BY_DATE_ADDED -> AnilistMediaSort.START_DATE
+    MediaSort.BY_RELEASE_DATE -> AnilistMediaSort.END_DATE
+    else -> AnilistMediaSort.UNKNOWN__
+}
 
 fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
 

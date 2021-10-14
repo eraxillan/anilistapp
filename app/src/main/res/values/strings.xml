@@ -40,6 +40,9 @@
 
     <!-- Media list fragment -->
     <string name="add_media_button_hint">Add media to favorites</string>
+    <string name="search_results_count">%1$d results</string>
+    <string name="see_the_results">See the results</string>
+    <string name="filter_button">Filtering and sorting options for media list</string>
 
     <!-- Media details fragment -->
 
@@ -50,6 +53,16 @@
         manage your personal list, and save your watch progress.
         All data will be persisted.
     </string>
+
+    <!-- Backdrop -->
+    <string name="sort_title">Sort</string>
+    <string name="sort_by_title">Title</string>
+    <string name="sort_by_popularity">Popularity</string>
+    <string name="sort_by_average_score">Average Score</string>
+    <string name="sort_by_trending">Trending</string>
+    <string name="sort_by_favorites">Favorites</string>
+    <string name="sort_by_date_added">Date Added</string>
+    <string name="sort_by_release_date">Release Date</string>
 
     <!-- Preferences screen -->
     <!-- TODO: implement -->

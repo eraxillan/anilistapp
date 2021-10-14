@@ -165,6 +165,22 @@ enum class MediaRankType {
     UNKNOWN,
 }
 
+/**
+ * The kind of media list sorting
+ */
+enum class MediaSort {
+    BY_TITLE,
+    BY_POPULARITY,
+    BY_AVERAGE_SCORE,
+    BY_TRENDING,
+    BY_FAVORITES,
+    BY_DATE_ADDED,
+    BY_RELEASE_DATE,
+
+    /** Constant for unknown enum values */
+    UNKNOWN,
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /** Just wrapper for `List<String>` to avoid adding too wide converter for it */

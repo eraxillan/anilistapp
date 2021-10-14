@@ -27,6 +27,7 @@ import name.eraxillan.anilistapp.db.MediaDatabase
 import name.eraxillan.anilistapp.db.RemoteKeys
 import name.eraxillan.anilistapp.db.convertAnilistMedia
 import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.utilities.NETWORK_PAGE_SIZE
 import timber.log.Timber
 import java.io.IOException
@@ -41,7 +42,8 @@ private const val ANILIST_STARTING_PAGE_INDEX = 1
 @ExperimentalPagingApi
 class AnilistRemoteMediator(
     private val database: MediaDatabase,
-    private val backend: AnilistApi
+    private val backend: AnilistApi,
+    private val sortBy: MediaSort
 ) : RemoteMediator<Int, Media>() {
 
     override suspend fun initialize(): InitializeAction {
@@ -106,7 +108,7 @@ class AnilistRemoteMediator(
                 else -> state.config.pageSize
             }
             Timber.d("Querying server: pageNo=$page with $pageSize per page...")
-            val backendResponse = backend.getAiringAnimeList(page, pageSize)
+            val backendResponse = backend.getAiringAnimeList(page, pageSize, sortBy)
             Timber.d("Successfully got response from server")
 
             val rateLimit = backend.getResponseRateLimit(backendResponse)

@@ -19,6 +19,7 @@ package name.eraxillan.anilistapp.db
 import androidx.paging.PagingSource
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
+import androidx.sqlite.db.SupportSQLiteQuery
 import name.eraxillan.anilistapp.model.Media
 
 /**
@@ -36,8 +37,8 @@ import name.eraxillan.anilistapp.model.Media
  */
 @Dao
 interface MediaDao {
-    @Query("SELECT * FROM media_collection ORDER BY popularity DESC, romajiTitle ASC")
-    fun getMediaListPages(): PagingSource<Int, Media>
+    @RawQuery(observedEntities = [Media::class])
+    fun getMediaListPagesSorted(query: SupportSQLiteQuery): PagingSource<Int, Media>
 
     @Insert(onConflict = REPLACE)
     suspend fun insertMediaList(mediaList: List<Media>)

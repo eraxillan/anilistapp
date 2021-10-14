@@ -27,8 +27,11 @@
     tools:context=".ui.MainActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/main_container"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/primaryLightColor"
         tools:context=".ui.MainActivity">
 
         <!--
@@ -43,11 +46,153 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
+        </com.google.android.material.appbar.AppBarLayout> -->
 
-        </com.google.android.material.appbar.AppBarLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:padding="20dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/sort_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sort_title"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <HorizontalScrollView
+                android:id="@+id/sort_buttons_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sort_text">
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/material_button_toggle_group_sort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/sort_text"
+                    app:singleSelection="true"
+                    app:selectionRequired="true"
+                    app:checkedButton="@+id/sort_by_popularity_button">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/sort_by_title_button"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/sort_by_title"
+                        android:tag="BY_TITLE" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/sort_by_popularity_button"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/sort_by_popularity"
+                        android:tag="BY_POPULARITY" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/sort_by_average_score_button"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/sort_by_average_score"
+                        android:tag="BY_AVERAGE_SCORE" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/sort_by_trending_button"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/sort_by_trending"
+                        android:tag="BY_TRENDING" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/sort_by_favorites_button"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/sort_by_favorites"
+                        android:tag="BY_FAVORITES" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/sort_by_date_added_button"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/sort_by_date_added"
+                        android:tag="BY_DATE_ADDED" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/sort_by_release_date_button"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/sort_by_release_date"
+                        android:tag="BY_RELEASE_DATE" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+            </HorizontalScrollView>
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sort_buttons_container" />
+
+            <!-- FIXME: add remaining filtering options -->
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--
+        * app:behavior_skipCollapsed=”true”:
+          prevents bottom sheet component to stop in the middle when we’re dragging it down
+        * app:behavior_peekHeight="70dp":
+          the height when the bottom sheet is collapsed
+        * app:layout_behavior=".GestureLockedBottomSheetBehavior":
+          sets a custom class to block any gesture on the bottom sheet
         -->
-
-        <include layout="@layout/content_main" android:id="@+id/content_main" />
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/nav_host"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="0dp"
+            android:layout_weight="1"
+            android:elevation="1dp"
+            app:behavior_peekHeight="70dp"
+            app:behavior_skipCollapsed="true"
+            app:layout_behavior=".GestureLockedBottomSheetBehavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph"
+            tools:context=".ui.MainActivity" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

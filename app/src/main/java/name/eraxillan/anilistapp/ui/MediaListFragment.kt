@@ -20,25 +20,32 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.ui.adapter.MediaListAdapter
 import name.eraxillan.anilistapp.databinding.FragmentMediaListBinding
+import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.ui.adapter.MediaListLoadStateAdapter
 import name.eraxillan.anilistapp.viewmodel.MediaViewModel
 import timber.log.Timber
 
 
-class MediaListFragment : Fragment() {
+class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
     private var _binding: FragmentMediaListBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!
+
+    private var currentState: Int = BottomSheetBehavior.STATE_EXPANDED
 
     /**
      * `by viewModels<MediaViewModel>()` is a lazy delegate that creates a new `viewModel`
@@ -78,6 +85,8 @@ class MediaListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
+        (requireActivity() as MainActivity).setOnBottomSheetCallbacks(this)
+
         // Inflate the layout for this fragment
         _binding = FragmentMediaListBinding.inflate(inflater, container, false)
         return binding.root
@@ -96,10 +105,23 @@ class MediaListFragment : Fragment() {
         setupRecyclerView()
         setupSwipeOnRefresh()
 
-        search()
+        // TODO: load from preferences
+        search(MediaSort.BY_POPULARITY)
         initSearch()
 
         binding.retryButton.setOnClickListener { listAdapter.retry() }
+
+        binding.resultText.setOnClickListener {
+            (requireActivity() as MainActivity).openBottomSheet()
+        }
+
+        binding.filterImage.setOnClickListener {
+            if (currentState == BottomSheetBehavior.STATE_EXPANDED) {
+                (requireActivity() as MainActivity).closeBottomSheet()
+            } else {
+                (requireActivity() as MainActivity).openBottomSheet()
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -132,6 +154,21 @@ class MediaListFragment : Fragment() {
         }
     }
 
+    override fun onStateChanged(bottomSheet: View, newState: Int) {
+        currentState = newState
+        when (newState) {
+            BottomSheetBehavior.STATE_EXPANDED -> {
+                binding.resultText.text = getString(R.string.search_results_count, listAdapter.itemCount)
+                binding.filterImage.setImageResource(R.drawable.ic_baseline_filter_list_24)
+            }
+            BottomSheetBehavior.STATE_COLLAPSED -> {
+                binding.resultText.text = getString(R.string.see_the_results)
+                binding.filterImage.setImageResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
+            }
+            // TODO: when the bottom sheet is moving update data
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun setupRecyclerView() {
@@ -149,6 +186,11 @@ class MediaListFragment : Fragment() {
         }
 
         listAdapter.addLoadStateListener { loadState ->
+            val isRefreshSucceeds = loadState.source.refresh is LoadState.NotLoading ||
+                    loadState.mediator?.refresh is LoadState.NotLoading
+            if (isRefreshSucceeds)
+                binding.resultText.text = getString(R.string.search_results_count, listAdapter.itemCount)
+
             // Show empty list
             val isListEmpty = loadState.refresh is LoadState.NotLoading && listAdapter.itemCount == 0
             showEmptyList(isListEmpty)
@@ -161,7 +203,7 @@ class MediaListFragment : Fragment() {
                 ?: loadState.prepend
 
             // Only show the list if refresh succeeds, either from the the local db or the remote
-            binding.list.isVisible = loadState.source.refresh is LoadState.NotLoading || loadState.mediator?.refresh is LoadState.NotLoading
+            binding.list.isVisible = isRefreshSucceeds
 
             // Show loading spinner during initial load or refresh
             binding.progressBar.isVisible = loadState.mediator?.refresh is LoadState.Loading
@@ -213,13 +255,18 @@ class MediaListFragment : Fragment() {
         }
     }
 
-    private fun search() {
+    fun scrollUp() {
+        //listAdapter.retry()
+        binding.list.scrollToPosition(0)
+    }
+
+    fun search(sortBy: MediaSort) {
         // Make sure we cancel the previous job before creating a new one
         searchJob?.cancel()
 
         // Observe media list loading
         searchJob = viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getMediaListStream().collectLatest {
+            viewModel.getMediaListStream(sortBy).collectLatest {
                 listAdapter.submitData(it)
             }
         }
