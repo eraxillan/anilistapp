@@ -95,7 +95,6 @@ dependencies {
     kapt "com.github.bumptech.glide:compiler:$glide_version"
     //kapt "com.google.dagger:hilt-android-compiler:$rootProject.hiltVersion"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:$core_ctx_version"
     implementation "androidx.appcompat:appcompat:$app_compat_version"
     implementation "com.google.android.material:material:$material_version"
