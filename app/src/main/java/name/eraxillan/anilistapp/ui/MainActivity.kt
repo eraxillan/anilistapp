@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
     private fun setSortGroupButtons() {
         check(binding.materialButtonToggleGroupSort.isSingleSelection)
         binding.materialButtonToggleGroupSort.addOnButtonCheckedListener {
-                group, checkedId, isChecked ->
+                /*group*/ _, checkedId, isChecked ->
             if (isChecked) {
                 val checkedButton = findViewById<MaterialButton>(checkedId)
                 check(checkedButton != null)

@@ -36,7 +36,7 @@ class MediaViewModel(application: Application): AndroidViewModel(application) {
     private var favoriteMediaList: LiveData<List<Media>>? = null
     private val media = HashMap<MediaSort, Flow<PagingData<Media>>?>()
 
-    fun addMediaToFavorite(media: Media, navController: NavController) {
+    fun addMediaToFavorite(media: Media, @Suppress("UNUSED_PARAMETER") navController: NavController) {
         /*val job =*/ viewModelScope.launch {
             // Save media to database
             val newId = repository.addMediaToFavorite(media)
