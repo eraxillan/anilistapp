@@ -23,10 +23,6 @@ class MediaDetailHolder(
     private val binding: ListItemMediaDetailBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    companion object {
-        private const val LOG_TAG = "54BE6C87_MDH" // MDH = MediaDetailHolder
-    }
-
     fun bind(text: String, textColor: Int) {
         binding.apply {
             setText(text)

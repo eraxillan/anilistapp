@@ -27,10 +27,6 @@ import name.eraxillan.anilistapp.ui.holder.MediaListHolder
 class MediaListAdapter
     : PagingDataAdapter<Media, MediaListHolder>(AiringAnimeDiffCallback()) {
 
-    companion object {
-        private const val LOG_TAG = "54BE6C87_MLAd" // AALAd = MediaListAdapter
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaListHolder {
         return MediaListHolder(
             ListItemMediaBinding.inflate(

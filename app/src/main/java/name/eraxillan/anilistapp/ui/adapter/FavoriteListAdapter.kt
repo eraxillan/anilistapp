@@ -32,10 +32,6 @@ class FavoriteListAdapter(
 ) : RecyclerView.Adapter<MediaListHolder>()
     , ItemTouchHelperCallback.ItemTouchHelperAdapter {
 
-    companion object {
-        private const val LOG_TAG = "54BE6C87_FLAd" // FLAd = FavoriteListAdapter
-    }
-
     private val mediaList : MutableList<Media> = mutableListOf()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

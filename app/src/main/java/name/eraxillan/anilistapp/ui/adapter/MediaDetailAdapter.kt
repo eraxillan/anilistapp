@@ -27,7 +27,6 @@ import name.eraxillan.anilistapp.ui.holder.MediaDetailHolder
 class MediaDetailAdapter(var media: Media) : RecyclerView.Adapter<MediaDetailHolder>() {
 
     companion object {
-        private const val LOG_TAG = "54BE6C87_MDA" // MDA = MediaDetailAdapter
         private const val fieldCount = 22
     }
 

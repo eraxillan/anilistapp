@@ -169,6 +169,5 @@ class ZonedScheduledTime private constructor(
         // https://en.wikipedia.org/wiki/Common_year_starting_on_Monday
         // Let us go with 2001-01-01.
         /* private val BASELINE: LocalDateTime = LocalDateTime.of(2001, 1, 1, 0, 0, 0, 0) */
-        private const val LOG_TAG = "54BE6C87_ZST" // ZST = ZonedScheduledTime
     }
 }

@@ -39,10 +39,6 @@ interface OnBottomSheetCallbacks {
 
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        private const val LOG_TAG = "54BE6C87_MA" // MainActivity
-    }
-
     private var _binding: ActivityMainBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!

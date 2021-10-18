@@ -31,9 +31,6 @@ import name.eraxillan.anilistapp.viewmodel.MediaViewModel
 
 
 class MediaDetailFragment : Fragment() {
-    companion object {
-        private const val LOG_TAG = "54BE6C87_MDF" // MDF = MediaDetailFragment
-    }
 
     private var _binding: FragmentMediaDetailBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`

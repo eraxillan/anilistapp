@@ -26,10 +26,6 @@ class MediaListHolder(
     private val binding: ListItemMediaBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    companion object {
-        private const val LOG_TAG = "54BE6C87_MLH" // MLH = MediaListHolder
-    }
-
     init {
         binding.setClickListener { view ->
             binding.media?.let { media ->
