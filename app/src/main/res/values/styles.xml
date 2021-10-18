@@ -14,26 +14,17 @@
  ~ limitations under the License.
  -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <!-- Base application theme -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name="colorAccent">@color/secondaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+
+        <item name="colorError">@color/error</item>
+        <item name="android:textColor">?attr/colorOnBackground</item>
     </style>
-
-    <!--
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
-    -->
 
     <style name="AppTheme.Splash">
         <item name="android:windowBackground">@drawable/splash</item>

@@ -20,9 +20,11 @@
     <color name="primaryColor">#ff9800</color>
     <color name="primaryLightColor">#ffc947</color>
     <color name="primaryDarkColor">#c66900</color>
+
     <color name="secondaryColor">#0d47a1</color>
     <color name="secondaryLightColor">#5472d3</color>
     <color name="secondaryDarkColor">#002171</color>
+
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#ffffff</color>
 
@@ -30,4 +32,6 @@
     <color name="red">#F01414</color>
     <color name="grey">#D3D3D3</color>
     <color name="black">#de000000</color>
+
+    <color name="error">#E53935</color> <!-- Red 600 -->
 </resources>

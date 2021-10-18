@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupActionBar(binding: ActivityMainBinding) {
         // NOTE: see https://developer.android.com/guide/navigation/navigation-ui#action_bar
 
-        /* setSupportActionBar(binding.toolbarMain) */
+        setSupportActionBar(binding.toolbarMain)
 
         appBarConfiguration = AppBarConfiguration(findNavController().graph, binding.drawerLayout)
         setupActionBarWithNavController(findNavController(), appBarConfiguration)

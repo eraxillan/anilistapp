@@ -17,12 +17,27 @@
 package name.eraxillan.anilistapp.ui
 
 import android.os.Bundle
+import androidx.preference.ListPreference
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import name.eraxillan.anilistapp.R
+import name.eraxillan.anilistapp.utilities.applyUiTheme
+import timber.log.Timber
 
 class PreferenceFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
+
+        val themePreference: ListPreference? = findPreference("themePref")
+        themePreference?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener {
+                /*preference: Preference*/ _, newValueObject: Any ->
+
+            val newValue = newValueObject as String
+            Timber.e("UI theme setting changed by user to: $newValue")
+
+            applyUiTheme(newValue)
+            true
+        }
     }
 }

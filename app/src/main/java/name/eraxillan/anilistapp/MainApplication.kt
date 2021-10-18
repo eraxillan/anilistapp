@@ -20,6 +20,9 @@ import android.app.Application
 import android.os.Build
 import android.os.StrictMode
 import androidx.annotation.RequiresApi
+import androidx.preference.PreferenceManager
+import name.eraxillan.anilistapp.utilities.THEME_DEFAULT_MODE
+import name.eraxillan.anilistapp.utilities.applyUiTheme
 import timber.log.Timber
 import java.util.concurrent.Executors
 //import dagger.hilt.android.HiltAndroidApp
@@ -27,9 +30,9 @@ import java.util.concurrent.Executors
 
 //@HiltAndroidApp
 class MainApplication : Application() {
-
     override fun onCreate() {
         super.onCreate()
+
         if (BuildConfig.DEBUG) {
             initLogger()
 
@@ -44,6 +47,8 @@ class MainApplication : Application() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 enableStrictMode()
             }
+
+            readPreferences()
         }
     }
 
@@ -62,17 +67,30 @@ class MainApplication : Application() {
             })
         }
     }
+
+    private fun readPreferences() {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Read and apply the UI theme
+        val themePref = preferences.getString("themePref", THEME_DEFAULT_MODE) ?: THEME_DEFAULT_MODE
+        applyUiTheme(themePref)
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
 fun enableStrictMode() {
-    StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
-        .detectAll().penaltyLog().build()
+    StrictMode.setThreadPolicy(
+        StrictMode.ThreadPolicy.Builder()
+            .detectAll().penaltyLog().build()
     )
 
     StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
         .detectAll().penaltyListener(Executors.newSingleThreadExecutor()) { violation ->
-            if (violation.javaClass.name.equals("android.os.strictmode.untaggedsocketviolation", ignoreCase = true)) {
+            if (violation.javaClass.name.equals(
+                    "android.os.strictmode.untaggedsocketviolation",
+                    ignoreCase = true
+                )
+            ) {
                 Timber.v(violation)
             }
         }
