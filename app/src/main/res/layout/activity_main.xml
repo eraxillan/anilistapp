@@ -46,6 +46,7 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/sort_container_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -180,7 +181,7 @@
             android:layout_marginTop="0dp"
             android:layout_weight="1"
             android:elevation="1dp"
-            app:behavior_peekHeight="70dp"
+            app:behavior_peekHeight="110dp"
             app:behavior_skipCollapsed="true"
             app:layout_behavior=".GestureLockedBottomSheetBehavior"
             app:layout_constraintBottom_toBottomOf="parent"
