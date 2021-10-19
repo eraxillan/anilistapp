@@ -156,6 +156,9 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
 
     override fun onStateChanged(bottomSheet: View, newState: Int) {
         currentState = newState
+
+        if (_binding == null) return
+
         when (newState) {
             BottomSheetBehavior.STATE_EXPANDED -> {
                 binding.resultText.text = getString(R.string.search_results_count, listAdapter.itemCount)

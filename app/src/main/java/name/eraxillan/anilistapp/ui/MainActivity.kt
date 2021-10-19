@@ -111,6 +111,9 @@ class MainActivity : AppCompatActivity() {
                     parent.closeDrawer(GravityCompat.START)
             }
 
+            // Avoid layout shift to bottom 
+            openBottomSheet()
+
             isHandled
         }
 
