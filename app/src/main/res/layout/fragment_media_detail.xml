@@ -22,7 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.MediaDetailFragment"
-    android:background="@color/white" >
+    android:background="?attr/colorSurface" >
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/media_field_list"
@@ -36,7 +36,6 @@
         android:id="@+id/add_to_favorite_button"
         style="@style/Widget.MaterialComponents.FloatingActionButton"
         android:visibility="invisible"
-        android:tint="@android:color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"

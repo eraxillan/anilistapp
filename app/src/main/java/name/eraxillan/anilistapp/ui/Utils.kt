@@ -16,6 +16,9 @@
 
 package name.eraxillan.anilistapp.ui
 
+import android.graphics.Color
+import androidx.annotation.ColorInt
+import androidx.core.graphics.ColorUtils
 import androidx.navigation.NavController
 import name.eraxillan.anilistapp.NavGraphDirections
 import name.eraxillan.anilistapp.model.Media
@@ -25,4 +28,18 @@ fun showMediaInfo(media: Media, navController: NavController) {
         media, media.romajiTitle
     )
     navController.navigate(directions)
+}
+
+fun correctTextColor(@ColorInt textColor: Int, @ColorInt backgroundColor: Int) : Int {
+    val textColorIsDark = ColorUtils.calculateLuminance(textColor) < 0.25  // 0.5
+    val textColorIsLight = ColorUtils.calculateLuminance(textColor) > 0.75 // 0.5
+
+    val backgroundColorIsDark = ColorUtils.calculateLuminance(backgroundColor) < 0.25
+    val backgroundColorIsLight = ColorUtils.calculateLuminance(backgroundColor) > 0.75
+
+    if (textColorIsDark && backgroundColorIsDark)
+        return Color.WHITE
+    if (textColorIsLight && backgroundColorIsLight)
+        return Color.BLACK
+    return textColor
 }

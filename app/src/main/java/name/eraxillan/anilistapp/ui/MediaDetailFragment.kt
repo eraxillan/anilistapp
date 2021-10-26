@@ -25,6 +25,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.color.MaterialColors
+import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.ui.adapter.MediaDetailAdapter
 import name.eraxillan.anilistapp.databinding.FragmentMediaDetailBinding
 import name.eraxillan.anilistapp.viewmodel.MediaViewModel
@@ -65,7 +67,12 @@ class MediaDetailFragment : Fragment() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun setupRecyclerView() {
-        val adapter = MediaDetailAdapter(args.media!!)
+        // Resolve color from theme attr
+        val surfaceColor = MaterialColors.getColor(
+            binding.mediaFieldList, R.attr.colorSurface
+        )
+
+        val adapter = MediaDetailAdapter(args.media!!, surfaceColor)
 
         binding.mediaFieldList.adapter = adapter
     }

@@ -60,10 +60,7 @@ class SwipeBackgroundHelper {
             val context = viewItem.context
             var icon = ContextCompat.getDrawable(context, iconResId)!!
             icon = DrawableCompat.wrap(icon).mutate()
-            icon.colorFilter = PorterDuffColorFilter(
-                ContextCompat.getColor(context, R.color.white),
-                PorterDuff.Mode.SRC_IN
-            )
+            icon.colorFilter = PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
             val backgroundColor = getBackgroundColor(R.color.red, R.color.grey, dX, viewItem)
             return DrawCommand(icon, backgroundColor)
         }

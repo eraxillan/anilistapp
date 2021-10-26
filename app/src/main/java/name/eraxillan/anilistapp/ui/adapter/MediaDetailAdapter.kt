@@ -18,13 +18,15 @@ package name.eraxillan.anilistapp.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
 import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.anilistapp.databinding.ListItemMediaDetailBinding
 import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.ui.correctTextColor
 import name.eraxillan.anilistapp.ui.holder.MediaDetailHolder
 
-class MediaDetailAdapter(var media: Media) : RecyclerView.Adapter<MediaDetailHolder>() {
+class MediaDetailAdapter(var media: Media, @ColorInt val surfaceColor: Int) : RecyclerView.Adapter<MediaDetailHolder>() {
 
     companion object {
         private const val fieldCount = 22
@@ -72,7 +74,7 @@ class MediaDetailAdapter(var media: Media) : RecyclerView.Adapter<MediaDetailHol
         val season = if (media.season != -1) media.season.toString() else PLACEHOLDER_STRING
         val minAge = if (media.minAge != -1) media.minAge.toString() else PLACEHOLDER_STRING
 
-        val imageColor = if (media.coverImageColor.isNotEmpty()) media.coverImageColor else "#000000"
+        val imageColorStr = if (media.coverImageColor.isNotEmpty()) media.coverImageColor else "#000000"
 
         // TODO: extract these strings to resources
         val text = when (position) {
@@ -102,7 +104,11 @@ class MediaDetailAdapter(var media: Media) : RecyclerView.Adapter<MediaDetailHol
             21 -> "Age restrictions: ${minAge}+"
             else -> ""
         }
-        holder.bind(text, imageColor.toColorInt())
+
+        // Adopt color for current theme: avoid black on black and white on white
+        val imageColor = correctTextColor(imageColorStr.toColorInt(), surfaceColor)
+
+        holder.bind(text, imageColor)
     }
 
     // Tells the `RecyclerView` how many items to display
