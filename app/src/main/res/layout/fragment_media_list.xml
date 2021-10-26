@@ -20,6 +20,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="?attr/actionBarSize"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/corner"
@@ -30,10 +31,8 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:animateLayoutChanges="true"
-        android:background="@drawable/corner"
         android:elevation="10dp"
         android:orientation="horizontal"
-        android:layout_marginTop="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -45,7 +44,6 @@
             android:layout_gravity="center|start"
             android:layout_marginStart="15dp"
             android:text="@string/search_results_count"
-            android:textColor="#2B2B2B"
             android:textSize="20sp" />
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -62,6 +60,7 @@
     </FrameLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:padding="5dp"
         android:id="@+id/swipe_refresh"
         android:layout_width="0dp"
         android:layout_height="0dp"
