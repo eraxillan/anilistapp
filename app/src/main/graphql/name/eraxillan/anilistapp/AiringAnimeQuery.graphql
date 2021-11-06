@@ -15,7 +15,7 @@ query AiringAnime($page: Int!, $perPage: Int!, $seasonYear: Int!, $sort: [MediaS
       idMal
       updatedAt
       synonyms
-      source(version: 2)
+      source(version: 3)
       title {
         romaji
         native

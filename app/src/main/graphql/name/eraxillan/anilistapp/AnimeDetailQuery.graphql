@@ -10,7 +10,7 @@ query AnimeDetail($id: Int, $page: Int!, $perPage: Int!) {
     media(id: $id, type: ANIME, format: TV, isAdult: false) {
       id
       idMal
-      source(version: 2)
+      source(version: 3)
       title {
         romaji
       }
