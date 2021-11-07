@@ -21,6 +21,7 @@ import android.os.Build
 import android.os.StrictMode
 import androidx.annotation.RequiresApi
 import androidx.preference.PreferenceManager
+import name.eraxillan.anilistapp.utilities.PREF_THEME_KEY
 import name.eraxillan.anilistapp.utilities.THEME_DEFAULT_MODE
 import name.eraxillan.anilistapp.utilities.applyUiTheme
 import timber.log.Timber
@@ -72,7 +73,7 @@ class MainApplication : Application() {
         val preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Read and apply the UI theme
-        val themePref = preferences.getString("themePref", THEME_DEFAULT_MODE) ?: THEME_DEFAULT_MODE
+        val themePref = preferences.getString(PREF_THEME_KEY, THEME_DEFAULT_MODE) ?: THEME_DEFAULT_MODE
         applyUiTheme(themePref)
     }
 }

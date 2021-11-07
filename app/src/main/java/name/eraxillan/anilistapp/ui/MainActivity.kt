@@ -151,7 +151,7 @@ class MainActivity : AppCompatActivity() {
                 check(checkedButton != null)
 
                 val sortValue = MediaSort.valueOf(checkedButton.tag.toString())
-                Timber.e("New sort value: $sortValue")
+                Timber.d("New sort value: $sortValue")
 
                 getMediaListFragment().search(sortValue)
             }

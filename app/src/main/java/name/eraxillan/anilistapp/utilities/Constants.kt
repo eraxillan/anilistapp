@@ -22,3 +22,6 @@ package name.eraxillan.anilistapp.utilities
 const val DATABASE_NAME = "media_db"
 const val ANIME_DATA_FILENAME = "animes.json"
 const val NETWORK_PAGE_SIZE = 30
+
+const val PREF_THEME_KEY = "themePref"
+
