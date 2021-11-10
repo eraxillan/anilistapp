@@ -23,18 +23,14 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import name.eraxillan.anilistapp.api.AnilistApi
-import name.eraxillan.anilistapp.db.MediaDatabase
-import name.eraxillan.anilistapp.db.RemoteKeys
-import name.eraxillan.anilistapp.db.convertAnilistMedia
-import name.eraxillan.anilistapp.model.Media
-import name.eraxillan.anilistapp.model.MediaSort
-import name.eraxillan.anilistapp.utilities.NETWORK_PAGE_SIZE
+import name.eraxillan.anilistapp.db.*
+import name.eraxillan.anilistapp.model.*
 import timber.log.Timber
 import java.io.IOException
 import java.lang.Exception
 
 
-typealias MediaPagingState = PagingState<Int, Media>
+typealias MediaPagingState = PagingState<Int, LocalMedia>
 
 // Anilist page API is 1 based: https://anilist.gitbook.io/anilist-apiv2-docs/overview/graphql/pagination
 private const val ANILIST_STARTING_PAGE_INDEX = 1
@@ -43,8 +39,11 @@ private const val ANILIST_STARTING_PAGE_INDEX = 1
 class AnilistRemoteMediator(
     private val database: MediaDatabase,
     private val backend: AnilistApi,
+    //private val filter: MediaQuery,
     private val sortBy: MediaSort
-) : RemoteMediator<Int, Media>() {
+) : RemoteMediator<Int, LocalMedia>() {
+
+    private val databaseHelper:MediaDatabaseHelper = MediaDatabaseHelper(database)
 
     override suspend fun initialize(): InitializeAction {
         // Launch remote refresh as soon as paging starts and do not trigger remote prepend or
@@ -68,45 +67,17 @@ class AnilistRemoteMediator(
     }
 
     override suspend fun load(loadType: LoadType, state: MediaPagingState): MediatorResult {
-        val page = when (loadType) {
-            REFRESH -> {
-                val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
-                val temp = remoteKeys?.nextKey?.minus(1) ?: ANILIST_STARTING_PAGE_INDEX
-                Timber.d("Got LoadType.REFRESH request: pageNo=$temp")
-                temp
-            }
-            PREPEND -> {
-                val remoteKeys = getRemoteKeyForFirstItem(state)
-                // If `remoteKeys` is null, that means the refresh result is not in the database yet.
-                // We can return `Success` with `endOfPaginationReached = false` because Paging
-                // will call this method again if `RemoteKeys` becomes non-null.
-                // If `remoteKeys` is NOT NULL but its `prevKey` is null, that means we've reached
-                // the end of pagination for prepend
-                val prevKey = remoteKeys?.prevKey
-                    ?: return MediatorResult.Success(endOfPaginationReached = (remoteKeys != null))
-                Timber.d("Got LoadType.PREPEND request: pageNo=$prevKey")
-                prevKey
-            }
-            APPEND -> {
-                val remoteKeys = getRemoteKeyForLastItem(state)
-                // If `remoteKeys` is null, that means the refresh result is not in the database yet.
-                // We can return `Success` with `endOfPaginationReached = false` because Paging
-                // will call this method again if `RemoteKeys` becomes non-null.
-                // If `remoteKeys` is NOT NULL but its `prevKey` is null, that means we've reached
-                // the end of pagination for append
-                val nextKey = remoteKeys?.nextKey
-                    ?: return MediatorResult.Success(endOfPaginationReached = (remoteKeys != null))
-                Timber.d("Got LoadType.APPEND request: pageNo=$nextKey")
-                nextKey
-            }
-        }
+        // https://kotlinlang.org/docs/destructuring-declarations.html#example-destructuring-declarations-and-maps
+        val (page, isEmpty, endOfPaginationReachedRemote) = getRemoteKey(loadType, state)
+        if (isEmpty)
+            return MediatorResult.Success(endOfPaginationReachedRemote)
 
         try {
-            check(NETWORK_PAGE_SIZE == state.config.pageSize)
-            val pageSize = when (loadType) {
+            val pageSize = state.config.pageSize
+            /*val pageSize = when (loadType) {
                 REFRESH -> state.config.initialLoadSize
                 else -> state.config.pageSize
-            }
+            }*/
             Timber.d("Querying server: pageNo=$page with $pageSize per page...")
             val backendResponse = backend.getAiringAnimeList(page, pageSize, sortBy)
             Timber.d("Successfully got response from server")
@@ -117,16 +88,8 @@ class AnilistRemoteMediator(
             )
 
             val pagination = backend.getResponsePagination(backendResponse)
-            val endOfPaginationReached = !pagination.hasNextPage
-            Timber.d(
-                """
-                    Media list total size: ${pagination.totalItems},
-                    current page: ${pagination.currentPage},
-                    items per page: ${pagination.perPage},
-                    total pages: ${pagination.totalPages}
-                    end of pagination reached: $endOfPaginationReached
-                """.trimIndent()
-            )
+            val endOfPaginationReached = pagination.totalItems == 0 || !pagination.hasNextPage
+                    || backendResponse.data?.page?.media?.isEmpty() == true
 
             val serverMediaList = backendResponse.data?.page?.media?.filterNotNull() ?: emptyList()
             val mediaList = serverMediaList.map { medium -> convertAnilistMedia(medium) }
@@ -134,35 +97,19 @@ class AnilistRemoteMediator(
             // FIXME: move to background worker
             backend.fillEpisodeCount(serverMediaList, mediaList)
 
-            Timber.d("mediaList.size=${mediaList.size}")
+            Timber.d(
+                """
+                    Media list total size: ${pagination.totalItems},
+                    media list for current page size: ${mediaList.size},
+                    current page: ${pagination.currentPage},
+                    items per page: ${pagination.perPage},
+                    total pages: ${pagination.totalPages}
+                    end of pagination reached: $endOfPaginationReached
+                """.trimIndent()
+            )
 
-            database.withTransaction {
-                // Clear all tables in the database
-                if (loadType == REFRESH) {
-                    database.remoteKeysDao().clearRemoteKeys()
-                    database.mediaDao().deleteAllMedia()
-                    Timber.d("Cache database cleared!")
-                }
-
-                val prevKey = if (page == ANILIST_STARTING_PAGE_INDEX) null else (page - 1)
-                // RemoteMediator.load with loadType=APPEND uses pageSize=state.config.pageSize,
-                // so nextKey should always be computed based on increments of state.config.pageSize.
-                // E.g., If we load items 0-59 on initial load with key=1, the nextKey should
-                // not be 2, because that would load items 20-39, which overlaps our initial load
-                // instead of fetching new data as intended
-                val nextKey = if (endOfPaginationReached) null else page + (pageSize / state.config.pageSize)
-                Timber.d("prevKey=$prevKey, nextKey=$nextKey")
-
-                val keys = mediaList.map {
-                    RemoteKeys(anilistId = it.anilistId, prevKey = prevKey, nextKey = nextKey)
-                }
-                database.remoteKeysDao().insertAll(keys)
-                database.mediaDao().insertMediaList(mediaList)
-                Timber.d(
-                    "Cache updated: ${keys.size} keys and ${mediaList.size} records added"
-                )
-            }
-            return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
+            saveMediasToDatabase(loadType, page, /*pageSize, state.config.pageSize,*/ endOfPaginationReached, mediaList)
+            return MediatorResult.Success(endOfPaginationReached)
         } catch (exception: IOException) {
             Timber.e("Unable to fetch data from network (IOException): ${exception.localizedMessage}")
             return MediatorResult.Error(exception)
@@ -183,7 +130,7 @@ class AnilistRemoteMediator(
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
             ?.let { media ->
                 // Get the remote keys of the last item retrieved
-                database.remoteKeysDao().remoteKeysById(media.anilistId)
+                database.remoteKeysDao().remoteKeysById(media.media.anilistId)
             }
     }
 
@@ -193,7 +140,7 @@ class AnilistRemoteMediator(
         return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
             ?.let { media ->
                 // Get the remote keys of the first items retrieved
-                database.remoteKeysDao().remoteKeysById(media.anilistId)
+                database.remoteKeysDao().remoteKeysById(media.media.anilistId)
             }
     }
 
@@ -201,9 +148,121 @@ class AnilistRemoteMediator(
         // The paging library is trying to load data after the anchor position.
         // Get the item closest to the anchor position
         return state.anchorPosition?.let { position ->
-            state.closestItemToPosition(position)?.anilistId?.let { anilistId ->
+            state.closestItemToPosition(position)?.media?.anilistId?.let { anilistId ->
                 database.remoteKeysDao().remoteKeysById(anilistId)
             }
         }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private suspend fun insertRemoteKeys(
+        page: Int, /*pageSize: Int, statePageSize: Int,*/
+        endOfPaginationReached: Boolean, mediaList: List<Media>
+    ): Int {
+        val prevKey = if (page == ANILIST_STARTING_PAGE_INDEX) null else (page - 1)
+
+        // RemoteMediator.load with loadType=APPEND uses pageSize=state.config.pageSize,
+        // so nextKey should always be computed based on increments of state.config.pageSize.
+        // E.g., If we load items 0-59 on initial load with key=1, the nextKey should
+        // not be 2, because that would load items 20-39, which overlaps our initial load
+        // instead of fetching new data as intended
+        val nextKey = if (endOfPaginationReached) null else page + 1 /*(pageSize / statePageSize)*/
+        Timber.d("prevKey=$prevKey, nextKey=$nextKey")
+
+        val keys = mediaList.map {
+            RemoteKeys(anilistId = it.anilistId, prevKey = prevKey, nextKey = nextKey)
+        }
+        database.remoteKeysDao().insertAll(keys)
+        Timber.d("${keys.size} remoteKeys inserted to database")
+
+        return keys.size
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private suspend fun saveMediasToDatabase(
+        loadType: LoadType, page: Int, /*pageSize: Int, statePageSize: Int,*/
+        endOfPaginationReached: Boolean, mediaList: List<Media>
+    ) {
+        database.withTransaction {
+            if (loadType == REFRESH) {
+                Timber.e("Got REFRESH request: clear the database")
+                databaseHelper.deleteAllMedias()
+            }
+
+            val keysSize = insertRemoteKeys(page, /*pageSize, statePageSize,*/
+                endOfPaginationReached, mediaList
+            )
+
+            val mediaIds = database.mediaDao().insertAll(mediaList)
+            check(mediaIds.size == mediaList.size) { Timber.e("mediaIds.size != mediaList.size") }
+
+            for (i in mediaIds.indices) {
+                val mediaId = mediaIds[i]
+                check(mediaId != -1L) { Timber.e("mediaId == -1") }
+
+                val media = mediaList[i]
+
+                // One-to-many relations
+                databaseHelper.insertTitleSynonyms(media.titleSynonyms, mediaId)
+                databaseHelper.insertExternalLinks(media.externalLinks, mediaId)
+                databaseHelper.insertStreamingEpisodes(media.streamingEpisodes, mediaId)
+                databaseHelper.insertRankings(media.rankings, mediaId)
+
+                // Many-to-many relations
+                databaseHelper.insertGenres(media.genres, mediaId)
+                databaseHelper.insertTags(media.tags, mediaId)
+                databaseHelper.insertStudios(media.studios, mediaId)
+            }
+
+            Timber.d(
+                "Cache updated: $keysSize keys and ${mediaList.size} records added"
+            )
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    data class PageResult(val page: Int, val isEmpty: Boolean, val endOfPaginationReached: Boolean)
+
+    private suspend fun getRemoteKey(loadType: LoadType, state: MediaPagingState): PageResult {
+        val page = when (loadType) {
+            REFRESH -> {
+                val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
+                val temp = remoteKeys?.nextKey?.minus(1) ?: ANILIST_STARTING_PAGE_INDEX
+
+                Timber.d("Got LoadType.REFRESH request: pageNo=$temp")
+                temp
+            }
+            PREPEND -> {
+                val remoteKeys = getRemoteKeyForFirstItem(state)
+                // If `remoteKeys` is null, that means the refresh result is not in the database yet.
+                // We can return `Success` with `endOfPaginationReached = false` because Paging
+                // will call this method again if `RemoteKeys` becomes non-null.
+                // If `remoteKeys` is NOT NULL but its `prevKey` is null, that means we've reached
+                // the end of pagination for prepend
+                val prevKey = remoteKeys?.prevKey
+                    ?: return PageResult(-1, true, remoteKeys != null)
+
+                Timber.d("Got LoadType.PREPEND request: pageNo=$prevKey")
+                prevKey
+            }
+            APPEND -> {
+                val remoteKeys = getRemoteKeyForLastItem(state)
+                // If `remoteKeys` is null, that means the refresh result is not in the database yet.
+                // We can return `Success` with `endOfPaginationReached = false` because Paging
+                // will call this method again if `RemoteKeys` becomes non-null.
+                // If `remoteKeys` is NOT NULL but its `prevKey` is null, that means we've reached
+                // the end of pagination for append
+                val nextKey = remoteKeys?.nextKey
+                    ?: return PageResult(-1, true, remoteKeys != null)
+
+                Timber.d("Got LoadType.APPEND request: pageNo=$nextKey")
+                nextKey
+            }
+        }
+
+        return PageResult(page, isEmpty = false, endOfPaginationReached = false)
     }
 }

@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 7,
-    "identityHash": "db3de07b4dd5dd6d5940ec42d31d91b7",
+    "version": 8,
+    "identityHash": "8057a193ba49a28404fb18b0edc73cfa",
     "entities": [
       {
         "tableName": "media_sources",
@@ -383,14 +383,13 @@
       },
       {
         "tableName": "media_studios",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`studio_id` INTEGER NOT NULL DEFAULT -1, `name` TEXT NOT NULL DEFAULT '', `is_animation_studio` INTEGER NOT NULL DEFAULT 0, `site_url` TEXT NOT NULL DEFAULT '', `favorites` INTEGER NOT NULL DEFAULT -1, PRIMARY KEY(`studio_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`studio_id` INTEGER NOT NULL, `name` TEXT NOT NULL DEFAULT '', `is_animation_studio` INTEGER NOT NULL DEFAULT 0, `site_url` TEXT NOT NULL DEFAULT '', `favorites` INTEGER NOT NULL DEFAULT -1, PRIMARY KEY(`studio_id`))",
         "fields": [
           {
             "fieldPath": "studioId",
             "columnName": "studio_id",
             "affinity": "INTEGER",
-            "notNull": true,
-            "defaultValue": "-1"
+            "notNull": true
           },
           {
             "fieldPath": "name",
@@ -1004,7 +1003,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'db3de07b4dd5dd6d5940ec42d31d91b7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8057a193ba49a28404fb18b0edc73cfa')"
     ]
   }
 }

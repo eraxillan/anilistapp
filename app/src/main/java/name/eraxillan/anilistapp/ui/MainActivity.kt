@@ -30,6 +30,7 @@ import com.google.android.material.button.MaterialButton
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.ActivityMainBinding
 import name.eraxillan.anilistapp.model.MediaSort
+import name.eraxillan.anilistapp.repository.PreferenceRepository
 import timber.log.Timber
 
 
@@ -144,14 +145,31 @@ class MainActivity : AppCompatActivity() {
 
     private fun setSortGroupButtons() {
         check(binding.materialButtonToggleGroupSort.isSingleSelection)
+
+        val preferences = PreferenceRepository.getInstance(this)
+        binding.materialButtonToggleGroupSort.check(
+            when (preferences.sortOption) {
+                MediaSort.BY_TITLE -> R.id.sort_by_title_button
+                MediaSort.BY_POPULARITY -> R.id.sort_by_popularity_button
+                MediaSort.BY_AVERAGE_SCORE -> R.id.sort_by_average_score_button
+                MediaSort.BY_TRENDING -> R.id.sort_by_trending_button
+                MediaSort.BY_FAVORITES -> R.id.sort_by_favorites_button
+                MediaSort.BY_DATE_ADDED -> R.id.sort_by_date_added_button
+                MediaSort.BY_RELEASE_DATE -> R.id.sort_by_release_date_button
+                else -> R.id.sort_by_popularity_button
+            }
+        )
+
         binding.materialButtonToggleGroupSort.addOnButtonCheckedListener {
-                /*group*/ _, checkedId, isChecked ->
+            /*group*/ _, checkedId, isChecked ->
             if (isChecked) {
                 val checkedButton = findViewById<MaterialButton>(checkedId)
                 check(checkedButton != null)
 
                 val sortValue = MediaSort.valueOf(checkedButton.tag.toString())
+                check(sortValue != MediaSort.UNKNOWN)
                 Timber.d("New sort value: $sortValue")
+                preferences.sortOption = sortValue
 
                 getMediaListFragment().search(sortValue)
             }

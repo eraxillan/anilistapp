@@ -19,8 +19,9 @@ package name.eraxillan.anilistapp.db
 import androidx.paging.PagingSource
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import androidx.sqlite.db.SupportSQLiteQuery
-import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.model.*
+import timber.log.Timber
+
 
 /**
  * Media database CRUD: create-read-update-delete
@@ -36,13 +37,61 @@ import name.eraxillan.anilistapp.model.Media
  * calling it from the main thread
  */
 @Dao
-interface MediaDao {
-    @RawQuery(observedEntities = [Media::class])
-    fun getMediaListPagesSorted(query: SupportSQLiteQuery): PagingSource<Int, Media>
+abstract class MediaDao {
+    @Query("SELECT COUNT(*) FROM media_collection")
+    abstract fun getAllMediaCount(): Long
+
+    @Transaction
+    @Query("SELECT * FROM media_collection ORDER BY romaji_title COLLATE NOCASE ASC")
+    protected abstract fun getAllLocalMediaPagedByTitle(): PagingSource<Int, LocalMedia>
+
+    @Transaction
+    @Query("SELECT * FROM media_collection ORDER BY popularity DESC, romaji_title COLLATE NOCASE ASC")
+    protected abstract fun getAllLocalMediaPagedIByPopularity(): PagingSource<Int, LocalMedia>
+
+    @Transaction
+    @Query("SELECT * FROM media_collection ORDER BY average_score DESC, romaji_title COLLATE NOCASE ASC")
+    protected abstract fun getAllLocalMediaPagedByAverageScore(): PagingSource<Int, LocalMedia>
+
+    @Transaction
+    @Query("SELECT * FROM media_collection ORDER BY trending DESC, romaji_title COLLATE NOCASE ASC")
+    protected abstract fun getAllLocalMediaPagedByTrending(): PagingSource<Int, LocalMedia>
+
+    @Transaction
+    @Query("SELECT * FROM media_collection ORDER BY favorites DESC, romaji_title COLLATE NOCASE ASC")
+    protected abstract fun getAllLocalMediaPagedByFavorites(): PagingSource<Int, LocalMedia>
+
+    @Transaction
+    @Query("SELECT * FROM media_collection ORDER BY anilist_id DESC, romaji_title COLLATE NOCASE ASC")
+    protected abstract fun getAllLocalMediaPagedByDateAdded(): PagingSource<Int, LocalMedia>
+
+    @Transaction
+    @Query("SELECT * FROM media_collection ORDER BY start_date DESC, romaji_title COLLATE NOCASE ASC")
+    protected abstract fun getAllLocalMediaPagedByReleaseDate(): PagingSource<Int, LocalMedia>
+
+    fun getAllLocalMediaPaged(sort: MediaSort): PagingSource<Int, LocalMedia> {
+        return when (sort) {
+            MediaSort.BY_TITLE -> getAllLocalMediaPagedByTitle()
+            MediaSort.BY_POPULARITY -> getAllLocalMediaPagedIByPopularity()
+            MediaSort.BY_AVERAGE_SCORE -> getAllLocalMediaPagedByAverageScore()
+            MediaSort.BY_TRENDING -> getAllLocalMediaPagedByTrending()
+            MediaSort.BY_FAVORITES -> getAllLocalMediaPagedByFavorites()
+            MediaSort.BY_DATE_ADDED -> getAllLocalMediaPagedByDateAdded()
+            MediaSort.BY_RELEASE_DATE -> getAllLocalMediaPagedByReleaseDate()
+            else -> {
+                Timber.e("Invalid sort value $sort! Sort by `popularity` field as default one")
+                getAllLocalMediaPagedIByPopularity()
+            }
+        }
+    }
+
+    // TODO: do not work in current Android Room version, [MediaDatabaseHelper] class do this job
+    /*@Insert(onConflict = REPLACE)
+    abstract suspend fun insertAll(entities: Collection<LocalMedia>): List<Long>*/
 
     @Insert(onConflict = REPLACE)
-    suspend fun insertMediaList(mediaList: List<Media>)
+    abstract suspend fun insertAll(entities: Collection<Media>): List<Long>
 
     @Query("DELETE FROM media_collection")
-    suspend fun deleteAllMedia()
+    abstract suspend fun deleteAll()
 }

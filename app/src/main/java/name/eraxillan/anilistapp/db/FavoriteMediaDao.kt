@@ -2,13 +2,14 @@ package name.eraxillan.anilistapp.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import name.eraxillan.anilistapp.model.Media
 import name.eraxillan.anilistapp.model.FavoriteMedia
+import name.eraxillan.anilistapp.model.Media
 
 @Dao
 interface FavoriteMediaDao {
-    @Query("SELECT * FROM media_collection WHERE anilistId IN (SELECT anilistId FROM favorite_media_collection)")
-    fun getFavoriteMediaList(): LiveData<List<Media>>
+    @Transaction
+    @Query("SELECT * FROM media_collection WHERE anilist_id IN (SELECT anilist_id FROM favorite_media_collection)")
+    fun getFavoriteMediaList(): LiveData<List<LocalMedia>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addMediaToFavorite(media: FavoriteMedia): Long
@@ -16,6 +17,6 @@ interface FavoriteMediaDao {
     @Delete
     suspend fun deleteFavoriteMedia(media: FavoriteMedia)
 
-    @Query("SELECT EXISTS(SELECT 1 FROM favorite_media_collection WHERE anilistId = :anilistId LIMIT 1)")
+    @Query("SELECT EXISTS(SELECT 1 FROM favorite_media_collection WHERE anilist_id = :anilistId LIMIT 1)")
     fun isMediaAddedToFavorite(anilistId: Long): LiveData<Boolean>
 }

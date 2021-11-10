@@ -24,20 +24,25 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.filter
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.ui.adapter.MediaListAdapter
 import name.eraxillan.anilistapp.databinding.FragmentMediaListBinding
+import name.eraxillan.anilistapp.db.MediaDatabase
 import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.ui.adapter.MediaListLoadStateAdapter
+import name.eraxillan.anilistapp.utilities.INIT_DATABASE_WORKER_TAG
 import name.eraxillan.anilistapp.viewmodel.MediaViewModel
 import timber.log.Timber
+import java.util.*
+import androidx.paging.map
+import name.eraxillan.anilistapp.db.convertLocalMedia
+import name.eraxillan.anilistapp.repository.PreferenceRepository
 
 
 class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
@@ -81,6 +86,9 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        // Trigger database creation and initialization by doing some query
+        initializeDatabase()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -105,8 +113,6 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
         setupRecyclerView()
         setupSwipeOnRefresh()
 
-        // TODO: load from preferences
-        search(MediaSort.BY_POPULARITY)
         initSearch()
 
         binding.retryButton.setOnClickListener { listAdapter.retry() }
@@ -121,6 +127,13 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
             } else {
                 (requireActivity() as MainActivity).openBottomSheet()
             }
+        }
+
+        val preferences = PreferenceRepository.getInstance(requireContext())
+        if (preferences.isFirstRun) {
+            waitForDatabaseReady()
+        } else {
+            search(preferences.sortOption)
         }
     }
 
@@ -270,7 +283,7 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
         // Observe media list loading
         searchJob = viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getMediaListStream(sortBy).collectLatest {
-                listAdapter.submitData(it)
+                listAdapter.submitData(it.map { media -> convertLocalMedia(media) })
             }
         }
     }
@@ -283,5 +296,41 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
             binding.emptyList.visibility = View.GONE
             binding.list.visibility = View.VISIBLE
         }
+    }
+
+    private fun initializeDatabase() {
+        lifecycleScope.launchWhenCreated {
+            withContext(Dispatchers.IO) {
+                val mediaCount = MediaDatabase.getInstance(requireContext()).mediaDao().getAllMediaCount()
+                Timber.d("Got $mediaCount media from database")
+            }
+        }
+    }
+
+    private fun waitForDatabaseReady() {
+        WorkManager.getInstance(requireContext())
+            .getWorkInfosByTagLiveData(INIT_DATABASE_WORKER_TAG)
+            .observe(viewLifecycleOwner, { workInfoList: List<WorkInfo> ->
+                if (workInfoList.isEmpty()) return@observe
+
+                val workInfo = workInfoList.first()
+                when (workInfo.state) {
+                    WorkInfo.State.SUCCEEDED -> {
+                        Timber.d("Init database worker state changed to 'SUCCEEDED'")
+
+                        // Mark the first run property as false
+                        val preferences = PreferenceRepository.getInstance(requireContext())
+                        preferences.isFirstRun = false
+
+                        // Show the media list
+                        search(preferences.sortOption)
+                    }
+                    else ->
+                        Timber.d("Init database worker state changed to '${workInfo.state.name}'")
+                }
+
+                // TODO: do something with progress information
+                //val value = workInfo.progress.getInt(INIT_DATABASE_WORKER_PROGRESS_KEY, 0)
+            })
     }
 }

@@ -25,9 +25,7 @@ import name.eraxillan.anilistapp.type.MediaSeason as AnilistMediaSeason
 import name.eraxillan.anilistapp.type.MediaSource as AnilistMediaSource
 import name.eraxillan.anilistapp.type.MediaRankType as AnilistMediaRankType
 import name.eraxillan.anilistapp.type.MediaSort as AnilistMediaSort
-import name.eraxillan.anilistapp.model.MediaFormat as MediaFormat
 import name.eraxillan.anilistapp.model.MediaStatus as MediaStatus
-import name.eraxillan.anilistapp.model.MediaSource as MediaSource
 import name.eraxillan.anilistapp.model.MediaRankType as MediaRankType
 import name.eraxillan.anilistapp.model.MediaSort as MediaSort
 import java.net.URL
@@ -48,17 +46,17 @@ fun convertSortType(value: MediaSort) = when (value) {
 fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
 
     fun convertFormat(value: AnilistMediaFormat?) = when (value) {
-        AnilistMediaFormat.TV -> MediaFormat.TV
-        AnilistMediaFormat.TV_SHORT -> MediaFormat.TV_SHORT
-        AnilistMediaFormat.MOVIE -> MediaFormat.MOVIE
-        AnilistMediaFormat.SPECIAL -> MediaFormat.SPECIAL
-        AnilistMediaFormat.OVA -> MediaFormat.OVA
-        AnilistMediaFormat.ONA -> MediaFormat.ONA
-        AnilistMediaFormat.MUSIC -> MediaFormat.MUSIC
-        AnilistMediaFormat.MANGA -> MediaFormat.MANGA
-        AnilistMediaFormat.NOVEL -> MediaFormat.NOVEL
-        AnilistMediaFormat.ONE_SHOT -> MediaFormat.ONE_SHOT
-        else -> MediaFormat.UNKNOWN
+        AnilistMediaFormat.TV -> MediaFormatEnum.TV
+        AnilistMediaFormat.TV_SHORT -> MediaFormatEnum.TV_SHORT
+        AnilistMediaFormat.MOVIE -> MediaFormatEnum.MOVIE
+        AnilistMediaFormat.SPECIAL -> MediaFormatEnum.SPECIAL
+        AnilistMediaFormat.OVA -> MediaFormatEnum.OVA
+        AnilistMediaFormat.ONA -> MediaFormatEnum.ONA
+        AnilistMediaFormat.MUSIC -> MediaFormatEnum.MUSIC
+        AnilistMediaFormat.MANGA -> MediaFormatEnum.MANGA
+        AnilistMediaFormat.NOVEL -> MediaFormatEnum.NOVEL
+        AnilistMediaFormat.ONE_SHOT -> MediaFormatEnum.ONE_SHOT
+        else -> MediaFormatEnum.UNKNOWN
     }
 
     fun convertStatus(value: AnilistMediaStatus?) = when (value) {
@@ -79,15 +77,15 @@ fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
     }
 
     fun convertSource(value: AnilistMediaSource?) = when (value) {
-        AnilistMediaSource.MANGA -> MediaSource.MANGA
-        AnilistMediaSource.LIGHT_NOVEL -> MediaSource.LIGHT_NOVEL
-        AnilistMediaSource.VISUAL_NOVEL -> MediaSource.VISUAL_NOVEL
-        AnilistMediaSource.VIDEO_GAME -> MediaSource.VIDEO_GAME
-        AnilistMediaSource.OTHER -> MediaSource.OTHER
-        AnilistMediaSource.NOVEL -> MediaSource.NOVEL
-        AnilistMediaSource.DOUJINSHI -> MediaSource.DOUJINSHI
-        AnilistMediaSource.ANIME -> MediaSource.ANIME
-        else -> MediaSource.UNKNOWN
+        AnilistMediaSource.MANGA -> MediaSourceEnum.MANGA
+        AnilistMediaSource.LIGHT_NOVEL -> MediaSourceEnum.LIGHT_NOVEL
+        AnilistMediaSource.VISUAL_NOVEL -> MediaSourceEnum.VISUAL_NOVEL
+        AnilistMediaSource.VIDEO_GAME -> MediaSourceEnum.VIDEO_GAME
+        AnilistMediaSource.OTHER -> MediaSourceEnum.OTHER
+        AnilistMediaSource.NOVEL -> MediaSourceEnum.NOVEL
+        AnilistMediaSource.DOUJINSHI -> MediaSourceEnum.DOUJINSHI
+        AnilistMediaSource.ANIME -> MediaSourceEnum.ANIME
+        else -> MediaSourceEnum.UNKNOWN
     }
 
     fun convertRankType(value: AnilistMediaRankType?) = when (value) {
@@ -158,38 +156,46 @@ fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
         0, zoneOffset
     )
 
-    val synonyms = input.synonyms?.filterNotNull()?.map { s -> MediaTitleSynonym(s) }
+    val synonyms = input.synonyms?.filterNotNull()?.map { element ->
+        MediaTitleSynonym(name = element) }
         ?: emptyList()
-    val genres = input.genres?.filterNotNull()?.map { g -> MediaGenre(g) }
+
+    val genres = input.genres?.filterNotNull()?.map { element ->
+        MediaGenre(name = element) }
         ?: emptyList()
 
     val tags = input.tags?.filterNotNull()?.map { tag ->
         MediaTag(
-            tag.name, tag.description ?: "", tag.category ?: "",
+            tag.id.toLong(), tag.name, tag.description ?: "", tag.category ?: "",
             tag.rank ?: -1, tag.isGeneralSpoiler ?: false,
             tag.isMediaSpoiler ?: false, tag.isAdult ?: false
         )
     } ?: emptyList()
+
     val studios = input.studios?.edges?.filterNotNull()?.map { studio ->
         MediaStudio(
-            studio.node?.id ?: -1, studio.node?.name ?: "",
+            studio.node?.id?.toLong() ?: -1L, studio.node?.name ?: "",
             studio.node?.isAnimationStudio ?: false,
             studio.node?.siteUrl ?: "", studio.node?.favourites ?: -1
         )
     } ?: emptyList()
+
     val externalLinks =
         input.externalLinks?.filterNotNull()?.map { link ->
-            MediaExternalLink(link.url, link.site)
+            MediaExternalLink(link.id.toLong(), link.url, link.site)
         } ?: emptyList()
+
     val streamingEpisodes = input.streamingEpisodes?.filterNotNull()?.map { se ->
-        MediaStreamingEpisode(
+        MediaStreamingEpisode(0,
             se.title ?: "", se.thumbnail ?: "",
             se.url ?: "", se.site ?: ""
         )
     } ?: emptyList()
+
     val rankings = input.rankings?.filterNotNull()?.map { ranking ->
         MediaRank(
-            ranking.id,
+            ranking.id.toLong(),
+            ranking.rank,
             convertRankType(ranking.type),
             convertFormat(ranking.format),
             ranking.year ?: -1,
@@ -265,5 +271,75 @@ fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
         // Calculated fields which not present in Anilist data
         season = -1, // NOTE: will be determined later in `PagingSource`/`RemoteMediator`
         minAge = getMinAge(),
+    )
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// FIXME: avoid extra conversions [Remote]Media <--> LocalMedia
+
+fun convertRemoteMedia(input: Media): LocalMedia {
+    return LocalMedia(
+        media = input,
+        genres = input.genres,
+        tags = input.tags,
+        studios = input.studios,
+        titleSynonyms = input.titleSynonyms,
+        externalLinks = input.externalLinks,
+        streamingEpisodes = input.streamingEpisodes,
+        rankings = input.rankings
+    )
+}
+
+fun convertLocalMedia(input: LocalMedia): Media {
+    return Media(
+        anilistId = input.media.anilistId,
+        malId = input.media.malId,
+        anilistUrl = input.media.anilistUrl,
+        malUrl = input.media.malUrl,
+        updatedAt = input.media.updatedAt,
+        romajiTitle = input.media.romajiTitle,
+        englishTitle = input.media.englishTitle,
+        nativeTitle = input.media.nativeTitle,
+        format = input.media.format,
+        status = input.media.status,
+        description = input.media.description,
+        startDate = input.media.startDate,
+        endDate = input.media.endDate,
+        startSeason = input.media.startSeason,
+        startSeasonYear = input.media.startSeasonYear,
+        episodeCount = input.media.episodeCount,
+        episodeDuration = input.media.episodeDuration,
+        nextEpisodeAiringAt = input.media.nextEpisodeAiringAt,
+        nextEpisodeTimeUntilAiring = input.media.nextEpisodeTimeUntilAiring,
+        nextEpisodeNo = input.media.nextEpisodeNo,
+        countryOfOrigin = input.media.countryOfOrigin,
+        isLicensed = input.media.isLicensed,
+        source = input.media.source,
+        hashtag = input.media.hashtag,
+        trailerSite = input.media.trailerSite,
+        trailerThumbnail = input.media.trailerThumbnail,
+        coverImageExtraLarge = input.media.coverImageExtraLarge,
+        coverImageLarge = input.media.coverImageLarge,
+        coverImageMedium = input.media.coverImageMedium,
+        coverImageColor = input.media.coverImageColor,
+        bannerImage = input.media.bannerImage,
+        averageScore = input.media.averageScore,
+        meanScore = input.media.meanScore,
+        popularity = input.media.popularity,
+        favorites = input.media.favorites,
+        trending = input.media.trending,
+
+        genres = input.genres,
+        tags = input.tags,
+        studios = input.studios,
+
+        titleSynonyms = input.titleSynonyms,
+        externalLinks = input.externalLinks,
+        streamingEpisodes = input.streamingEpisodes,
+        rankings = input.rankings,
+
+        // Calculated fields which not present in Anilist data
+        season = input.media.season,
+        minAge = input.media.minAge,
     )
 }

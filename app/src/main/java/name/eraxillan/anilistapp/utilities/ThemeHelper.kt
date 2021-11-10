@@ -6,10 +6,10 @@ import androidx.appcompat.app.AppCompatDelegate
 
 private const val THEME_LIGHT_MODE = "light"
 private const val THEME_DARK_MODE = "dark"
-public const val THEME_DEFAULT_MODE = "default"
+const val THEME_DEFAULT_MODE = "default"
 
 
-public fun applyUiTheme(themePref: String) {
+fun applyUiTheme(themePref: String) {
     when (themePref) {
         THEME_LIGHT_MODE -> {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)

@@ -22,20 +22,53 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import name.eraxillan.anilistapp.model.Media
-import name.eraxillan.anilistapp.model.FavoriteMedia
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.utilities.DATABASE_NAME
+import name.eraxillan.anilistapp.utilities.INIT_DATABASE_WORKER_TAG
+import name.eraxillan.anilistapp.workers.MediaDatabaseWorker
 
 /**
  * The Room database for this app
  */
 @Database(
-    entities = [Media::class, FavoriteMedia::class, RemoteKeys::class],
-    version = 7,
+    entities = [
+        MediaSource::class,
+        MediaFormat::class,
+
+        MediaExternalLink::class,
+        MediaGenre::class,
+        MediaGenreEntry::class,
+        MediaRank::class,
+        MediaStreamingEpisode::class,
+        MediaStudio::class,
+        MediaStudioEntry::class,
+        MediaTag::class,
+        MediaTagEntry::class,
+        MediaTitleSynonym::class,
+
+        Media::class,
+        FavoriteMedia::class,
+        RemoteKeys::class
+    ],
+    version = 8,
     //exportSchema = false
 )
 @TypeConverters(DatabaseTypeConverters::class)
 abstract class MediaDatabase : RoomDatabase() {
+    abstract fun mediaTitleSynonymDao(): MediaTitleSynonymDao
+    abstract fun mediaExternalLinkDao(): MediaExternalLinkDao
+    abstract fun mediaStreamingEpisodeDao(): MediaStreamingEpisodeDao
+    abstract fun mediaRankDao(): MediaRankDao
+
+    abstract fun mediaGenreDao(): MediaGenreDao
+    abstract fun mediaTagDao(): MediaTagDao
+    abstract fun mediaStudioDao(): MediaStudioDao
+
+    abstract fun mediaGenreEntryDao(): MediaGenreEntryDao
+    abstract fun mediaTagEntryDao(): MediaTagEntryDao
+    abstract fun mediaStudioEntryDao(): MediaStudioEntryDao
 
     abstract fun mediaDao(): MediaDao
     abstract fun favoriteDao(): FavoriteMediaDao
@@ -61,11 +94,27 @@ abstract class MediaDatabase : RoomDatabase() {
                 DATABASE_NAME
             ).addCallback(
                 object : RoomDatabase.Callback() {
+                    private var workerWasStarted = false
+
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
-                        /*val request = OneTimeWorkRequestBuilder<MediaDatabaseWorker>()
-                                .build()
-                            WorkManager.getInstance(context).enqueue(request)*/
+
+                        if (!workerWasStarted) runWorker()
+                    }
+
+                    override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
+                        super.onDestructiveMigration(db)
+
+                        if (!workerWasStarted) runWorker()
+                    }
+
+                    private fun runWorker() {
+                        val request = OneTimeWorkRequestBuilder<MediaDatabaseWorker>()
+                            .addTag(INIT_DATABASE_WORKER_TAG)
+                            .build()
+
+                        WorkManager.getInstance(context).enqueue(request)
+                        workerWasStarted = true
                     }
                 }
             ).fallbackToDestructiveMigration(

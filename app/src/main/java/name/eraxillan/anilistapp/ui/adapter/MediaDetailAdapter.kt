@@ -59,11 +59,11 @@ class MediaDetailAdapter(var media: Media, @ColorInt val surfaceColor: Int) : Re
         val producers = media.studios.filter { studio -> !studio.isAnimationStudio }.joinToString(", ") { producer -> producer.name }
         val source = media.source.toString()
         val hashtag = if (media.hashtag.isNotEmpty()) media.hashtag else PLACEHOLDER_STRING
-        val genres = media.genres.filter { true }.joinToString(", ") { genre -> genre.genre }
+        val genres = media.genres.filter { true }.joinToString(", ") { genre -> genre.name }
         val romajiTitle = if (media.romajiTitle.isNotEmpty()) media.romajiTitle else PLACEHOLDER_STRING
         val englishTitle = if (media.englishTitle.isNotEmpty()) media.englishTitle else PLACEHOLDER_STRING
         val nativeTitle = if (media.nativeTitle.isNotEmpty()) media.nativeTitle else PLACEHOLDER_STRING
-        val synonyms = media.titleSynonyms.joinToString(", ") { synonym -> synonym.title }
+        val synonyms = media.titleSynonyms.joinToString(", ") { synonym -> synonym.name }
 
         // Airing anime specific fields
         val nextEpisodeNo = if (media.nextEpisodeNo != -1) media.nextEpisodeNo.toString() else PLACEHOLDER_STRING

@@ -18,13 +18,11 @@ package name.eraxillan.anilistapp.repository
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import androidx.paging.*
-import androidx.sqlite.db.SimpleSQLiteQuery
 import kotlinx.coroutines.flow.Flow
 import name.eraxillan.anilistapp.api.AnilistApi
-import name.eraxillan.anilistapp.db.MediaDao
-import name.eraxillan.anilistapp.db.MediaDatabase
-import name.eraxillan.anilistapp.db.FavoriteMediaDao
+import name.eraxillan.anilistapp.db.*
 import name.eraxillan.anilistapp.model.Media
 import name.eraxillan.anilistapp.model.FavoriteMedia
 import name.eraxillan.anilistapp.model.MediaSort
@@ -54,37 +52,24 @@ class MediaRepo(context: Context) {
 
     val favoriteMediaList: LiveData<List<Media>>
         get() {
-            return favoriteDao.getFavoriteMediaList()
+            return favoriteDao.getFavoriteMediaList().map { localMediaList ->
+                localMediaList.map { localMedia ->
+                    convertLocalMedia(localMedia)
+                }
+            }
         }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private fun generateOrderByQuery(sortBy: MediaSort) = when (sortBy) {
-        MediaSort.BY_TITLE -> "ORDER BY romajiTitle COLLATE NOCASE ASC"
-        MediaSort.BY_POPULARITY -> "ORDER BY popularity DESC, romajiTitle ASC"
-        MediaSort.BY_AVERAGE_SCORE -> "ORDER BY averageScore DESC, romajiTitle ASC"
-        MediaSort.BY_TRENDING -> "ORDER BY trending DESC, romajiTitle ASC"
-        MediaSort.BY_FAVORITES -> "ORDER BY favorites DESC, romajiTitle ASC"
-        MediaSort.BY_DATE_ADDED -> "ORDER BY anilistId DESC, romajiTitle ASC"
-        MediaSort.BY_RELEASE_DATE -> "ORDER BY startDate DESC, romajiTitle ASC"
-        else -> {
-            Timber.e("Unknown media sort enum constant $sortBy!")
-            Timber.e("Fallback to sort by popularity and romaji title")
-            "ORDER BY popularity DESC, romajiTitle ASC"
-        }
-    }
 
     /**
      * Get media list and exposed as a stream of data,
      * that will emit every time we get more data from the network
      */
-    fun getMediaListStream(sortBy: MediaSort): Flow<PagingData<Media>> {
+    fun getMediaListStream(sortBy: MediaSort): Flow<PagingData<LocalMedia>> {
         Timber.d("Query media list from remote backend...")
 
         val pagingSourceFactory = {
-            val sortQuery =  generateOrderByQuery(sortBy)
-            val query = SimpleSQLiteQuery("SELECT * FROM media_collection $sortQuery")
-            mediaDao.getMediaListPagesSorted(query)
+            mediaDao.getAllLocalMediaPaged(sortBy)
         }
 
         @OptIn(ExperimentalPagingApi::class)

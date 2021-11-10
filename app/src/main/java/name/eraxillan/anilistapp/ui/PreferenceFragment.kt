@@ -21,6 +21,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import name.eraxillan.anilistapp.R
+import name.eraxillan.anilistapp.utilities.PREF_THEME_KEY
 import name.eraxillan.anilistapp.utilities.applyUiTheme
 import timber.log.Timber
 
@@ -29,12 +30,12 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-        val themePreference: ListPreference? = findPreference("themePref")
+        val themePreference: ListPreference? = findPreference(PREF_THEME_KEY)
         themePreference?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener {
                 /*preference: Preference*/ _, newValueObject: Any ->
 
             val newValue = newValueObject as String
-            Timber.e("UI theme setting changed by user to: $newValue")
+            Timber.d("UI theme setting changed by user to: $newValue")
 
             applyUiTheme(newValue)
             true
