@@ -20,12 +20,10 @@ import android.app.Application
 import android.os.Build
 import android.os.StrictMode
 import androidx.annotation.RequiresApi
-import androidx.preference.PreferenceManager
 import name.eraxillan.anilistapp.repository.PreferenceRepository
-import name.eraxillan.anilistapp.utilities.PREF_THEME_KEY
-import name.eraxillan.anilistapp.utilities.THEME_DEFAULT_MODE
 import name.eraxillan.anilistapp.utilities.applyUiTheme
 import timber.log.Timber
+import java.time.LocalDateTime
 import java.util.concurrent.Executors
 //import dagger.hilt.android.HiltAndroidApp
 
@@ -64,7 +62,7 @@ class MainApplication : Application() {
             // D/MediaRepo.kt:65#getMediaListStream: Query media list from remote backend...
             Timber.plant(object : Timber.DebugTree() {
                 override fun createStackElementTag(element: StackTraceElement): String {
-                    return "${element.fileName}:${element.lineNumber}#${element.methodName}"
+                    return "${LocalDateTime.now()}:${element.fileName}:${element.lineNumber}#${element.methodName}"
                 }
             })
         }

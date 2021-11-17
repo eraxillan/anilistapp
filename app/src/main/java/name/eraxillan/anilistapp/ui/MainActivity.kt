@@ -26,13 +26,12 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.button.MaterialButton
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.ActivityMainBinding
-import name.eraxillan.anilistapp.model.MediaSort
+import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.repository.PreferenceRepository
+import name.eraxillan.anilistapp.ui.views.ChippedEditText
 import timber.log.Timber
-
 
 /**
  * An interface to communicate between fragment and activity
@@ -65,12 +64,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupActionBar(binding)
-        setSortGroupButtons()
-
-        // Show backdrop controls only on `MediaListFragment` ("Discover" menu item)
-        val navHost = supportFragmentManager.primaryNavigationFragment // NavHostFragment
-        val currentFragment = navHost?.childFragmentManager?.primaryNavigationFragment
-        binding.sortContainerLayout.isVisible = navHost == null || currentFragment is MediaListFragment
     }
 
     override fun onDestroy() {
@@ -86,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         val result = findNavController().navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-        binding.sortContainerLayout.isVisible = true
+        binding.backdropViews.filterContainerLayout.isVisible = true
         return result
     }
 
@@ -103,7 +96,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.navView.setNavigationItemSelectedListener { menuItem ->
             // Show backdrop controls only on `MediaListFragment` ("Discover" menu item)
-            binding.sortContainerLayout.isVisible = (menuItem.itemId == 2131296544)
+            binding.backdropViews.filterContainerLayout.isVisible = (menuItem.itemId == 2131296544)
 
             val isHandled = NavigationUI.onNavDestinationSelected(menuItem, findNavController())
             if (isHandled) {
@@ -143,39 +136,6 @@ class MainActivity : AppCompatActivity() {
         getMediaListFragment().scrollUp()
     }
 
-    private fun setSortGroupButtons() {
-        check(binding.materialButtonToggleGroupSort.isSingleSelection)
-
-        val preferences = PreferenceRepository.getInstance(this)
-        binding.materialButtonToggleGroupSort.check(
-            when (preferences.sortOption) {
-                MediaSort.BY_TITLE -> R.id.sort_by_title_button
-                MediaSort.BY_POPULARITY -> R.id.sort_by_popularity_button
-                MediaSort.BY_AVERAGE_SCORE -> R.id.sort_by_average_score_button
-                MediaSort.BY_TRENDING -> R.id.sort_by_trending_button
-                MediaSort.BY_FAVORITES -> R.id.sort_by_favorites_button
-                MediaSort.BY_DATE_ADDED -> R.id.sort_by_date_added_button
-                MediaSort.BY_RELEASE_DATE -> R.id.sort_by_release_date_button
-                else -> R.id.sort_by_popularity_button
-            }
-        )
-
-        binding.materialButtonToggleGroupSort.addOnButtonCheckedListener {
-            /*group*/ _, checkedId, isChecked ->
-            if (isChecked) {
-                val checkedButton = findViewById<MaterialButton>(checkedId)
-                check(checkedButton != null)
-
-                val sortValue = MediaSort.valueOf(checkedButton.tag.toString())
-                check(sortValue != MediaSort.UNKNOWN)
-                Timber.d("New sort value: $sortValue")
-                preferences.sortOption = sortValue
-
-                getMediaListFragment().search(sortValue)
-            }
-        }
-    }
-
     private fun configureBackdrop() {
         val fragment = supportFragmentManager.findFragmentById(R.id.nav_host)
 
@@ -197,6 +157,97 @@ class MainActivity : AppCompatActivity() {
                 mBottomSheetBehavior = bs
             }
         }
+
+        // Show backdrop controls only on `MediaListFragment` ("Discover" menu item)
+        val navHost = supportFragmentManager.primaryNavigationFragment // NavHostFragment
+        val currentFragment = navHost?.childFragmentManager?.primaryNavigationFragment
+        binding.backdropViews.filterContainerLayout.isVisible = navHost == null || currentFragment is MediaListFragment
+
+        binding.backdropViews.yearInput.isCompleteListener = ChippedEditText.Listener {
+            Timber.d("yearInput data binding completed")
+            loadSortOption()
+            loadFilterOptions()
+        }
+
+        binding.backdropViews.applyFiltersButton.setOnClickListener {
+            // Setup filter options from UI
+            val filterOptions = getFilterOptions()
+
+            // Setup sort option from UI
+            val sortOption = getSortOption()
+
+            // Save filter and sort options to Android Shared Preferences
+            saveFilterOptions(filterOptions)
+            saveSortOption(sortOption)
+
+            Timber.d("Fetching filtered and sorted media list...")
+            getMediaListFragment().search(filterOptions, sortOption)
+            openBottomSheet()
+        }
+    }
+
+    private fun getFilterOptions(): MediaFilter {
+        return MediaFilter(
+            search = binding.backdropViews.searchInput.text.toString(),
+            year = binding.backdropViews.yearInput.checkedElementAsInteger,
+            season = binding.backdropViews.seasonInput.checkedElementAsEnumEntry<MediaSeason>(),
+            formats = binding.backdropViews.formatInput.checkedElementAsEnumEntries(),
+            status = binding.backdropViews.airingStatusInput.checkedElementAsEnumEntry<MediaStatus>(),
+            country = binding.backdropViews.countryInput.checkedElementAsEnumEntry<MediaCountry>(),
+            sources = binding.backdropViews.sourceInput.checkedElementAsEnumEntries(),
+            isLicensed = (!binding.backdropViews.doujinInput.isChecked),
+            genres = binding.backdropViews.genresInput.checkedElementAsStrings,
+            tags = binding.backdropViews.tagsInput.checkedElementAsStrings,
+            services = binding.backdropViews.streamingServicesInput.checkedElementAsStrings,
+        )
+    }
+
+    private fun setFilterOptions(filterOptions: MediaFilter) {
+        binding.backdropViews.apply {
+            searchInput.setText(filterOptions.search)
+            yearInput.checkIntegerElement(filterOptions.year)
+            seasonInput.checkEnumerationElement(filterOptions.season)
+            formatInput.checkEnumerationElements(filterOptions.formats)
+            airingStatusInput.checkEnumerationElement(filterOptions.status)
+            countryInput.checkEnumerationElement(filterOptions.country)
+            sourceInput.checkEnumerationElements(filterOptions.sources)
+            doujinInput.isChecked = filterOptions.isLicensed == false
+            genresInput.checkStringElements(filterOptions.genres)
+            tagsInput.checkStringElements(filterOptions.tags)
+            streamingServicesInput.checkStringElements(filterOptions.services)
+        }
+    }
+
+    private fun getSortOption(): MediaSort {
+        return binding.backdropViews.sortInput.checkedElementAsEnumEntry<MediaSort>()
+            ?: MediaSort.BY_POPULARITY
+    }
+
+    private fun setSortOption(sortOption: MediaSort) {
+        binding.backdropViews.sortInput.checkEnumerationElement(sortOption)
+    }
+
+    private fun loadFilterOptions() {
+        val preferences = PreferenceRepository.getInstance(this)
+        val filterOptions = preferences.filterOptions
+        setFilterOptions(filterOptions)
+    }
+
+    private fun loadSortOption() {
+        check(binding.backdropViews.sortInput.selectionMode == ChippedEditText.SINGLE_CHOICE)
+
+        val preferences = PreferenceRepository.getInstance(this)
+        setSortOption(preferences.sortOption)
+    }
+
+    private fun saveFilterOptions(filter: MediaFilter) {
+        val preferences = PreferenceRepository.getInstance(this)
+        preferences.filterOptions = filter
+    }
+
+    private fun saveSortOption(sort: MediaSort) {
+        val preferences = PreferenceRepository.getInstance(this)
+        preferences.sortOption = sort
     }
 
     private fun getMediaListFragment(): MediaListFragment {

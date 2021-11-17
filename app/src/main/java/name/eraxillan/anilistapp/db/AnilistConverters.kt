@@ -25,14 +25,40 @@ import name.eraxillan.anilistapp.type.MediaSeason as AnilistMediaSeason
 import name.eraxillan.anilistapp.type.MediaSource as AnilistMediaSource
 import name.eraxillan.anilistapp.type.MediaRankType as AnilistMediaRankType
 import name.eraxillan.anilistapp.type.MediaSort as AnilistMediaSort
+import name.eraxillan.anilistapp.model.MediaSeason as MediaSeason
+import name.eraxillan.anilistapp.model.MediaFormatEnum as MediaFormat
+import name.eraxillan.anilistapp.model.MediaSourceEnum as MediaSource
 import name.eraxillan.anilistapp.model.MediaStatus as MediaStatus
 import name.eraxillan.anilistapp.model.MediaRankType as MediaRankType
 import name.eraxillan.anilistapp.model.MediaSort as MediaSort
 import java.net.URL
 import java.time.*
 
+fun convertMediaSeason(value: MediaSeason?) = when (value) {
+    MediaSeason.WINTER -> AnilistMediaSeason.WINTER
+    MediaSeason.SPRING -> AnilistMediaSeason.SPRING
+    MediaSeason.SUMMER -> AnilistMediaSeason.SUMMER
+    MediaSeason.FALL -> AnilistMediaSeason.FALL
+    else -> null
+}
 
-fun convertSortType(value: MediaSort) = when (value) {
+fun convertMediaFormat(value: MediaFormat?) = when (value) {
+    MediaFormat.TV -> AnilistMediaFormat.TV
+    MediaFormat.TV_SHORT -> AnilistMediaFormat.TV_SHORT
+    MediaFormat.MOVIE -> AnilistMediaFormat.MOVIE
+    MediaFormat.SPECIAL -> AnilistMediaFormat.SPECIAL
+    MediaFormat.OVA -> AnilistMediaFormat.OVA
+    MediaFormat.ONA -> AnilistMediaFormat.ONA
+    MediaFormat.MUSIC -> AnilistMediaFormat.MUSIC
+    MediaFormat.MANGA -> AnilistMediaFormat.MANGA
+    MediaFormat.NOVEL -> AnilistMediaFormat.NOVEL
+    MediaFormat.ONE_SHOT -> AnilistMediaFormat.ONE_SHOT
+    else -> null
+}
+
+fun convertMediaCountry(value: MediaCountry?) = value?.name
+
+fun convertMediaSortType(value: MediaSort) = when (value) {
     MediaSort.BY_TITLE -> AnilistMediaSort.TITLE_ROMAJI
     MediaSort.BY_POPULARITY -> AnilistMediaSort.POPULARITY_DESC
     MediaSort.BY_AVERAGE_SCORE -> AnilistMediaSort.SCORE_DESC
@@ -40,23 +66,46 @@ fun convertSortType(value: MediaSort) = when (value) {
     MediaSort.BY_FAVORITES -> AnilistMediaSort.FAVOURITES_DESC
     MediaSort.BY_DATE_ADDED -> AnilistMediaSort.START_DATE
     MediaSort.BY_RELEASE_DATE -> AnilistMediaSort.END_DATE
-    else -> AnilistMediaSort.UNKNOWN__
+    else -> null
 }
+
+fun convertMediaStatus(value: MediaStatus?) = when (value) {
+    MediaStatus.FINISHED -> AnilistMediaStatus.FINISHED
+    MediaStatus.RELEASING -> AnilistMediaStatus.RELEASING
+    MediaStatus.NOT_YET_RELEASED -> AnilistMediaStatus.NOT_YET_RELEASED
+    MediaStatus.CANCELLED -> AnilistMediaStatus.CANCELLED
+    MediaStatus.HIATUS -> AnilistMediaStatus.HIATUS
+    else -> null
+}
+
+fun convertMediaSource(value: MediaSource?) = when (value) {
+    MediaSource.MANGA -> AnilistMediaSource.MANGA
+    MediaSource.LIGHT_NOVEL -> AnilistMediaSource.LIGHT_NOVEL
+    MediaSource.VISUAL_NOVEL -> AnilistMediaSource.VISUAL_NOVEL
+    MediaSource.VIDEO_GAME -> AnilistMediaSource.VIDEO_GAME
+    MediaSource.OTHER -> AnilistMediaSource.OTHER
+    MediaSource.NOVEL -> AnilistMediaSource.NOVEL
+    MediaSource.DOUJINSHI -> AnilistMediaSource.DOUJINSHI
+    MediaSource.ANIME -> AnilistMediaSource.ANIME
+    else -> null
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
 
     fun convertFormat(value: AnilistMediaFormat?) = when (value) {
-        AnilistMediaFormat.TV -> MediaFormatEnum.TV
-        AnilistMediaFormat.TV_SHORT -> MediaFormatEnum.TV_SHORT
-        AnilistMediaFormat.MOVIE -> MediaFormatEnum.MOVIE
-        AnilistMediaFormat.SPECIAL -> MediaFormatEnum.SPECIAL
-        AnilistMediaFormat.OVA -> MediaFormatEnum.OVA
-        AnilistMediaFormat.ONA -> MediaFormatEnum.ONA
-        AnilistMediaFormat.MUSIC -> MediaFormatEnum.MUSIC
-        AnilistMediaFormat.MANGA -> MediaFormatEnum.MANGA
-        AnilistMediaFormat.NOVEL -> MediaFormatEnum.NOVEL
-        AnilistMediaFormat.ONE_SHOT -> MediaFormatEnum.ONE_SHOT
-        else -> MediaFormatEnum.UNKNOWN
+        AnilistMediaFormat.TV -> MediaFormat.TV
+        AnilistMediaFormat.TV_SHORT -> MediaFormat.TV_SHORT
+        AnilistMediaFormat.MOVIE -> MediaFormat.MOVIE
+        AnilistMediaFormat.SPECIAL -> MediaFormat.SPECIAL
+        AnilistMediaFormat.OVA -> MediaFormat.OVA
+        AnilistMediaFormat.ONA -> MediaFormat.ONA
+        AnilistMediaFormat.MUSIC -> MediaFormat.MUSIC
+        AnilistMediaFormat.MANGA -> MediaFormat.MANGA
+        AnilistMediaFormat.NOVEL -> MediaFormat.NOVEL
+        AnilistMediaFormat.ONE_SHOT -> MediaFormat.ONE_SHOT
+        else -> MediaFormat.UNKNOWN
     }
 
     fun convertStatus(value: AnilistMediaStatus?) = when (value) {
@@ -77,15 +126,15 @@ fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
     }
 
     fun convertSource(value: AnilistMediaSource?) = when (value) {
-        AnilistMediaSource.MANGA -> MediaSourceEnum.MANGA
-        AnilistMediaSource.LIGHT_NOVEL -> MediaSourceEnum.LIGHT_NOVEL
-        AnilistMediaSource.VISUAL_NOVEL -> MediaSourceEnum.VISUAL_NOVEL
-        AnilistMediaSource.VIDEO_GAME -> MediaSourceEnum.VIDEO_GAME
-        AnilistMediaSource.OTHER -> MediaSourceEnum.OTHER
-        AnilistMediaSource.NOVEL -> MediaSourceEnum.NOVEL
-        AnilistMediaSource.DOUJINSHI -> MediaSourceEnum.DOUJINSHI
-        AnilistMediaSource.ANIME -> MediaSourceEnum.ANIME
-        else -> MediaSourceEnum.UNKNOWN
+        AnilistMediaSource.MANGA -> MediaSource.MANGA
+        AnilistMediaSource.LIGHT_NOVEL -> MediaSource.LIGHT_NOVEL
+        AnilistMediaSource.VISUAL_NOVEL -> MediaSource.VISUAL_NOVEL
+        AnilistMediaSource.VIDEO_GAME -> MediaSource.VIDEO_GAME
+        AnilistMediaSource.OTHER -> MediaSource.OTHER
+        AnilistMediaSource.NOVEL -> MediaSource.NOVEL
+        AnilistMediaSource.DOUJINSHI -> MediaSource.DOUJINSHI
+        AnilistMediaSource.ANIME -> MediaSource.ANIME
+        else -> MediaSource.UNKNOWN
     }
 
     fun convertRankType(value: AnilistMediaRankType?) = when (value) {
@@ -277,7 +326,7 @@ fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // FIXME: avoid extra conversions [Remote]Media <--> LocalMedia
 
-fun convertRemoteMedia(input: Media): LocalMedia {
+/*fun convertRemoteMedia(input: Media): LocalMedia {
     return LocalMedia(
         media = input,
         genres = input.genres,
@@ -288,7 +337,7 @@ fun convertRemoteMedia(input: Media): LocalMedia {
         streamingEpisodes = input.streamingEpisodes,
         rankings = input.rankings
     )
-}
+}*/
 
 fun convertLocalMedia(input: LocalMedia): Media {
     return Media(

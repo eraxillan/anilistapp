@@ -16,6 +16,7 @@
 
 package name.eraxillan.anilistapp.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -42,7 +43,11 @@ import timber.log.Timber
 import java.util.*
 import androidx.paging.map
 import name.eraxillan.anilistapp.db.convertLocalMedia
+import name.eraxillan.anilistapp.model.MediaFilter
+import name.eraxillan.anilistapp.model.MediaFormatEnum
+import name.eraxillan.anilistapp.model.MediaStatus
 import name.eraxillan.anilistapp.repository.PreferenceRepository
+import java.time.LocalDate
 
 
 class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
@@ -60,10 +65,18 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
      */
     private val viewModel by viewModels<MediaViewModel>()
 
+    private lateinit var preferences: PreferenceRepository
+
     private var searchJob: Job? = null
     private val listAdapter: MediaListAdapter = MediaListAdapter()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        preferences = PreferenceRepository.getInstance(context)
+    }
 
     // See https://developer.android.com/training/swipe/add-swipe-interface
     private fun updateMediaList(fromMenu: Boolean) {
@@ -129,11 +142,12 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
             }
         }
 
-        val preferences = PreferenceRepository.getInstance(requireContext())
         if (preferences.isFirstRun) {
+            setupDefaultFilterOptions()
+            setupDefaultSortOption()
             waitForDatabaseReady()
         } else {
-            search(preferences.sortOption)
+            search(preferences.filterOptions, preferences.sortOption)
         }
     }
 
@@ -276,13 +290,13 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
         binding.list.scrollToPosition(0)
     }
 
-    fun search(sortBy: MediaSort) {
+    fun search(filter: MediaFilter, sortBy: MediaSort) {
         // Make sure we cancel the previous job before creating a new one
         searchJob?.cancel()
 
         // Observe media list loading
         searchJob = viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getMediaListStream(sortBy).collectLatest {
+            viewModel.getMediaListStream(filter, sortBy).collectLatest {
                 listAdapter.submitData(it.map { media -> convertLocalMedia(media) })
             }
         }
@@ -298,13 +312,27 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
         }
     }
 
+    // This call "touches" the database and cause its worker to start
     private fun initializeDatabase() {
         lifecycleScope.launchWhenCreated {
             withContext(Dispatchers.IO) {
-                val mediaCount = MediaDatabase.getInstance(requireContext()).mediaDao().getAllMediaCount()
+                val dao = MediaDatabase.getInstance(requireContext()).mediaDao()
+                val mediaCount = dao.getAllMediaCount()
                 Timber.d("Got $mediaCount media from database")
             }
         }
+    }
+
+    private fun setupDefaultFilterOptions() {
+        preferences.filterOptions = MediaFilter(
+            year = LocalDate.now().year,
+            status = MediaStatus.RELEASING,
+            formats = listOf(MediaFormatEnum.TV)
+        )
+    }
+
+    private fun setupDefaultSortOption() {
+        preferences.sortOption = MediaSort.BY_POPULARITY
     }
 
     private fun waitForDatabaseReady() {
@@ -319,11 +347,10 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
                         Timber.d("Init database worker state changed to 'SUCCEEDED'")
 
                         // Mark the first run property as false
-                        val preferences = PreferenceRepository.getInstance(requireContext())
                         preferences.isFirstRun = false
 
                         // Show the media list
-                        search(preferences.sortOption)
+                        search(preferences.filterOptions, preferences.sortOption)
                     }
                     else ->
                         Timber.d("Init database worker state changed to '${workInfo.state.name}'")

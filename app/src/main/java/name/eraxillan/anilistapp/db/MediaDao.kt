@@ -20,7 +20,6 @@ import androidx.paging.PagingSource
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
 import name.eraxillan.anilistapp.model.*
-import timber.log.Timber
 
 
 /**
@@ -42,47 +41,68 @@ abstract class MediaDao {
     abstract fun getAllMediaCount(): Long
 
     @Transaction
-    @Query("SELECT * FROM media_collection ORDER BY romaji_title COLLATE NOCASE ASC")
-    protected abstract fun getAllLocalMediaPagedByTitle(): PagingSource<Int, LocalMedia>
+    @Query(
+        """
+        SELECT * FROM media_collection WHERE
+            -- TODO: implement fuzzy full text search like Anilist backend do
+            (:search IS NULL OR :search = '' OR romaji_title LIKE '%' || :search || '%') AND
+            (:year IS NULL OR :year = 0 OR start_season_year = :year) AND
+            (:country IS NULL OR :country = '' OR country_of_origin = :country) AND            
+            (:season IS NULL OR :season = 'UNKNOWN' OR start_season = :season) AND
+            (:status IS NULL OR :status = 'UNKNOWN' OR status = :status) AND
+            (:isLicensed IS NULL OR is_licensed = :isLicensed) AND
+            (:formatsCount = 0 OR format IN (:formats)) AND            
+            (:sourcesCount = 0 OR source IN (:sources)) AND
+            anilist_id IN (
+                SELECT anilist_id FROM media_with_genres
+                WHERE :genresCount = 0 OR genre_name IN (:genres) GROUP BY anilist_id
+                HAVING COUNT(*) = :genresCount OR :genresCount = 0
+                INTERSECT
+                SELECT anilist_id FROM media_with_tags
+                WHERE :tagsCount = 0 OR tag_name IN (:tags) GROUP BY anilist_id
+                HAVING COUNT(*) = :tagsCount OR :tagsCount = 0
+                INTERSECT
+                SELECT anilist_id FROM media_with_services
+                WHERE :servicesCount = 0 OR service_name IN (:services) GROUP BY anilist_id
+                --HAVING COUNT(*) = :servicesCount OR :servicesCount = 0
+            )
+            ORDER BY
+            CASE WHEN :sortOption = 1 THEN popularity END DESC,
+            CASE WHEN :sortOption = 2 THEN average_score END DESC,
+            CASE WHEN :sortOption = 3 THEN trending END DESC,
+            CASE WHEN :sortOption = 4 THEN favorites END DESC,
+            CASE WHEN :sortOption = 5 THEN anilist_id END DESC,
+            CASE WHEN :sortOption = 6 THEN start_date END DESC,
+            romaji_title COLLATE NOCASE ASC
+    """
+    )
+    protected abstract fun getFilteredMediaInternalPaged(
+        search: String? = null, year: Int? = null, season: MediaSeason? = null,
+        formats: List<MediaFormatEnum> = emptyList(), formatsCount: Int = 0,
+        status: MediaStatus? = null, country: MediaCountry? = null,
+        sources: List<MediaSourceEnum> = emptyList(), sourcesCount: Int = 0,
+        isLicensed: Boolean? = null,
+        genres: List<String> = emptyList(), genresCount: Int = 0,
+        tags: List<String> = emptyList(), tagsCount: Int = 0,
+        services: List<String> = emptyList(), servicesCount: Int = 0,
+        sortOption: Int = 0
+    ): PagingSource<Int, LocalMedia>
 
-    @Transaction
-    @Query("SELECT * FROM media_collection ORDER BY popularity DESC, romaji_title COLLATE NOCASE ASC")
-    protected abstract fun getAllLocalMediaPagedIByPopularity(): PagingSource<Int, LocalMedia>
-
-    @Transaction
-    @Query("SELECT * FROM media_collection ORDER BY average_score DESC, romaji_title COLLATE NOCASE ASC")
-    protected abstract fun getAllLocalMediaPagedByAverageScore(): PagingSource<Int, LocalMedia>
-
-    @Transaction
-    @Query("SELECT * FROM media_collection ORDER BY trending DESC, romaji_title COLLATE NOCASE ASC")
-    protected abstract fun getAllLocalMediaPagedByTrending(): PagingSource<Int, LocalMedia>
-
-    @Transaction
-    @Query("SELECT * FROM media_collection ORDER BY favorites DESC, romaji_title COLLATE NOCASE ASC")
-    protected abstract fun getAllLocalMediaPagedByFavorites(): PagingSource<Int, LocalMedia>
-
-    @Transaction
-    @Query("SELECT * FROM media_collection ORDER BY anilist_id DESC, romaji_title COLLATE NOCASE ASC")
-    protected abstract fun getAllLocalMediaPagedByDateAdded(): PagingSource<Int, LocalMedia>
-
-    @Transaction
-    @Query("SELECT * FROM media_collection ORDER BY start_date DESC, romaji_title COLLATE NOCASE ASC")
-    protected abstract fun getAllLocalMediaPagedByReleaseDate(): PagingSource<Int, LocalMedia>
-
-    fun getAllLocalMediaPaged(sort: MediaSort): PagingSource<Int, LocalMedia> {
-        return when (sort) {
-            MediaSort.BY_TITLE -> getAllLocalMediaPagedByTitle()
-            MediaSort.BY_POPULARITY -> getAllLocalMediaPagedIByPopularity()
-            MediaSort.BY_AVERAGE_SCORE -> getAllLocalMediaPagedByAverageScore()
-            MediaSort.BY_TRENDING -> getAllLocalMediaPagedByTrending()
-            MediaSort.BY_FAVORITES -> getAllLocalMediaPagedByFavorites()
-            MediaSort.BY_DATE_ADDED -> getAllLocalMediaPagedByDateAdded()
-            MediaSort.BY_RELEASE_DATE -> getAllLocalMediaPagedByReleaseDate()
-            else -> {
-                Timber.e("Invalid sort value $sort! Sort by `popularity` field as default one")
-                getAllLocalMediaPagedIByPopularity()
-            }
-        }
+    fun getFilteredAndSortedMediaPaged(
+        filter: MediaFilter,
+        sort: MediaSort
+    ): PagingSource<Int, LocalMedia> {
+        return getFilteredMediaInternalPaged(
+            search = filter.search, year = filter.year, season = filter.season,
+            formats = filter.formats.orEmpty(), formatsCount = filter.formats?.size ?: 0,
+            status = filter.status, country = filter.country,
+            sources = filter.sources.orEmpty(), sourcesCount = filter.sources?.size ?: 0,
+            isLicensed = filter.isLicensed,
+            genres = filter.genres.orEmpty(), genresCount = filter.genres?.size ?: 0,
+            tags = filter.tags.orEmpty(), tagsCount = filter.tags?.size ?: 0,
+            services = filter.services.orEmpty(), servicesCount = filter.services?.size ?: 0,
+            sortOption = sort.ordinal
+        )
     }
 
     // TODO: do not work in current Android Room version, [MediaDatabaseHelper] class do this job

@@ -52,6 +52,11 @@ import name.eraxillan.anilistapp.workers.MediaDatabaseWorker
         FavoriteMedia::class,
         RemoteKeys::class
     ],
+    views = [
+        MediaWithGenres::class,
+        MediaWithTags::class,
+        MediaWithServices::class
+    ],
     version = 8,
     //exportSchema = false
 )

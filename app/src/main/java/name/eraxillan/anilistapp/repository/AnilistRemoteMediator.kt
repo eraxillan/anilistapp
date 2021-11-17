@@ -39,7 +39,7 @@ private const val ANILIST_STARTING_PAGE_INDEX = 1
 class AnilistRemoteMediator(
     private val database: MediaDatabase,
     private val backend: AnilistApi,
-    //private val filter: MediaQuery,
+    private val filter: MediaFilter,
     private val sortBy: MediaSort
 ) : RemoteMediator<Int, LocalMedia>() {
 
@@ -79,7 +79,7 @@ class AnilistRemoteMediator(
                 else -> state.config.pageSize
             }*/
             Timber.d("Querying server: pageNo=$page with $pageSize per page...")
-            val backendResponse = backend.getAiringAnimeList(page, pageSize, sortBy)
+            val backendResponse = backend.getAiringAnimeList(page, pageSize, filter, sortBy)
             Timber.d("Successfully got response from server")
 
             val rateLimit = backend.getResponseRateLimit(backendResponse)

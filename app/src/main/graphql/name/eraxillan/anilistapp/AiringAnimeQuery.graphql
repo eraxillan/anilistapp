@@ -1,4 +1,13 @@
-query AiringAnime($page: Int!, $perPage: Int!, $seasonYear: Int!, $sort: [MediaSort!]!, $status: MediaStatus!) {
+query AiringAnime(
+  $page: Int!, $perPage: Int!,
+  $genres: [String!], $tags: [String!],
+  $seasonYear: Int, $season: MediaSeason,
+  $formats: [MediaFormat!], $status: MediaStatus,
+  $licensedBy: [String!], $country: CountryCode,
+  $sources: [MediaSource!], $isLicensed: Boolean,
+  $sort: [MediaSort!]
+  ) {
+
   Page(page: $page, perPage: $perPage) {
     pageInfo {
       total
@@ -7,7 +16,17 @@ query AiringAnime($page: Int!, $perPage: Int!, $seasonYear: Int!, $sort: [MediaS
       hasNextPage
       perPage
     }
-    media(seasonYear: $seasonYear, sort: $sort, status: $status, isAdult: false, type: ANIME, format: TV) {
+    media(
+      # TODO: move to settings instead of hardcode
+      isAdult: false, type: ANIME,
+      genre_in: $genres, tag_in: $tags,
+      seasonYear: $seasonYear, season: $season,
+      format_in: $formats, status: $status,
+      licensedBy_in: $licensedBy, countryOfOrigin: $country,
+      source_in: $sources, isLicensed: $isLicensed,
+      sort: $sort
+      ) {
+
       id
       idMal
       siteUrl

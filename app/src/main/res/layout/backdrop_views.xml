@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ ~ Copyright 2021 Aleksandr Kamyshnikov
+ ~
+ ~ Licensed under the Apache License, Version 2.0 (the "License");
+ ~ you may not use this file except in compliance with the License.
+ ~ You may obtain a copy of the License at
+ ~
+ ~     https://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ Unless required by applicable law or agreed to in writing, software
+ ~ distributed under the License is distributed on an "AS IS" BASIS,
+ ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ~ See the License for the specific language governing permissions and
+ ~ limitations under the License.
+ -->
+
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="java.time.LocalDate" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize"
+        android:layout_marginBottom="70dp"
+        android:padding="16dp"
+        android:layout_gravity="center">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/filter_container_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/search_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:inputType="textNoSuggestions"
+                android:imeOptions="actionSearch"
+                android:hint="@string/media_search_hint"
+                tools:text="Kimetsu no Yaiba"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <name.eraxillan.anilistapp.ui.views.ChippedEditText
+                android:id="@+id/genres_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/genres_dialog_title"
+                app:selectionMode="multiChoice"
+                app:stringElements="@array/genres_dialog_genres"
+                app:stringSkipEntryName="\?"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/search_input" />
+
+            <name.eraxillan.anilistapp.ui.views.ChippedEditText
+                android:id="@+id/tags_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/tags_dialog_title"
+                app:selectionMode="multiChoice"
+                app:stringElements="@array/tags_dialog_tags"
+                app:stringSkipEntryName="\?"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/genres_input" />
+
+            <name.eraxillan.anilistapp.ui.views.ChippedEditText
+                android:id="@+id/year_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/year_dialog_title"
+                app:selectionMode="singleChoice"
+                app:elementType="integer"
+                app:integerElementFrom="1940"
+                app:integerElementTo="@{LocalDate.now().year + 1}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tags_input" />
+
+            <name.eraxillan.anilistapp.ui.views.ChippedEditText
+                android:id="@+id/season_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/seasons_dialog_title"
+                app:selectionMode="singleChoice"
+                app:elementType="enumeration"
+                app:enumerationFullName="name.eraxillan.anilistapp.model.MediaSeason"
+                app:enumerationSkipEntryName="UNKNOWN"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/year_input" />
+
+            <name.eraxillan.anilistapp.ui.views.ChippedEditText
+                android:id="@+id/format_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/formats_dialog_title"
+                app:selectionMode="multiChoice"
+                app:elementType="enumeration"
+                app:enumerationFullName="name.eraxillan.anilistapp.model.MediaFormatEnum"
+                app:enumerationSkipEntryName="UNKNOWN"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/season_input" />
+
+            <name.eraxillan.anilistapp.ui.views.ChippedEditText
+                android:id="@+id/airing_status_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/airing_status_dialog_title"
+                app:selectionMode="singleChoice"
+                app:elementType="enumeration"
+                app:enumerationFullName="name.eraxillan.anilistapp.model.MediaStatus"
+                app:enumerationSkipEntryName="UNKNOWN"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/format_input" />
+
+            <name.eraxillan.anilistapp.ui.views.ChippedEditText
+                android:id="@+id/streaming_services_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/streaming_on_dialog_title"
+                app:selectionMode="multiChoice"
+                app:elementType="string"
+                app:stringElements="@array/streaming_on_dialog_services"
+                app:stringSkipEntryName="\?"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/airing_status_input" />
+
+            <name.eraxillan.anilistapp.ui.views.ChippedEditText
+                android:id="@+id/country_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/country_dialog_title"
+                app:selectionMode="singleChoice"
+                app:elementType="enumeration"
+                app:enumerationFullName="name.eraxillan.anilistapp.model.MediaCountry"
+                app:enumerationSkipEntryName="UNKNOWN"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/streaming_services_input" />
+
+            <name.eraxillan.anilistapp.ui.views.ChippedEditText
+                android:id="@+id/source_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/source_dialog_title"
+                app:selectionMode="multiChoice"
+                app:elementType="enumeration"
+                app:enumerationFullName="name.eraxillan.anilistapp.model.MediaSourceEnum"
+                app:enumerationSkipEntryName="UNKNOWN"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/country_input" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/doujin_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="@string/doujin"
+                android:checked="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/source_input" />
+
+            <name.eraxillan.anilistapp.ui.views.ChippedEditText
+                android:id="@+id/sort_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/sort_dialog_title"
+                app:selectionMode="singleChoice"
+                app:elementType="enumeration"
+                app:enumerationFullName="name.eraxillan.anilistapp.model.MediaSort"
+                app:enumerationSkipEntryName="UNKNOWN"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/doujin_input" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/apply_filters_button"
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/apply_filters_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sort_input" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

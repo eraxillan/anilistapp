@@ -25,6 +25,7 @@ import name.eraxillan.anilistapp.api.AnilistApi
 import name.eraxillan.anilistapp.db.*
 import name.eraxillan.anilistapp.model.Media
 import name.eraxillan.anilistapp.model.FavoriteMedia
+import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.utilities.NETWORK_PAGE_SIZE
 import timber.log.Timber
@@ -65,17 +66,17 @@ class MediaRepo(context: Context) {
      * Get media list and exposed as a stream of data,
      * that will emit every time we get more data from the network
      */
-    fun getMediaListStream(sortBy: MediaSort): Flow<PagingData<LocalMedia>> {
+    fun getMediaListStream(filter: MediaFilter, sortBy: MediaSort): Flow<PagingData<LocalMedia>> {
         Timber.d("Query media list from remote backend...")
 
         val pagingSourceFactory = {
-            mediaDao.getAllLocalMediaPaged(sortBy)
+            mediaDao.getFilteredAndSortedMediaPaged(filter, sortBy)
         }
 
         @OptIn(ExperimentalPagingApi::class)
         return Pager(
             config = PagingConfig(enablePlaceholders = false, pageSize = NETWORK_PAGE_SIZE),
-            remoteMediator = AnilistRemoteMediator(database, backend, sortBy),
+            remoteMediator = AnilistRemoteMediator(database, backend, filter, sortBy),
             pagingSourceFactory = pagingSourceFactory
         ).flow
     }

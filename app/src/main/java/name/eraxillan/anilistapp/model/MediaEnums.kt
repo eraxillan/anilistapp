@@ -150,7 +150,7 @@ enum class MediaSourceEnum {
     PICTURE_BOOK { override fun toString() = "Picture Book" },
 
     /** Constant for unknown enum values */
-    UNKNOWN,
+    UNKNOWN { override fun toString() = "?" },
 }
 
 /**
@@ -168,16 +168,27 @@ enum class MediaRankType {
 }
 
 /**
+ * ISO 3166-1 alpha-2, i.e. two-letter country code
+ */
+enum class MediaCountry {
+    JP { override fun toString() = "Japan" },
+    KR { override fun toString() = "South Korea" },
+    CN { override fun toString() = "China" },
+    TW { override fun toString() = "Taiwan" },
+    UNKNOWN { override fun toString() = "?" },
+}
+
+/**
  * The kind of media list sorting
  */
 enum class MediaSort {
-    BY_TITLE,
-    BY_POPULARITY,
-    BY_AVERAGE_SCORE,
-    BY_TRENDING,
-    BY_FAVORITES,
-    BY_DATE_ADDED,
-    BY_RELEASE_DATE,
+    BY_TITLE { override fun toString() = "Title" },
+    BY_POPULARITY { override fun toString() = "Popularity" },
+    BY_AVERAGE_SCORE { override fun toString() = "Average Score" },
+    BY_TRENDING { override fun toString() = "Trending" },
+    BY_FAVORITES { override fun toString() = "Favorites" },
+    BY_DATE_ADDED { override fun toString() = "Date Added" },
+    BY_RELEASE_DATE { override fun toString() = "Release Date" },
 
     /** Constant for unknown enum values */
     UNKNOWN,

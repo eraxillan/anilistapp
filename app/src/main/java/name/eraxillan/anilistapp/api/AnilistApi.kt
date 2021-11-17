@@ -21,23 +21,25 @@ import androidx.core.text.isDigitsOnly
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.ApolloExperimental
 import com.apollographql.apollo.api.Response
+import com.apollographql.apollo.api.toInput
 import com.apollographql.apollo.coroutines.await
 import com.apollographql.apollo.http.OkHttpExecutionContext
 import kotlinx.coroutines.delay
 import name.eraxillan.anilistapp.AiringAnimeQuery
 import name.eraxillan.anilistapp.AnimeRelationsQuery
-import name.eraxillan.anilistapp.db.convertSortType
+import name.eraxillan.anilistapp.db.*
 import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort as MediaSort
-import name.eraxillan.anilistapp.type.MediaRelation
+import name.eraxillan.anilistapp.type.MediaRelation as AnilistMediaRelation
 import name.eraxillan.anilistapp.type.MediaSort as AnilistMediaSort
-import name.eraxillan.anilistapp.type.MediaStatus
-import name.eraxillan.anilistapp.type.MediaType
+import name.eraxillan.anilistapp.type.MediaStatus as AnilistMediaStatus
+import name.eraxillan.anilistapp.type.MediaType as AnilistMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.lang.NumberFormatException
-import java.time.LocalDate
+
 
 /**
  * Used to connect to the Anilist API to fetch airing anime schedule and details
@@ -47,21 +49,39 @@ class AnilistApi(private val client: ApolloClient) {
     /**
      * Get currently airing anime list, ordered by popularity (must popular first)
      */
-    suspend fun getAiringAnimeList(page: Int, perPage: Int, sortBy: MediaSort):
-            Response<AiringAnimeQuery.Data> {
-        check(page >= 1)
-        check(perPage >= 1)
-        check(sortBy != MediaSort.UNKNOWN)
+    suspend fun getAiringAnimeList(
+        page: Int, perPage: Int, filter: MediaFilter, sortBy: MediaSort
+    ): Response<AiringAnimeQuery.Data> {
 
-        val sortByAnilist = convertSortType(sortBy)
-        check(sortByAnilist != AnilistMediaSort.UNKNOWN__)
+        check(page >= 1) { Timber.e("page < 0") }
+        check(perPage >= 1) { Timber.e("perPage < 0") }
+        check(sortBy != MediaSort.UNKNOWN) { Timber.e("sortBy == MediaSort.UNKNOWN") }
+
+        val formats = filter.formats?.mapNotNull {
+            mediaFormat -> convertMediaFormat(mediaFormat)
+        }.toInput()
+
+        val sortByAnilist = convertMediaSortType(sortBy) ?: AnilistMediaSort.POPULARITY_DESC
+        check(sortByAnilist != AnilistMediaSort.UNKNOWN__) {
+            Timber.e("sortByAnilist == AnilistMediaSort.UNKNOWN__")
+        }
 
         val airingAnimeQuery = AiringAnimeQuery(
             page = page,
             perPage = perPage,
-            seasonYear = LocalDate.now().year,
-            sort = listOf(sortByAnilist),
-            status = MediaStatus.RELEASING
+
+            genres = filter.genres.toInput(),
+            tags = filter.tags.toInput(),
+            formats = formats,
+            seasonYear = filter.year.toInput(),
+            licensedBy = filter.services.toInput(),
+            sources = filter.sources?.mapNotNull { source -> convertMediaSource(source) }.toInput(),
+            season = convertMediaSeason(filter.season).toInput(),
+            status = convertMediaStatus(filter.status).toInput(),
+            country = convertMediaCountry(filter.country).toInput(),
+            isLicensed = filter.isLicensed.toInput(),
+
+            sort = listOf(sortByAnilist).toInput()
         )
 
         // TODO: use `client.query(airingAnimeQuery).enqueue(...)` instead?
@@ -94,9 +114,9 @@ class AnilistApi(private val client: ApolloClient) {
     private fun getPrequel(medium: AnimeRelationsQuery.Medium): Pair<Boolean, Int> {
         val prequelEdge = medium.relations?.edges?.filterNotNull()?.find { edge ->
             // Anime can have only one prequel and have not at all
-            if (edge.relationType == MediaRelation.PREQUEL &&
-                edge.node?.type == MediaType.ANIME &&
-                edge.node.status == MediaStatus.FINISHED
+            if (edge.relationType == AnilistMediaRelation.PREQUEL &&
+                edge.node?.type == AnilistMediaType.ANIME &&
+                edge.node.status == AnilistMediaStatus.FINISHED
             ) {
                 val title = edge.node.title?.romaji
                 Timber.d("Prequel anime found: $title")
