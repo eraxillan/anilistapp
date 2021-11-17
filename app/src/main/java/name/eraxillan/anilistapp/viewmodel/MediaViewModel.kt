@@ -17,6 +17,7 @@
 package name.eraxillan.anilistapp.viewmodel
 
 import android.app.Application
+import android.util.LruCache
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
@@ -30,14 +31,34 @@ import name.eraxillan.anilistapp.model.Media
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.repository.MediaRepo
+import name.eraxillan.anilistapp.utilities.MEDIA_SEARCH_CACHE_SIZE
 import timber.log.Timber
+import java.util.*
 
 
 class MediaViewModel(application: Application): AndroidViewModel(application) {
+
+    private data class MediaSearchOptions(val filter: MediaFilter, val sort: MediaSort) {
+        override fun hashCode(): Int {
+            return Objects.hash(filter, sort)
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as MediaSearchOptions
+
+            if (filter != other.filter) return false
+            if (sort != other.sort) return false
+
+            return true
+        }
+    }
+    private val cache = LruCache<Int, Flow<PagingData<LocalMedia>>>(MEDIA_SEARCH_CACHE_SIZE)
+
     private var repository: MediaRepo = MediaRepo(getApplication())
     private var favoriteMediaList: LiveData<List<Media>>? = null
-    // FIXME: implement caching of all possible filter and sort results
-    //private val media = HashMap<MediaSort, Flow<PagingData<LocalMedia>>?>()
 
     fun addMediaToFavorite(media: Media, @Suppress("UNUSED_PARAMETER") navController: NavController) {
         /*val job =*/ viewModelScope.launch {
@@ -74,18 +95,19 @@ class MediaViewModel(application: Application): AndroidViewModel(application) {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     fun getMediaListStream(filter: MediaFilter, sortBy: MediaSort): Flow<PagingData<LocalMedia>> {
-        // FIXME: implement LRU cache
-        /*if (!media.containsKey(sortBy)) {
-            media[sortBy] = repository
-                .getMediaListStream(filter, sortBy)
-                .cachedIn(viewModelScope)
+        val cacheKey = MediaSearchOptions(filter, sortBy).hashCode()
+        val cachedResult = cache.get(cacheKey)
+        if (cachedResult != null) {
+            Timber.d("return cached media list for filter/sort hash=$cacheKey")
+            return cachedResult
         }
-        check(media.containsKey(sortBy))
-        return media[sortBy]!!*/
-        //val cache: LruCache<Int, MediaFilter>
 
-        return repository
+        val newResult = repository
             .getMediaListStream(filter, sortBy)
             .cachedIn(viewModelScope)
+        cache.put(cacheKey, newResult)
+        Timber.d("add to cache media list for filter/sort hash=$cacheKey")
+
+        return newResult
     }
 }

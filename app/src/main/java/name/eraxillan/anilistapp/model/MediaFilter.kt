@@ -18,20 +18,21 @@ package name.eraxillan.anilistapp.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import java.util.*
 
 /** Media filter collection */
 @Parcelize
 data class MediaFilter(
     val search: String? = null,
-    val genres: List<String>? = null, // List<MediaGenre>
-    val tags: List<String>? = null, // List<MediaTag>
+    val genres: List<String>? = null,
+    val tags: List<String>? = null,
     val year: Int? = null,
     val season: MediaSeason? = null,
-    val formats: List<MediaFormatEnum>? = null, // List<MediaFormat>
+    val formats: List<MediaFormatEnum>? = null,
     val status: MediaStatus? = null,
     val services: List<String>? = null,
     val country: MediaCountry? = null,
-    val sources: List<MediaSourceEnum>? = null, // List<MediaSource>
+    val sources: List<MediaSourceEnum>? = null,
     val isLicensed: Boolean? = null,
 ) : Parcelable {
 
@@ -39,6 +40,43 @@ data class MediaFilter(
         return genres == null && tags == null && year == null && season == null &&
                 formats == null && status == null && services == null && country == null &&
                 sources == null && isLicensed == null
+    }
+
+    override fun hashCode(): Int {
+        return Objects.hash(
+            search,
+            genres,
+            tags,
+            year,
+            season,
+            formats,
+            status,
+            services,
+            country,
+            sources,
+            isLicensed,
+        )
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as MediaFilter
+
+        if (search != other.search) return false
+        if (genres != other.genres) return false
+        if (tags != other.tags) return false
+        if (year != other.year) return false
+        if (season != other.season) return false
+        if (formats != other.formats) return false
+        if (status != other.status) return false
+        if (services != other.services) return false
+        if (country != other.country) return false
+        if (sources != other.sources) return false
+        if (isLicensed != other.isLicensed) return false
+
+        return true
     }
 
     override fun toString(): String {
