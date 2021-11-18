@@ -22,7 +22,7 @@ import name.eraxillan.anilistapp.model.MediaRank
 
 
 @Dao
-abstract class MediaRankDao {
+abstract class MediaRankingDao {
     @Query("SELECT * FROM media_ranks WHERE context = :context")
     abstract suspend fun getGenreWithContext(context: String): MediaRank?
 

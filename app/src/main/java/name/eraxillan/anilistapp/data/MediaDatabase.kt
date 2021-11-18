@@ -62,7 +62,7 @@ abstract class MediaDatabase : RoomDatabase() {
     abstract fun mediaTitleSynonymDao(): MediaTitleSynonymDao
     abstract fun mediaExternalLinkDao(): MediaExternalLinkDao
     abstract fun mediaStreamingEpisodeDao(): MediaStreamingEpisodeDao
-    abstract fun mediaRankingDao(): MediaRankDao
+    abstract fun mediaRankingDao(): MediaRankingDao
 
     abstract fun mediaGenreDao(): MediaGenreDao
     abstract fun mediaTagDao(): MediaTagDao
