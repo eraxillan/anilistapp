@@ -32,7 +32,7 @@ import kotlin.time.measureTime
  * Repository class that works with local and remote data sources
  */
 @Singleton
-class MediaRepo @Inject constructor(
+class MediaRepository @Inject constructor(
     private val database: MediaDatabase,
     private val backend: AnilistApi
 ) {

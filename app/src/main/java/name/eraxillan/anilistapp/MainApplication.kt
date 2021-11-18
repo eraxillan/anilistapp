@@ -67,7 +67,7 @@ class MainApplication : Application() {
             // Write to Logcat full info:
             // source file name, line number and method name to simplify further debugging.
             // Output example:
-            // D/MediaRepo.kt:65#getMediaListStream: Query media list from remote backend...
+            // D/MediaRepository.kt:65#getMediaListStream: Query media list from remote backend...
             Timber.plant(object : Timber.DebugTree() {
                 override fun createStackElementTag(element: StackTraceElement): String {
                     return "${LocalDateTime.now()}:${element.fileName}:${element.lineNumber}#${element.methodName}"

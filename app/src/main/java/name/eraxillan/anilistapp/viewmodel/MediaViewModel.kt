@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.Flow
 import name.eraxillan.anilistapp.data.LocalMedia
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort
-import name.eraxillan.anilistapp.repository.MediaRepo
+import name.eraxillan.anilistapp.repository.MediaRepository
 import name.eraxillan.anilistapp.utilities.MEDIA_SEARCH_CACHE_SIZE
 import timber.log.Timber
 import java.util.*
@@ -35,7 +35,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MediaViewModel @Inject constructor(
-    private val mediaRepository: MediaRepo,
+    private val mediaRepository: MediaRepository,
 ) : ViewModel() {
 
     private data class MediaSearchOptions(val filter: MediaFilter, val sort: MediaSort) {
