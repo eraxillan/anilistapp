@@ -3,11 +3,15 @@ package name.eraxillan.anilistapp.db
 import name.eraxillan.anilistapp.model.*
 import timber.log.Timber
 
+
 private const val FAKE_GENRE = "?"
 private const val FAKE_TAG = "?"
 //private const val FAKE_SERVICE = "?"
 
-class MediaDatabaseHelper(private val database: MediaDatabase) {
+
+class MediaDatabaseHelper(
+    private val database: MediaDatabase
+) {
 
     private var _genreCache: Map<String, Long>? = null //id, name
     private var _tagCache: Map<String, Long>? = null // id, name
@@ -62,30 +66,32 @@ class MediaDatabaseHelper(private val database: MediaDatabase) {
     private suspend fun insertNotExistingStudios(studios: List<MediaStudio>): List<Long> {
         val studiosWithIds = studios.associateBy { studio -> studio.studioId }
         val existingStudioIds = database.mediaStudioDao().getExistingIds(studiosWithIds.keys.toList())
-        val absentStudioIds = studiosWithIds.keys.minus(existingStudioIds)
+        val absentStudioIds = studiosWithIds.keys.minus(existingStudioIds.toSet())
         val absentStudios = studiosWithIds.filterKeys { absentStudioIds.contains(it) }
         val addedStudioIds = database.mediaStudioDao().insertAll(absentStudios.values.toList())
         return existingStudioIds.toSet().union(addedStudioIds).toList()
     }
 
     suspend fun deleteAllMedias() {
-        // Clear all tables in the database
-        database.remoteKeysDao().clearRemoteKeys()
-        database.mediaDao().deleteAll()
+        database.apply {
+            // Clear all tables in the database
+            remoteKeysDao().clearRemoteKeys()
+            mediaDao().deleteAll()
 
-        // Many-to-many tables
-        //database.mediaGenreDao().deleteALl()
-        database.mediaGenreEntryDao().deleteAll()
-        //database.mediaTagDao().deleteAll()
-        database.mediaTagEntryDao().deleteAll()
-        database.mediaStudioDao().deleteAll()
-        database.mediaStudioEntryDao().deleteAll()
+            // Many-to-many tables
+            //mediaGenreDao().deleteALl()
+            mediaGenreEntryDao().deleteAll()
+            //mediaTagDao().deleteAll()
+            mediaTagEntryDao().deleteAll()
+            mediaStudioDao().deleteAll()
+            mediaStudioEntryDao().deleteAll()
 
-        // One-to-many tables
-        database.mediaTitleSynonymDao().deleteAll()
-        database.mediaExternalLinkDao().deleteAll()
-        database.mediaStreamingEpisodeDao().deleteAll()
-        database.mediaRankDao().deleteAll()
+            // One-to-many tables
+            mediaTitleSynonymDao().deleteAll()
+            mediaExternalLinkDao().deleteAll()
+            mediaStreamingEpisodeDao().deleteAll()
+            mediaRankingDao().deleteAll()
+        }
 
         Timber.d("Cache database cleared!")
     }
@@ -205,6 +211,6 @@ class MediaDatabaseHelper(private val database: MediaDatabase) {
 
             MediaRank(rank, mediaId)
         }
-        database.mediaRankDao().insertAll(rankingsWithMediaId)
+        database.mediaRankingDao().insertAll(rankingsWithMediaId)
     }
 }

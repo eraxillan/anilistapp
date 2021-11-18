@@ -15,62 +15,43 @@
  */
 
 package name.eraxillan.anilistapp.repository
-
-import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import name.eraxillan.anilistapp.api.AnilistApi
 import name.eraxillan.anilistapp.db.*
-import name.eraxillan.anilistapp.model.Media
-import name.eraxillan.anilistapp.model.FavoriteMedia
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.utilities.NETWORK_PAGE_SIZE
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 /**
  * Repository class that works with local and remote data sources
  */
-class MediaRepo(context: Context) {
-
-    private var database = MediaDatabase.getInstance(context)
-    private var mediaDao: MediaDao = database.mediaDao()
-    private var favoriteDao: FavoriteMediaDao = database.favoriteDao()
-    private val backend: AnilistApi = AnilistApi.create(AnilistApi.createClient())
-
-    // Favorite media list local database API
-    suspend fun addMediaToFavorite(media: Media): Long {
-        return favoriteDao.addMediaToFavorite(FavoriteMedia(anilistId = media.anilistId))
-    }
-
-    suspend fun deleteFavoriteMedia(media: Media) {
-        favoriteDao.deleteFavoriteMedia(FavoriteMedia(anilistId = media.anilistId))
-    }
-
-    fun isMediaAddedToFavorite(anilistId: Long) = favoriteDao.isMediaAddedToFavorite(anilistId)
-
-    val favoriteMediaList: LiveData<List<Media>>
-        get() {
-            return favoriteDao.getFavoriteMediaList().map { localMediaList ->
-                localMediaList.map { localMedia ->
-                    convertLocalMedia(localMedia)
-                }
-            }
-        }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+@Singleton
+class MediaRepo @Inject constructor(
+    private val database: MediaDatabase,
+    private val backend: AnilistApi
+) {
 
     /**
      * Get media list and exposed as a stream of data,
      * that will emit every time we get more data from the network
      */
     fun getMediaListStream(filter: MediaFilter, sortBy: MediaSort): Flow<PagingData<LocalMedia>> {
-        Timber.d("Query media list from remote backend...")
+        Timber.d("Querying media list from remote backend...")
 
+        @OptIn(ExperimentalTime::class)
         val pagingSourceFactory = {
-            mediaDao.getFilteredAndSortedMediaPaged(filter, sortBy)
+            var result: PagingSource<Int, LocalMedia>
+            val queryTime = measureTime {
+                result = database.mediaDao().getFilteredAndSortedMediaPaged(filter, sortBy)
+            }
+            Timber.d("Media list 'SELECT' query execution time: $queryTime")
+            result
         }
 
         @OptIn(ExperimentalPagingApi::class)

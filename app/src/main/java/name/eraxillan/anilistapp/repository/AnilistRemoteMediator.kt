@@ -43,7 +43,7 @@ class AnilistRemoteMediator(
     private val sortBy: MediaSort
 ) : RemoteMediator<Int, LocalMedia>() {
 
-    private val databaseHelper:MediaDatabaseHelper = MediaDatabaseHelper(database)
+    private val databaseHelper: MediaDatabaseHelper = MediaDatabaseHelper(database)
 
     override suspend fun initialize(): InitializeAction {
         // Launch remote refresh as soon as paging starts and do not trigger remote prepend or

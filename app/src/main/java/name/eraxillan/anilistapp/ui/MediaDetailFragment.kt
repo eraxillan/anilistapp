@@ -26,12 +26,15 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.color.MaterialColors
+import dagger.hilt.android.AndroidEntryPoint
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.ui.adapter.MediaDetailAdapter
 import name.eraxillan.anilistapp.databinding.FragmentMediaDetailBinding
+import name.eraxillan.anilistapp.viewmodel.FavoriteMediaViewModel
 import name.eraxillan.anilistapp.viewmodel.MediaViewModel
 
 
+@AndroidEntryPoint
 class MediaDetailFragment : Fragment() {
 
     private var _binding: FragmentMediaDetailBinding? = null
@@ -40,7 +43,7 @@ class MediaDetailFragment : Fragment() {
 
     private val args: MediaDetailFragmentArgs by navArgs()
 
-    private val viewModel by viewModels<MediaViewModel>()
+    private val favoriteViewModel by viewModels<FavoriteMediaViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,10 +84,10 @@ class MediaDetailFragment : Fragment() {
         val mediaId = (args.media!!).anilistId
 
         binding.addToFavoriteButton.setOnClickListener {
-            viewModel.addMediaToFavorite(args.media!!, findNavController())
+            favoriteViewModel.addMediaToFavorite(args.media!!, findNavController())
         }
 
-        viewModel.isMediaAddedToFavorite(mediaId).observe(
+        favoriteViewModel.isMediaAddedToFavorite(mediaId).observe(
             viewLifecycleOwner, { isFav ->
                 binding.addToFavoriteButton.isVisible = !isFav
             })

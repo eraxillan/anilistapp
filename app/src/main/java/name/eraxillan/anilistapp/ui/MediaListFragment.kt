@@ -42,14 +42,14 @@ import name.eraxillan.anilistapp.viewmodel.MediaViewModel
 import timber.log.Timber
 import java.util.*
 import androidx.paging.map
+import dagger.hilt.android.AndroidEntryPoint
 import name.eraxillan.anilistapp.db.convertLocalMedia
-import name.eraxillan.anilistapp.model.MediaFilter
-import name.eraxillan.anilistapp.model.MediaFormatEnum
-import name.eraxillan.anilistapp.model.MediaStatus
+import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.repository.PreferenceRepository
 import java.time.LocalDate
 
 
+@AndroidEntryPoint
 class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
     private var _binding: FragmentMediaListBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`

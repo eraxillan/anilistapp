@@ -20,11 +20,13 @@ import android.os.Bundle
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import dagger.hilt.android.AndroidEntryPoint
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.utilities.PREF_THEME_KEY
 import name.eraxillan.anilistapp.utilities.applyUiTheme
 import timber.log.Timber
 
+@AndroidEntryPoint
 class PreferenceFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

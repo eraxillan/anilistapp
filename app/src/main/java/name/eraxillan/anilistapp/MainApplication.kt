@@ -25,10 +25,18 @@ import name.eraxillan.anilistapp.utilities.applyUiTheme
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.concurrent.Executors
-//import dagger.hilt.android.HiltAndroidApp
+import dagger.hilt.android.HiltAndroidApp
 
 
-//@HiltAndroidApp
+/*
+    @HiltAndroidApp triggers Hilt's code generation, including a base class for your application
+    that serves as the application-level dependency container.
+    This generated Hilt component is attached to the Application object's lifecycle
+    and provides dependencies to it.
+    Additionally, it is the parent component of the app,
+    which means that other components can access the dependencies that it provides.
+*/
+@HiltAndroidApp
 class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()

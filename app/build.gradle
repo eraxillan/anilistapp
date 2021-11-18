@@ -21,7 +21,7 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
     id 'kotlin-parcelize'
     id 'com.apollographql.apollo'
-    //id 'dagger.hilt.android.plugin'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -93,7 +93,7 @@ dependencies {
     // Kotlin annotation processors
     kapt "androidx.room:room-compiler:$room_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
-    //kapt "com.google.dagger:hilt-android-compiler:$rootProject.hiltVersion"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     implementation "androidx.core:core-ktx:$core_ctx_version"
     implementation "androidx.appcompat:appcompat:$app_compat_version"
@@ -144,7 +144,8 @@ dependencies {
     // Advanced logging
     implementation "com.jakewharton.timber:timber:$timber_version"
 
-    //kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    implementation "com.google.dagger:hilt-android:2.38.1"
 
     testImplementation "junit:junit:$junit_version"
     //androidTestImplementation 'androidx.test.ext:junit:1.1.2'

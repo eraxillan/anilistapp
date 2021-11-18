@@ -17,10 +17,7 @@
 package name.eraxillan.anilistapp.db
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -65,7 +62,7 @@ abstract class MediaDatabase : RoomDatabase() {
     abstract fun mediaTitleSynonymDao(): MediaTitleSynonymDao
     abstract fun mediaExternalLinkDao(): MediaExternalLinkDao
     abstract fun mediaStreamingEpisodeDao(): MediaStreamingEpisodeDao
-    abstract fun mediaRankDao(): MediaRankDao
+    abstract fun mediaRankingDao(): MediaRankDao
 
     abstract fun mediaGenreDao(): MediaGenreDao
     abstract fun mediaTagDao(): MediaTagDao

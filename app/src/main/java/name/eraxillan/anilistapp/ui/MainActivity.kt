@@ -26,6 +26,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import dagger.hilt.android.AndroidEntryPoint
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.ActivityMainBinding
 import name.eraxillan.anilistapp.model.*
@@ -40,6 +41,7 @@ interface OnBottomSheetCallbacks {
     fun onStateChanged(bottomSheet: View, newState: Int)
 }
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null

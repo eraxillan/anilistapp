@@ -23,15 +23,17 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.FragmentFavoriteListBinding
 import name.eraxillan.anilistapp.ui.adapter.FavoriteListAdapter
-import name.eraxillan.anilistapp.viewmodel.MediaViewModel
+import name.eraxillan.anilistapp.viewmodel.FavoriteMediaViewModel
 import timber.log.Timber
 
 
+@AndroidEntryPoint
 class FavoriteListFragment : Fragment() {
     private var _binding: FragmentFavoriteListBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
@@ -43,7 +45,7 @@ class FavoriteListFragment : Fragment() {
      * If a configuration change happens, such as a screen rotation,
      * it returns the previously created `MediaViewModel`
      */
-    private val viewModel by viewModels<MediaViewModel>()
+    private val viewModel by viewModels<FavoriteMediaViewModel>()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
