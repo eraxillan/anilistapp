@@ -24,7 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import name.eraxillan.anilistapp.R
-import name.eraxillan.anilistapp.data.MediaDatabase
+import name.eraxillan.anilistapp.data.room.MediaDatabase
 import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.utilities.ANIME_DATA_FILENAME
 import name.eraxillan.anilistapp.utilities.INIT_DATABASE_WORKER_PROGRESS_KEY

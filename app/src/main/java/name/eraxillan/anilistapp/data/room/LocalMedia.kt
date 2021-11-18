@@ -1,8 +1,11 @@
-package name.eraxillan.anilistapp.data
+package name.eraxillan.anilistapp.data.room
 
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
+import name.eraxillan.anilistapp.data.room.relations.MediaGenreEntry
+import name.eraxillan.anilistapp.data.room.relations.MediaStudioEntry
+import name.eraxillan.anilistapp.data.room.relations.MediaTagEntry
 import name.eraxillan.anilistapp.model.*
 
 

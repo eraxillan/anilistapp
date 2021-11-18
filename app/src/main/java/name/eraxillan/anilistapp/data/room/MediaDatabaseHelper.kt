@@ -1,5 +1,8 @@
-package name.eraxillan.anilistapp.data
+package name.eraxillan.anilistapp.data.room
 
+import name.eraxillan.anilistapp.data.room.relations.MediaGenreEntry
+import name.eraxillan.anilistapp.data.room.relations.MediaStudioEntry
+import name.eraxillan.anilistapp.data.room.relations.MediaTagEntry
 import name.eraxillan.anilistapp.model.*
 import timber.log.Timber
 

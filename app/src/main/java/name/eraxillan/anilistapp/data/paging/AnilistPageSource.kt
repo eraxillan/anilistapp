@@ -19,7 +19,7 @@ package name.eraxillan.anilistapp.data.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import name.eraxillan.anilistapp.api.AnilistApi
-import name.eraxillan.anilistapp.data.convertAnilistMedia
+import name.eraxillan.anilistapp.api.convertAnilistMedia
 import name.eraxillan.anilistapp.model.Media
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort

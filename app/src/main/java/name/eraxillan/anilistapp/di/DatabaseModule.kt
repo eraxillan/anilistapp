@@ -7,7 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import name.eraxillan.anilistapp.data.room.dao.FavoriteMediaDao
-import name.eraxillan.anilistapp.data.MediaDatabase
+import name.eraxillan.anilistapp.data.room.MediaDatabase
 import javax.inject.Singleton
 
 

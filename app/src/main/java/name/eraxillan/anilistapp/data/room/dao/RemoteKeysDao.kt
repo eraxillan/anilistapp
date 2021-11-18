@@ -20,7 +20,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import name.eraxillan.anilistapp.data.RemoteKeys
+import name.eraxillan.anilistapp.data.room.RemoteKeys
 
 @Dao
 interface RemoteKeysDao {

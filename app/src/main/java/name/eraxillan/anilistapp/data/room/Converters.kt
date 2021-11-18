@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.data
+package name.eraxillan.anilistapp.data.room
 
 import androidx.room.TypeConverter
 import name.eraxillan.anilistapp.utilities.ZonedScheduledTime

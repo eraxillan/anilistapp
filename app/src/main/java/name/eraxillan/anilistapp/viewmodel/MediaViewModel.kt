@@ -23,7 +23,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import name.eraxillan.anilistapp.data.LocalMedia
+import name.eraxillan.anilistapp.data.room.LocalMedia
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.repository.MediaRepository

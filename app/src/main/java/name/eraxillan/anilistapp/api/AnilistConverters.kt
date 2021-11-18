@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.data
+package name.eraxillan.anilistapp.api
 
 import name.eraxillan.anilistapp.AiringAnimeQuery
+import name.eraxillan.anilistapp.data.room.LocalMedia
 import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.utilities.ZonedScheduledTime
 import timber.log.Timber

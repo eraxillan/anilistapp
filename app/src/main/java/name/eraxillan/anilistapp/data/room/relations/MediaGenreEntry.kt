@@ -1,4 +1,4 @@
-package name.eraxillan.anilistapp.data
+package name.eraxillan.anilistapp.data.room.relations
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo

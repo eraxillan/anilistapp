@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.data
+package name.eraxillan.anilistapp.data.room
 
 import android.content.Context
 import androidx.room.*
@@ -22,6 +22,12 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import name.eraxillan.anilistapp.data.room.dao.*
+import name.eraxillan.anilistapp.data.room.relations.MediaGenreEntry
+import name.eraxillan.anilistapp.data.room.relations.MediaStudioEntry
+import name.eraxillan.anilistapp.data.room.relations.MediaTagEntry
+import name.eraxillan.anilistapp.data.room.views.MediaWithGenres
+import name.eraxillan.anilistapp.data.room.views.MediaWithServices
+import name.eraxillan.anilistapp.data.room.views.MediaWithTags
 import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.utilities.DATABASE_NAME
 import name.eraxillan.anilistapp.utilities.INIT_DATABASE_WORKER_TAG

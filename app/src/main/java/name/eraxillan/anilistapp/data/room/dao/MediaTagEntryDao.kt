@@ -2,7 +2,7 @@ package name.eraxillan.anilistapp.data.room.dao
 
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import name.eraxillan.anilistapp.data.MediaTagEntry
+import name.eraxillan.anilistapp.data.room.relations.MediaTagEntry
 
 @Dao
 abstract class MediaTagEntryDao {
