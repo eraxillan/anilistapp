@@ -21,6 +21,7 @@ import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import name.eraxillan.anilistapp.data.room.dao.*
 import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.utilities.DATABASE_NAME
 import name.eraxillan.anilistapp.utilities.INIT_DATABASE_WORKER_TAG

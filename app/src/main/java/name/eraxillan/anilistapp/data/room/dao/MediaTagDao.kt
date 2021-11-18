@@ -14,36 +14,33 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.data
+package name.eraxillan.anilistapp.data.room.dao
 
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import name.eraxillan.anilistapp.model.MediaTitleSynonym
+import name.eraxillan.anilistapp.model.MediaTag
 
 
 @Dao
-abstract class MediaTitleSynonymDao {
-    @Query("SELECT * FROM media_title_synonyms WHERE name = :name")
-    abstract suspend fun getSynonymWithName(name: String): MediaTitleSynonym?
+abstract class MediaTagDao {
+    @Query("SELECT * FROM media_tags WHERE name = :name")
+    abstract suspend fun getTagWithName(name: String): MediaTag?
 
-    @Query("SELECT * FROM media_title_synonyms")
-    abstract suspend fun getAll(): List<MediaTitleSynonym>
-
-    @Insert(onConflict = REPLACE)
-    abstract suspend fun insert(entity: MediaTitleSynonym): Long
+    @Query("SELECT * FROM media_tags")
+    abstract suspend fun getAll(): List<MediaTag>
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(vararg entity: MediaTitleSynonym): List<Long>
+    abstract suspend fun insert(entity: MediaTag): Long
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(entities: Collection<MediaTitleSynonym>): List<Long>
+    abstract suspend fun insertAll(vararg entity: MediaTag): List<Long>
+
+    @Insert(onConflict = REPLACE)
+    abstract suspend fun insertAll(entities: Collection<MediaTag>): List<Long>
 
     @Update(onConflict = REPLACE)
-    abstract suspend fun update(entity: MediaTitleSynonym)
+    abstract suspend fun update(entity: MediaTag)
 
     @Delete
-    abstract suspend fun delete(entity: MediaTitleSynonym): Int
-
-    @Query("DELETE FROM media_title_synonyms")
-    abstract suspend fun deleteAll()
+    abstract suspend fun delete(entity: MediaTag): Int
 }

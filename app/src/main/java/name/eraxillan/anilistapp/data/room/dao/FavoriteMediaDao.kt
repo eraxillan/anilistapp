@@ -1,7 +1,8 @@
-package name.eraxillan.anilistapp.data
+package name.eraxillan.anilistapp.data.room.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import name.eraxillan.anilistapp.data.LocalMedia
 import name.eraxillan.anilistapp.model.FavoriteMedia
 
 @Dao

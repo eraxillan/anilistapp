@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.data
+package name.eraxillan.anilistapp.data.room.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import name.eraxillan.anilistapp.data.RemoteKeys
 
 @Dao
 interface RemoteKeysDao {

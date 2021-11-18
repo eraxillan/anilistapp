@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.data
+package name.eraxillan.anilistapp.data.room.dao
 
 import androidx.paging.PagingSource
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
+import name.eraxillan.anilistapp.data.LocalMedia
 import name.eraxillan.anilistapp.model.*
 
 
