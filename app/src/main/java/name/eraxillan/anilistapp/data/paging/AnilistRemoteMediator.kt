@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.repository
+package name.eraxillan.anilistapp.data.paging
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
