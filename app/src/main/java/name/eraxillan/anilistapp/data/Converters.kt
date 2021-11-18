@@ -17,6 +17,7 @@
 package name.eraxillan.anilistapp.data
 
 import androidx.room.TypeConverter
+import name.eraxillan.anilistapp.utilities.ZonedScheduledTime
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime

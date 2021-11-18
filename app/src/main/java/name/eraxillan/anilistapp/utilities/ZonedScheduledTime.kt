@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.data
+package name.eraxillan.anilistapp.utilities
 
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.core.os.LocaleListCompat
+import name.eraxillan.anilistapp.data.DayOfWeekTimeParser
 import timber.log.Timber
 import java.time.*
 import java.time.format.DateTimeFormatter

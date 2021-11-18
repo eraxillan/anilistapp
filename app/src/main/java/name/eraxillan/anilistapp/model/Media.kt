@@ -19,7 +19,7 @@ package name.eraxillan.anilistapp.model
 import android.os.Parcelable
 import androidx.room.*
 import kotlinx.parcelize.Parcelize
-import name.eraxillan.anilistapp.data.ZonedScheduledTime
+import name.eraxillan.anilistapp.utilities.ZonedScheduledTime
 import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime

@@ -18,6 +18,7 @@ package name.eraxillan.anilistapp.data
 
 import name.eraxillan.anilistapp.AiringAnimeQuery
 import name.eraxillan.anilistapp.model.*
+import name.eraxillan.anilistapp.utilities.ZonedScheduledTime
 import timber.log.Timber
 import name.eraxillan.anilistapp.type.MediaFormat as AnilistMediaFormat
 import name.eraxillan.anilistapp.type.MediaStatus as AnilistMediaStatus
