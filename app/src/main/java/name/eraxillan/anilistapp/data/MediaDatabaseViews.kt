@@ -1,4 +1,4 @@
-package name.eraxillan.anilistapp.db
+package name.eraxillan.anilistapp.data
 
 import androidx.room.ColumnInfo
 import androidx.room.DatabaseView

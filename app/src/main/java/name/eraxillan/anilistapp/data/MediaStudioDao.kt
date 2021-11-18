@@ -14,36 +14,39 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.db
+package name.eraxillan.anilistapp.data
 
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import name.eraxillan.anilistapp.model.MediaTitleSynonym
+import name.eraxillan.anilistapp.model.MediaStudio
 
 
 @Dao
-abstract class MediaTitleSynonymDao {
-    @Query("SELECT * FROM media_title_synonyms WHERE name = :name")
-    abstract suspend fun getSynonymWithName(name: String): MediaTitleSynonym?
+abstract class MediaStudioDao {
+    @Query("SELECT * FROM media_studios WHERE name = :name")
+    abstract suspend fun getStudioWithName(name: String): MediaStudio?
 
-    @Query("SELECT * FROM media_title_synonyms")
-    abstract suspend fun getAll(): List<MediaTitleSynonym>
+    @Query("SELECT studio_id FROM media_studios WHERE studio_id IN (:ids)")
+    abstract suspend fun getExistingIds(ids: List<Long>): List<Long>
 
-    @Insert(onConflict = REPLACE)
-    abstract suspend fun insert(entity: MediaTitleSynonym): Long
-
-    @Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(vararg entity: MediaTitleSynonym): List<Long>
+    @Query("SELECT * FROM media_studios")
+    abstract suspend fun getAll(): List<MediaStudio>
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(entities: Collection<MediaTitleSynonym>): List<Long>
+    abstract suspend fun insert(entity: MediaStudio): Long
+
+    @Insert(onConflict = REPLACE)
+    abstract suspend fun insertAll(vararg entity: MediaStudio): List<Long>
+
+    @Insert(onConflict = REPLACE)
+    abstract suspend fun insertAll(entities: Collection<MediaStudio>): List<Long>
 
     @Update(onConflict = REPLACE)
-    abstract suspend fun update(entity: MediaTitleSynonym)
+    abstract suspend fun update(entity: MediaStudio)
 
     @Delete
-    abstract suspend fun delete(entity: MediaTitleSynonym): Int
+    abstract suspend fun delete(entity: MediaStudio): Int
 
-    @Query("DELETE FROM media_title_synonyms")
+    @Query("DELETE FROM media_studios")
     abstract suspend fun deleteAll()
 }

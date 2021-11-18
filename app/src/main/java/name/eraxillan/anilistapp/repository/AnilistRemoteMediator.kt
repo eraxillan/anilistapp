@@ -23,7 +23,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import name.eraxillan.anilistapp.api.AnilistApi
-import name.eraxillan.anilistapp.db.*
+import name.eraxillan.anilistapp.data.*
 import name.eraxillan.anilistapp.model.*
 import timber.log.Timber
 import java.io.IOException

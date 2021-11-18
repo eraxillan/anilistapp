@@ -18,7 +18,7 @@ package name.eraxillan.anilistapp.repository
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import name.eraxillan.anilistapp.api.AnilistApi
-import name.eraxillan.anilistapp.db.*
+import name.eraxillan.anilistapp.data.*
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.utilities.NETWORK_PAGE_SIZE

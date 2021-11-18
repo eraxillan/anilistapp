@@ -2,8 +2,8 @@ package name.eraxillan.anilistapp.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
-import name.eraxillan.anilistapp.db.FavoriteMediaDao
-import name.eraxillan.anilistapp.db.convertLocalMedia
+import name.eraxillan.anilistapp.data.FavoriteMediaDao
+import name.eraxillan.anilistapp.data.convertLocalMedia
 import name.eraxillan.anilistapp.model.FavoriteMedia
 import name.eraxillan.anilistapp.model.Media
 import javax.inject.Inject

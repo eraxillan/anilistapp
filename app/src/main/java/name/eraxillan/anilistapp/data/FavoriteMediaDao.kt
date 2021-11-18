@@ -1,9 +1,8 @@
-package name.eraxillan.anilistapp.db
+package name.eraxillan.anilistapp.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import name.eraxillan.anilistapp.model.FavoriteMedia
-import name.eraxillan.anilistapp.model.Media
 
 @Dao
 interface FavoriteMediaDao {

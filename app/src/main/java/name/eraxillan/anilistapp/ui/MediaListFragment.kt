@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.collectLatest
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.ui.adapter.MediaListAdapter
 import name.eraxillan.anilistapp.databinding.FragmentMediaListBinding
-import name.eraxillan.anilistapp.db.MediaDatabase
+import name.eraxillan.anilistapp.data.MediaDatabase
 import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.ui.adapter.MediaListLoadStateAdapter
 import name.eraxillan.anilistapp.utilities.INIT_DATABASE_WORKER_TAG
@@ -43,7 +43,7 @@ import timber.log.Timber
 import java.util.*
 import androidx.paging.map
 import dagger.hilt.android.AndroidEntryPoint
-import name.eraxillan.anilistapp.db.convertLocalMedia
+import name.eraxillan.anilistapp.data.convertLocalMedia
 import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.repository.PreferenceRepository
 import java.time.LocalDate

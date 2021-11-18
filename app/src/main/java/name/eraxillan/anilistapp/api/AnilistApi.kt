@@ -27,7 +27,7 @@ import com.apollographql.apollo.http.OkHttpExecutionContext
 import kotlinx.coroutines.delay
 import name.eraxillan.anilistapp.AiringAnimeQuery
 import name.eraxillan.anilistapp.AnimeRelationsQuery
-import name.eraxillan.anilistapp.db.*
+import name.eraxillan.anilistapp.data.*
 import name.eraxillan.anilistapp.model.Media
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort as MediaSort

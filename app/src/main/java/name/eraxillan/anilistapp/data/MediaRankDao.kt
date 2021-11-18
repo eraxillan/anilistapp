@@ -14,36 +14,36 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.db
+package name.eraxillan.anilistapp.data
 
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import name.eraxillan.anilistapp.model.MediaGenre
+import name.eraxillan.anilistapp.model.MediaRank
 
 
 @Dao
-abstract class MediaGenreDao {
-    @Query("SELECT * FROM media_genres WHERE name = :name")
-    abstract suspend fun getGenreWithName(name: String): MediaGenre?
+abstract class MediaRankDao {
+    @Query("SELECT * FROM media_ranks WHERE context = :context")
+    abstract suspend fun getGenreWithContext(context: String): MediaRank?
 
-    @Query("SELECT * FROM media_genres")
-    abstract suspend fun getAll(): List<MediaGenre>
-
-    @Query("SELECT COUNT(genre_id) FROM media_genres")
-    abstract suspend fun getCount(): Long
+    @Query("SELECT * FROM media_ranks")
+    abstract suspend fun getAll(): List<MediaRank>
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insert(entity: MediaGenre): Long
+    abstract suspend fun insert(entity: MediaRank): Long
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(vararg entity: MediaGenre): List<Long>
+    abstract suspend fun insertAll(vararg entity: MediaRank): List<Long>
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(entities: Collection<MediaGenre>): List<Long>
+    abstract suspend fun insertAll(entities: Collection<MediaRank>): List<Long>
 
     @Update(onConflict = REPLACE)
-    abstract suspend fun update(entity: MediaGenre)
+    abstract suspend fun update(entity: MediaRank)
 
     @Delete
-    abstract suspend fun delete(entity: MediaGenre): Int
+    abstract suspend fun delete(entity: MediaRank): Int
+
+    @Query("DELETE FROM media_ranks")
+    abstract suspend fun deleteAll()
 }

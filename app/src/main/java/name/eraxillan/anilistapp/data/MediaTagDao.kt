@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.db
+package name.eraxillan.anilistapp.data
 
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE

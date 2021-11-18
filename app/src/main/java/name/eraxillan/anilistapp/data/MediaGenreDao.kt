@@ -14,29 +14,36 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.db
+package name.eraxillan.anilistapp.data
 
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import name.eraxillan.anilistapp.model.*
+import name.eraxillan.anilistapp.model.MediaGenre
+
 
 @Dao
-abstract class MediaExternalLinkDao {
-    @Insert(onConflict = REPLACE)
-    abstract suspend fun insert(entity: MediaExternalLink): Long
+abstract class MediaGenreDao {
+    @Query("SELECT * FROM media_genres WHERE name = :name")
+    abstract suspend fun getGenreWithName(name: String): MediaGenre?
+
+    @Query("SELECT * FROM media_genres")
+    abstract suspend fun getAll(): List<MediaGenre>
+
+    @Query("SELECT COUNT(genre_id) FROM media_genres")
+    abstract suspend fun getCount(): Long
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(vararg entity: MediaExternalLink): List<Long>
+    abstract suspend fun insert(entity: MediaGenre): Long
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(entities: Collection<MediaExternalLink>): List<Long>
+    abstract suspend fun insertAll(vararg entity: MediaGenre): List<Long>
+
+    @Insert(onConflict = REPLACE)
+    abstract suspend fun insertAll(entities: Collection<MediaGenre>): List<Long>
 
     @Update(onConflict = REPLACE)
-    abstract suspend fun update(entity: MediaExternalLink)
+    abstract suspend fun update(entity: MediaGenre)
 
     @Delete
-    abstract suspend fun delete(entity: MediaExternalLink): Int
-
-    @Query("DELETE FROM media_external_links")
-    abstract suspend fun deleteAll()
+    abstract suspend fun delete(entity: MediaGenre): Int
 }

@@ -14,36 +14,29 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.db
+package name.eraxillan.anilistapp.data
 
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import name.eraxillan.anilistapp.model.MediaStreamingEpisode
-
+import name.eraxillan.anilistapp.model.*
 
 @Dao
-abstract class MediaStreamingEpisodeDao {
-    @Query("SELECT * FROM media_streaming_episodes WHERE title = :title")
-    abstract suspend fun getSynonymWithTitle(title: String): MediaStreamingEpisode?
-
-    @Query("SELECT * FROM media_streaming_episodes")
-    abstract suspend fun getAll(): List<MediaStreamingEpisode>
+abstract class MediaExternalLinkDao {
+    @Insert(onConflict = REPLACE)
+    abstract suspend fun insert(entity: MediaExternalLink): Long
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insert(entity: MediaStreamingEpisode): Long
+    abstract suspend fun insertAll(vararg entity: MediaExternalLink): List<Long>
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(vararg entity: MediaStreamingEpisode): List<Long>
-
-    @Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(entities: Collection<MediaStreamingEpisode>): List<Long>
+    abstract suspend fun insertAll(entities: Collection<MediaExternalLink>): List<Long>
 
     @Update(onConflict = REPLACE)
-    abstract suspend fun update(entity: MediaStreamingEpisode)
+    abstract suspend fun update(entity: MediaExternalLink)
 
     @Delete
-    abstract suspend fun delete(entity: MediaStreamingEpisode): Int
+    abstract suspend fun delete(entity: MediaExternalLink): Int
 
-    @Query("DELETE FROM media_streaming_episodes")
+    @Query("DELETE FROM media_external_links")
     abstract suspend fun deleteAll()
 }

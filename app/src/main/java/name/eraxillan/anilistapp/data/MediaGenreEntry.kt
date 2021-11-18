@@ -1,4 +1,4 @@
-package name.eraxillan.anilistapp.db
+package name.eraxillan.anilistapp.data
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo
@@ -7,12 +7,12 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import kotlinx.parcelize.Parcelize
 import name.eraxillan.anilistapp.model.Media
-import name.eraxillan.anilistapp.model.MediaTag
+import name.eraxillan.anilistapp.model.MediaGenre
 
-/** Media and media tag junction table to decompose many-to-many relation */
+/** Media and media genre junction table to decompose many-to-many relation */
 @Entity(
-    tableName = "media_tag_entries",
-    primaryKeys = ["media_id", "tag_id"],
+    tableName = "media_genre_entries",
+    primaryKeys = ["media_id", "genre_id"],
     foreignKeys = [
         ForeignKey(
             entity = Media::class,
@@ -24,9 +24,9 @@ import name.eraxillan.anilistapp.model.MediaTag
             //deferred = true
         ),
         ForeignKey(
-            entity = MediaTag::class,
-            parentColumns = ["tag_id"],
-            childColumns = ["tag_id"],
+            entity = MediaGenre::class,
+            parentColumns = ["genre_id"],
+            childColumns = ["genre_id"],
             onUpdate = ForeignKey.CASCADE,
             onDelete = ForeignKey.CASCADE,
             // TODO: need testing
@@ -35,14 +35,14 @@ import name.eraxillan.anilistapp.model.MediaTag
     ],
     // TODO: need testing
     indices = [
-        Index("media_id", "tag_id", unique = true),
+        Index("media_id", "genre_id", unique = true),
         Index("media_id"),
-        Index("tag_id")
+        Index("genre_id")
     ]
 )
 @Parcelize
-data class MediaTagEntry(
+data class MediaGenreEntry(
     //@PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long = 0,
     @ColumnInfo(name = "media_id") val mediaId: Long = -1,
-    @ColumnInfo(name = "tag_id") val tagId: Long = -1,
+    @ColumnInfo(name = "genre_id") val genreId: Long = -1,
 ) : Parcelable

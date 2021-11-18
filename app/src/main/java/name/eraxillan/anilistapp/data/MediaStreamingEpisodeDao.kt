@@ -14,39 +14,36 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.db
+package name.eraxillan.anilistapp.data
 
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import name.eraxillan.anilistapp.model.MediaStudio
+import name.eraxillan.anilistapp.model.MediaStreamingEpisode
 
 
 @Dao
-abstract class MediaStudioDao {
-    @Query("SELECT * FROM media_studios WHERE name = :name")
-    abstract suspend fun getStudioWithName(name: String): MediaStudio?
+abstract class MediaStreamingEpisodeDao {
+    @Query("SELECT * FROM media_streaming_episodes WHERE title = :title")
+    abstract suspend fun getSynonymWithTitle(title: String): MediaStreamingEpisode?
 
-    @Query("SELECT studio_id FROM media_studios WHERE studio_id IN (:ids)")
-    abstract suspend fun getExistingIds(ids: List<Long>): List<Long>
-
-    @Query("SELECT * FROM media_studios")
-    abstract suspend fun getAll(): List<MediaStudio>
+    @Query("SELECT * FROM media_streaming_episodes")
+    abstract suspend fun getAll(): List<MediaStreamingEpisode>
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insert(entity: MediaStudio): Long
+    abstract suspend fun insert(entity: MediaStreamingEpisode): Long
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(vararg entity: MediaStudio): List<Long>
+    abstract suspend fun insertAll(vararg entity: MediaStreamingEpisode): List<Long>
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(entities: Collection<MediaStudio>): List<Long>
+    abstract suspend fun insertAll(entities: Collection<MediaStreamingEpisode>): List<Long>
 
     @Update(onConflict = REPLACE)
-    abstract suspend fun update(entity: MediaStudio)
+    abstract suspend fun update(entity: MediaStreamingEpisode)
 
     @Delete
-    abstract suspend fun delete(entity: MediaStudio): Int
+    abstract suspend fun delete(entity: MediaStreamingEpisode): Int
 
-    @Query("DELETE FROM media_studios")
+    @Query("DELETE FROM media_streaming_episodes")
     abstract suspend fun deleteAll()
 }

@@ -1,4 +1,4 @@
-package name.eraxillan.anilistapp.db
+package name.eraxillan.anilistapp.data
 
 import androidx.room.Embedded
 import androidx.room.Junction

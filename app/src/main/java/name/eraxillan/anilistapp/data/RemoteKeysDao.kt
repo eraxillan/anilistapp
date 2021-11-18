@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.db
+package name.eraxillan.anilistapp.data
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 
-@Entity(tableName = "remote_keys")
-data class RemoteKeys(
-    @PrimaryKey val anilistId: Long,
-    val prevKey: Int?,
-    val nextKey: Int?
-)
+@Dao
+interface RemoteKeysDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(remoteKey: List<RemoteKeys>)
+
+    @Query("SELECT * FROM remote_keys WHERE anilistId = :anilistId")
+    suspend fun remoteKeysById(anilistId: Long): RemoteKeys?
+
+    @Query("DELETE FROM remote_keys")
+    suspend fun clearRemoteKeys()
+}

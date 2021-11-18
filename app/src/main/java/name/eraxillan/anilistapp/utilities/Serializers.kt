@@ -19,7 +19,7 @@ package name.eraxillan.anilistapp.utilities
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
-import name.eraxillan.anilistapp.db.ZonedScheduledTime
+import name.eraxillan.anilistapp.data.ZonedScheduledTime
 import name.eraxillan.anilistapp.model.Media
 import timber.log.Timber
 import java.io.InputStreamReader
