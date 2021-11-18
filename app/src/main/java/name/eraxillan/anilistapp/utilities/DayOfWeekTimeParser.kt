@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.data
+package name.eraxillan.anilistapp.utilities
 
 import timber.log.Timber
 import java.lang.NumberFormatException
