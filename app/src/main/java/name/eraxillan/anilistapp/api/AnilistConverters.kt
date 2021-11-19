@@ -16,7 +16,6 @@
 
 package name.eraxillan.anilistapp.api
 
-import androidx.room.ColumnInfo
 import name.eraxillan.anilistapp.AiringAnimeQuery
 import name.eraxillan.anilistapp.data.room.LocalMedia
 import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
