@@ -6,7 +6,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import kotlinx.parcelize.Parcelize
-import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.data.room.LocalMedia
 import name.eraxillan.anilistapp.model.MediaTag
 
 /** Media and media tag junction table to decompose many-to-many relation */
@@ -15,7 +15,7 @@ import name.eraxillan.anilistapp.model.MediaTag
     primaryKeys = ["media_id", "tag_id"],
     foreignKeys = [
         ForeignKey(
-            entity = Media::class,
+            entity = LocalMedia::class,
             parentColumns = ["anilist_id"],
             childColumns = ["media_id"],
             onUpdate = ForeignKey.CASCADE,

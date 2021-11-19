@@ -27,8 +27,7 @@ import com.apollographql.apollo.http.OkHttpExecutionContext
 import kotlinx.coroutines.delay
 import name.eraxillan.anilistapp.AiringAnimeQuery
 import name.eraxillan.anilistapp.AnimeRelationsQuery
-import name.eraxillan.anilistapp.data.*
-import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.model.RemoteMedia
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort as MediaSort
 import name.eraxillan.anilistapp.type.MediaRelation as AnilistMediaRelation
@@ -182,7 +181,7 @@ class AnilistApi(private val client: ApolloClient) {
 
     // TODO: move to custom Worker to increase load speed and avoid rate limit
     suspend fun fillEpisodeCount(
-        serverAnimeList: List<AiringAnimeQuery.Medium>, animeList: List<Media>) {
+        serverAnimeList: List<AiringAnimeQuery.Medium>, animeList: List<RemoteMedia>) {
         val ids = animeList.associateBy(
             { it.anilistId }, { mutableListOf(it.anilistId) }
         )

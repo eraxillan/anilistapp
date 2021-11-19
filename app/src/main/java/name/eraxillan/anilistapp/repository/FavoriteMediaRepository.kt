@@ -1,11 +1,9 @@
 package name.eraxillan.anilistapp.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
 import name.eraxillan.anilistapp.data.room.dao.FavoriteMediaDao
-import name.eraxillan.anilistapp.api.convertLocalMedia
 import name.eraxillan.anilistapp.model.FavoriteMedia
-import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,22 +13,18 @@ class FavoriteMediaRepository @Inject constructor(
 ) {
 
     // Favorite media list local database API
-    suspend fun addMediaToFavorite(media: Media): Long {
-        return favoriteDao.addMediaToFavorite(FavoriteMedia(anilistId = media.anilistId))
+    suspend fun addMediaToFavorite(media: LocalMediaWithRelations): Long {
+        return favoriteDao.addMediaToFavorite(FavoriteMedia(anilistId = media.localMedia.anilistId))
     }
 
-    suspend fun deleteFavoriteMedia(media: Media) {
-        favoriteDao.deleteFavoriteMedia(FavoriteMedia(anilistId = media.anilistId))
+    suspend fun deleteFavoriteMedia(media: LocalMediaWithRelations) {
+        favoriteDao.deleteFavoriteMedia(FavoriteMedia(anilistId = media.localMedia.anilistId))
     }
 
     fun isMediaAddedToFavorite(anilistId: Long) = favoriteDao.isMediaAddedToFavorite(anilistId)
 
-    val favoriteMediaList: LiveData<List<Media>>
+    val favoriteMediaList: LiveData<List<LocalMediaWithRelations>>
         get() {
-            return favoriteDao.getFavoriteMediaList().map { localMediaList ->
-                localMediaList.map { localMedia ->
-                    convertLocalMedia(localMedia)
-                }
-            }
+            return favoriteDao.getFavoriteMediaList()
         }
 }

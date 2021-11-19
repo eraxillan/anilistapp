@@ -19,7 +19,7 @@ package name.eraxillan.anilistapp.ui.holder
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.anilistapp.databinding.ListItemMediaBinding
-import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.ui.showMediaInfo
 
 class MediaListHolder(
@@ -34,7 +34,7 @@ class MediaListHolder(
         }
     }
 
-    fun bind(position: Int, media: Media) {
+    fun bind(position: Int, media: LocalMediaWithRelations) {
         binding.apply {
             setPosition((position + 1).toString())
             setMedia(media)

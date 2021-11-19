@@ -21,11 +21,11 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import name.eraxillan.anilistapp.databinding.ListItemMediaBinding
-import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.ui.holder.MediaListHolder
 
 class MediaListAdapter
-    : PagingDataAdapter<Media, MediaListHolder>(AiringAnimeDiffCallback()) {
+    : PagingDataAdapter<LocalMediaWithRelations, MediaListHolder>(AiringAnimeDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaListHolder {
         return MediaListHolder(
@@ -41,12 +41,12 @@ class MediaListAdapter
     }
 }
 
-class AiringAnimeDiffCallback : DiffUtil.ItemCallback<Media>() {
-    override fun areItemsTheSame(oldItem: Media, newItem: Media): Boolean {
-        return oldItem.anilistId == newItem.anilistId
+class AiringAnimeDiffCallback : DiffUtil.ItemCallback<LocalMediaWithRelations>() {
+    override fun areItemsTheSame(oldItem: LocalMediaWithRelations, newItem: LocalMediaWithRelations): Boolean {
+        return oldItem.localMedia.anilistId == newItem.localMedia.anilistId
     }
 
-    override fun areContentsTheSame(oldItem: Media, newItem: Media): Boolean {
+    override fun areContentsTheSame(oldItem: LocalMediaWithRelations, newItem: LocalMediaWithRelations): Boolean {
         return oldItem == newItem
     }
 }

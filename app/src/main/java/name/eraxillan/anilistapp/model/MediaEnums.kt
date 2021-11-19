@@ -156,7 +156,7 @@ enum class MediaSourceEnum {
 /**
  * The type of media ranking
  */
-enum class MediaRankType {
+enum class MediaRankingType {
     /** Ranking is based on the media's ratings/score */
     RATED,
 

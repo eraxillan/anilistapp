@@ -20,7 +20,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.anilistapp.databinding.ListItemMediaBinding
-import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.ui.ItemTouchHelperCallback
 import name.eraxillan.anilistapp.ui.holder.MediaListHolder
 
@@ -28,11 +28,11 @@ import name.eraxillan.anilistapp.ui.holder.MediaListHolder
 // `PagingDataAdapter` have read-only data, and there is no way to remove item in-place
 
 class FavoriteListAdapter(
-    private val deleteDelegate: (Media) -> Unit
+    private val deleteDelegate: (LocalMediaWithRelations) -> Unit
 ) : RecyclerView.Adapter<MediaListHolder>()
     , ItemTouchHelperCallback.ItemTouchHelperAdapter {
 
-    private val mediaList : MutableList<Media> = mutableListOf()
+    private val mediaList : MutableList<LocalMediaWithRelations> = mutableListOf()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -75,12 +75,12 @@ class FavoriteListAdapter(
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun addMedia(media: Media) {
+    fun addMedia(media: LocalMediaWithRelations) {
         mediaList.add(media)
         notifyItemInserted(mediaList.size - 1)
     }
 
-    fun deleteMedia(media: Media) {
+    fun deleteMedia(media: LocalMediaWithRelations) {
         val position = mediaList.indexOf(media)
         mediaList.remove(media)
         notifyItemRemoved(position)

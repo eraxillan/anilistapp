@@ -6,12 +6,14 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
+
 /** A tag that describes a theme or element of the media */
 @Entity(tableName = "media_tags")
 @Parcelize
 data class MediaTag constructor(
     /** The id of the tag */
-    @PrimaryKey @ColumnInfo(name = "tag_id")
+    @PrimaryKey
+    @ColumnInfo(name = "tag_id")
     val tagId: Long = -1,
 
     /** The name of the tag */

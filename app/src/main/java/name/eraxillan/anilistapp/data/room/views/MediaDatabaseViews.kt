@@ -3,7 +3,7 @@ package name.eraxillan.anilistapp.data.room.views
 import androidx.room.ColumnInfo
 import androidx.room.DatabaseView
 import androidx.room.Embedded
-import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.data.room.LocalMedia
 
 @DatabaseView(
     """
@@ -14,14 +14,10 @@ import name.eraxillan.anilistapp.model.Media
     viewName = "media_with_genres")
 class MediaWithGenres {
     @Embedded
-    var media: Media? = null
+    var media: LocalMedia? = null
 
     @ColumnInfo(name = "genre_name")
     var genreName: String = ""
-
-    override fun toString(): String {
-        return "{ '${media?.romajiTitle}' + '${media?.genres}' }"
-    }
 }
 
 @DatabaseView(
@@ -34,7 +30,7 @@ class MediaWithGenres {
 )
 class MediaWithTags {
     @Embedded
-    var media: Media? = null
+    var media: LocalMedia? = null
 
     @ColumnInfo(name = "tag_name")
     var tagName: String = ""
@@ -49,7 +45,7 @@ class MediaWithTags {
 )
 class MediaWithServices {
     @Embedded
-    var media: Media? = null
+    var media: LocalMedia? = null
 
     @ColumnInfo(name = "service_name")
     var serviceName: String = ""

@@ -20,7 +20,8 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import name.eraxillan.anilistapp.api.AnilistApi
 import name.eraxillan.anilistapp.api.convertAnilistMedia
-import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.api.convertRemoteMedia
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.utilities.NETWORK_PAGE_SIZE
@@ -32,9 +33,9 @@ class AnilistPagingSource(
     private val service: AnilistApi,
     private val filter: MediaFilter,
     private val sortBy: MediaSort
-) : PagingSource<Int, Media>() {
+) : PagingSource<Int, LocalMediaWithRelations>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Media> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, LocalMediaWithRelations> {
         // Start refresh at first page if undefined
         val page = params.key ?: ANILIST_STARTING_PAGE_INDEX
 
@@ -71,7 +72,7 @@ class AnilistPagingSource(
             Timber.d("prevKey=null, nextKey=$test")*/
 
             LoadResult.Page(
-                data = mediaList,
+                data = mediaList.map { convertRemoteMedia(it) },
                 prevKey = null, // only paging forward
                 nextKey = if (pagination.hasNextPage) pagination.currentPage + 1 else null
             )
@@ -80,7 +81,7 @@ class AnilistPagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, Media>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, LocalMediaWithRelations>): Int? {
         // Try to find the page key of the closest page to anchorPosition, from
         // either the prevKey or the nextKey, but you need to handle nullability
         // here:

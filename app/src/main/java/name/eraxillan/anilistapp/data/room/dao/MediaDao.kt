@@ -20,6 +20,7 @@ import androidx.paging.PagingSource
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
 import name.eraxillan.anilistapp.data.room.LocalMedia
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.model.*
 
 
@@ -87,12 +88,12 @@ abstract class MediaDao {
         tags: List<String> = emptyList(), tagsCount: Int = 0,
         services: List<String> = emptyList(), servicesCount: Int = 0,
         sortOption: Int = 0
-    ): PagingSource<Int, LocalMedia>
+    ): PagingSource<Int, LocalMediaWithRelations>
 
     fun getFilteredAndSortedMediaPaged(
         filter: MediaFilter,
         sort: MediaSort
-    ): PagingSource<Int, LocalMedia> {
+    ): PagingSource<Int, LocalMediaWithRelations> {
         return getFilteredMediaInternalPaged(
             search = filter.search, year = filter.year, season = filter.season,
             formats = filter.formats.orEmpty(), formatsCount = filter.formats?.size ?: 0,
@@ -108,10 +109,10 @@ abstract class MediaDao {
 
     // TODO: do not work in current Android Room version, [MediaDatabaseHelper] class do this job
     /*@Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(entities: Collection<LocalMedia>): List<Long>*/
+    abstract suspend fun insertAll(entities: Collection<LocalMediaWithRelations>): List<Long>*/
 
     @Insert(onConflict = REPLACE)
-    abstract suspend fun insertAll(entities: Collection<Media>): List<Long>
+    abstract suspend fun insertAll(entities: Collection<LocalMedia>): List<Long>
 
     @Query("DELETE FROM media_collection")
     abstract suspend fun deleteAll()

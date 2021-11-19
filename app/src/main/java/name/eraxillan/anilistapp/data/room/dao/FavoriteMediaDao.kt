@@ -2,14 +2,14 @@ package name.eraxillan.anilistapp.data.room.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import name.eraxillan.anilistapp.data.room.LocalMedia
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.model.FavoriteMedia
 
 @Dao
 interface FavoriteMediaDao {
     @Transaction
     @Query("SELECT * FROM media_collection WHERE anilist_id IN (SELECT anilist_id FROM favorite_media_collection)")
-    fun getFavoriteMediaList(): LiveData<List<LocalMedia>>
+    fun getFavoriteMediaList(): LiveData<List<LocalMediaWithRelations>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addMediaToFavorite(media: FavoriteMedia): Long

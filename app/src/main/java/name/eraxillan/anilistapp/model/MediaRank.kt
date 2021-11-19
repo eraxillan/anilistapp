@@ -6,13 +6,14 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
+import name.eraxillan.anilistapp.data.room.LocalMedia
 
 /** The ranking of a media in a particular time span and format compared to other media */
 @Entity(
     tableName = "media_ranks",
     foreignKeys = [
         androidx.room.ForeignKey(
-            entity = Media::class,
+            entity = LocalMedia::class,
             parentColumns = ["anilist_id"],
             childColumns = ["media_id"],
             onUpdate = ForeignKey.CASCADE,
@@ -38,7 +39,7 @@ data class MediaRank constructor(
 
     /** The type of ranking */
     @ColumnInfo(name = "type")
-    val type: MediaRankType = MediaRankType.UNKNOWN,
+    val type: MediaRankingType = MediaRankingType.UNKNOWN,
 
     /** The format the media is ranked within */
     @ColumnInfo(name = "format")

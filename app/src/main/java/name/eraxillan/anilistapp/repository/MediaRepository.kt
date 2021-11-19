@@ -19,7 +19,7 @@ import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import name.eraxillan.anilistapp.api.AnilistApi
 import name.eraxillan.anilistapp.data.paging.AnilistRemoteMediator
-import name.eraxillan.anilistapp.data.room.LocalMedia
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.data.room.MediaDatabase
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort
@@ -43,12 +43,12 @@ class MediaRepository @Inject constructor(
      * Get media list and exposed as a stream of data,
      * that will emit every time we get more data from the network
      */
-    fun getMediaListStream(filter: MediaFilter, sortBy: MediaSort): Flow<PagingData<LocalMedia>> {
+    fun getMediaListStream(filter: MediaFilter, sortBy: MediaSort): Flow<PagingData<LocalMediaWithRelations>> {
         Timber.d("Querying media list from remote backend...")
 
         @OptIn(ExperimentalTime::class)
         val pagingSourceFactory = {
-            var result: PagingSource<Int, LocalMedia>
+            var result: PagingSource<Int, LocalMediaWithRelations>
             val queryTime = measureTime {
                 result = database.mediaDao().getFilteredAndSortedMediaPaged(filter, sortBy)
             }

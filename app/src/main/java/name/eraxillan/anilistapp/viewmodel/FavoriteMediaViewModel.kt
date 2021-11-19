@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.repository.FavoriteMediaRepository
 import timber.log.Timber
 import javax.inject.Inject
@@ -17,10 +17,10 @@ class FavoriteMediaViewModel @Inject constructor(
     private val favoriteMediaRepository: FavoriteMediaRepository,
 ) : ViewModel() {
 
-    private var favoriteMediaList: LiveData<List<Media>>? = null
+    private var favoriteMediaList: LiveData<List<LocalMediaWithRelations>>? = null
 
     fun addMediaToFavorite(
-        media: Media,
+        media: LocalMediaWithRelations,
         @Suppress("UNUSED_PARAMETER") navController: NavController
     ) {
         /*val job =*/ viewModelScope.launch {
@@ -36,7 +36,7 @@ class FavoriteMediaViewModel @Inject constructor(
         //job.cancelAndJoin()
     }
 
-    fun deleteFavoriteMedia(media: Media) {
+    fun deleteFavoriteMedia(media: LocalMediaWithRelations) {
         /*val job =*/ viewModelScope.launch {
             favoriteMediaRepository.deleteFavoriteMedia(media)
         }
@@ -46,7 +46,7 @@ class FavoriteMediaViewModel @Inject constructor(
     fun isMediaAddedToFavorite(anilistId: Long) =
         favoriteMediaRepository.isMediaAddedToFavorite(anilistId)
 
-    fun getFavoriteMediaList(): LiveData<List<Media>>? {
+    fun getFavoriteMediaList(): LiveData<List<LocalMediaWithRelations>>? {
         if (favoriteMediaList == null) {
             /*val job =*/ viewModelScope.launch {
                 favoriteMediaList = favoriteMediaRepository.favoriteMediaList

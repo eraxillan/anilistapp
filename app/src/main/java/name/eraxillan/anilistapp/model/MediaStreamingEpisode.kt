@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
+import name.eraxillan.anilistapp.data.room.LocalMedia
 
 /**
  * Data and links to legal streaming episodes on external sites
@@ -14,7 +15,7 @@ import kotlinx.parcelize.Parcelize
     tableName = "media_streaming_episodes",
     foreignKeys = [
         androidx.room.ForeignKey(
-            entity = Media::class,
+            entity = LocalMedia::class,
             parentColumns = ["anilist_id"],
             childColumns = ["media_id"],
             onUpdate = ForeignKey.CASCADE,

@@ -16,8 +16,10 @@
 
 package name.eraxillan.anilistapp.api
 
+import androidx.room.ColumnInfo
 import name.eraxillan.anilistapp.AiringAnimeQuery
 import name.eraxillan.anilistapp.data.room.LocalMedia
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.utilities.ZonedScheduledTime
 import timber.log.Timber
@@ -31,7 +33,7 @@ import name.eraxillan.anilistapp.model.MediaSeason as MediaSeason
 import name.eraxillan.anilistapp.model.MediaFormatEnum as MediaFormat
 import name.eraxillan.anilistapp.model.MediaSourceEnum as MediaSource
 import name.eraxillan.anilistapp.model.MediaStatus as MediaStatus
-import name.eraxillan.anilistapp.model.MediaRankType as MediaRankType
+import name.eraxillan.anilistapp.model.MediaRankingType as MediaRankingType
 import name.eraxillan.anilistapp.model.MediaSort as MediaSort
 import java.net.URL
 import java.time.*
@@ -94,7 +96,7 @@ fun convertMediaSource(value: MediaSource?) = when (value) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
+fun convertAnilistMedia(input: AiringAnimeQuery.Medium): RemoteMedia {
 
     fun convertFormat(value: AnilistMediaFormat?) = when (value) {
         AnilistMediaFormat.TV -> MediaFormat.TV
@@ -140,9 +142,9 @@ fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
     }
 
     fun convertRankType(value: AnilistMediaRankType?) = when (value) {
-        AnilistMediaRankType.RATED -> MediaRankType.RATED
-        AnilistMediaRankType.POPULAR -> MediaRankType.POPULAR
-        else -> MediaRankType.UNKNOWN
+        AnilistMediaRankType.RATED -> MediaRankingType.RATED
+        AnilistMediaRankType.POPULAR -> MediaRankingType.POPULAR
+        else -> MediaRankingType.UNKNOWN
     }
 
     fun hasAdultTags(): Boolean {
@@ -261,7 +263,7 @@ fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
     val startSeason = convertSeason(input.season)
     val source = convertSource(input.source)
 
-    return Media(
+    return RemoteMedia(
         anilistId = input.id.toLong(),
         malId = malId,
         anilistUrl = URL(input.siteUrl),
@@ -326,71 +328,64 @@ fun convertAnilistMedia(input: AiringAnimeQuery.Medium): Media {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// FIXME: avoid extra conversions [Remote]Media <--> LocalMedia
 
-/*fun convertRemoteMedia(input: Media): LocalMedia {
-    return LocalMedia(
-        media = input,
-        genres = input.genres,
-        tags = input.tags,
-        studios = input.studios,
-        titleSynonyms = input.titleSynonyms,
-        externalLinks = input.externalLinks,
-        streamingEpisodes = input.streamingEpisodes,
-        rankings = input.rankings
+fun convertRemoteMedia(source: RemoteMedia): LocalMediaWithRelations {
+    return LocalMediaWithRelations(
+        localMedia = convertRemoteMediaToLocal(source),
+        genres = source.genres,
+        tags = source.tags,
+        studios = source.studios,
+        titleSynonyms = source.titleSynonyms,
+        externalLinks = source.externalLinks,
+        streamingEpisodes = source.streamingEpisodes,
+        rankings = source.rankings
     )
-}*/
+}
 
-fun convertLocalMedia(input: LocalMedia): Media {
-    return Media(
-        anilistId = input.media.anilistId,
-        malId = input.media.malId,
-        anilistUrl = input.media.anilistUrl,
-        malUrl = input.media.malUrl,
-        updatedAt = input.media.updatedAt,
-        romajiTitle = input.media.romajiTitle,
-        englishTitle = input.media.englishTitle,
-        nativeTitle = input.media.nativeTitle,
-        format = input.media.format,
-        status = input.media.status,
-        description = input.media.description,
-        startDate = input.media.startDate,
-        endDate = input.media.endDate,
-        startSeason = input.media.startSeason,
-        startSeasonYear = input.media.startSeasonYear,
-        episodeCount = input.media.episodeCount,
-        episodeDuration = input.media.episodeDuration,
-        nextEpisodeAiringAt = input.media.nextEpisodeAiringAt,
-        nextEpisodeTimeUntilAiring = input.media.nextEpisodeTimeUntilAiring,
-        nextEpisodeNo = input.media.nextEpisodeNo,
-        countryOfOrigin = input.media.countryOfOrigin,
-        isLicensed = input.media.isLicensed,
-        source = input.media.source,
-        hashtag = input.media.hashtag,
-        trailerSite = input.media.trailerSite,
-        trailerThumbnail = input.media.trailerThumbnail,
-        coverImageExtraLarge = input.media.coverImageExtraLarge,
-        coverImageLarge = input.media.coverImageLarge,
-        coverImageMedium = input.media.coverImageMedium,
-        coverImageColor = input.media.coverImageColor,
-        bannerImage = input.media.bannerImage,
-        averageScore = input.media.averageScore,
-        meanScore = input.media.meanScore,
-        popularity = input.media.popularity,
-        favorites = input.media.favorites,
-        trending = input.media.trending,
-
-        genres = input.genres,
-        tags = input.tags,
-        studios = input.studios,
-
-        titleSynonyms = input.titleSynonyms,
-        externalLinks = input.externalLinks,
-        streamingEpisodes = input.streamingEpisodes,
-        rankings = input.rankings,
-
-        // Calculated fields which not present in Anilist data
-        season = input.media.season,
-        minAge = input.media.minAge,
+fun convertRemoteMediaToLocal(source: RemoteMedia): LocalMedia {
+    return LocalMedia(
+        anilistId = source.anilistId,
+        malId = source.malId,
+        anilistUrl = source.anilistUrl,
+        malUrl = source.malUrl,
+        updatedAt = source.updatedAt,
+        romajiTitle = source.romajiTitle,
+        englishTitle = source.englishTitle,
+        nativeTitle = source.nativeTitle,
+        /*type = source.type, */
+        format = source.format,
+        status = source.status,
+        description = source.description,
+        startDate = source.startDate,
+        endDate = source.endDate,
+        startSeason = source.startSeason,
+        startSeasonYear = source.startSeasonYear,
+        episodeCount = source.episodeCount,
+        /*chapterCount = source.chapterCount,*/
+        /*volumeCount = source.volumeCount,*/
+        episodeDuration = source.episodeDuration,
+        nextEpisodeAiringAt = source.nextEpisodeAiringAt,
+        nextEpisodeTimeUntilAiring = source.nextEpisodeTimeUntilAiring,
+        nextEpisodeNo = source.nextEpisodeNo,
+        countryOfOrigin = source.countryOfOrigin,
+        isLicensed = source.isLicensed,
+        source = source.source,
+        hashtag = source.hashtag,
+        trailerSite = source.trailerSite,
+        trailerThumbnail = source.trailerThumbnail,
+        coverImageExtraLarge = source.coverImageExtraLarge,
+        coverImageLarge = source.coverImageLarge,
+        coverImageMedium = source.coverImageMedium,
+        coverImageColor = source.coverImageColor,
+        bannerImage = source.bannerImage,
+        averageScore = source.averageScore,
+        meanScore = source.meanScore,
+        popularity = source.popularity,
+        favorites = source.favorites,
+        trending = source.trending,
+        /*isFavorite = source.isFavorite,*/
+        /*isAdult = source.isAdult,*/
+        season = source.season,
+        minAge = source.minAge,
     )
 }

@@ -21,11 +21,11 @@ import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
 import androidx.navigation.NavController
 import name.eraxillan.anilistapp.NavGraphDirections
-import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 
-fun showMediaInfo(media: Media, navController: NavController) {
+fun showMediaInfo(media: LocalMediaWithRelations, navController: NavController) {
     val directions = NavGraphDirections.actionMediaDetails(
-        media, media.romajiTitle
+        media, media.localMedia.romajiTitle
     )
     navController.navigate(directions)
 }

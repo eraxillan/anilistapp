@@ -23,7 +23,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import name.eraxillan.anilistapp.data.room.LocalMedia
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.repository.MediaRepository
@@ -55,11 +55,11 @@ class MediaViewModel @Inject constructor(
             return true
         }
     }
-    private val cache = LruCache<Int, Flow<PagingData<LocalMedia>>>(MEDIA_SEARCH_CACHE_SIZE)
+    private val cache = LruCache<Int, Flow<PagingData<LocalMediaWithRelations>>>(MEDIA_SEARCH_CACHE_SIZE)
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun getMediaListStream(filter: MediaFilter, sortBy: MediaSort): Flow<PagingData<LocalMedia>> {
+    fun getMediaListStream(filter: MediaFilter, sortBy: MediaSort): Flow<PagingData<LocalMediaWithRelations>> {
         val cacheKey = MediaSearchOptions(filter, sortBy).hashCode()
         val cachedResult = cache.get(cacheKey)
         if (cachedResult != null) {

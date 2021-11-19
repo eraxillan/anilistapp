@@ -25,7 +25,7 @@ data class MediaStudio constructor(
 
     /** The media the studio has worked on */
     /*@Ignore*/
-    /*val medias: List<Media> = emptyList(),*/
+    /*val medias: List<LocalMedia> = emptyList(),*/
 
     /** The URL for the studio page on the AniList website */
     // TODO: use URL class instead of raw `String`

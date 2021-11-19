@@ -19,7 +19,7 @@ package name.eraxillan.anilistapp.utilities
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
-import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.model.RemoteMedia
 import timber.log.Timber
 import java.io.InputStreamReader
 import java.lang.ClassCastException
@@ -40,8 +40,8 @@ private const val AA_MIN_AGE = "minAge"
 
 private val gson: Gson by lazy {
     GsonBuilder()
-        .registerTypeAdapter(Media::class.java,
-            JsonSerializer<Media> { src, _, _ ->
+        .registerTypeAdapter(RemoteMedia::class.java,
+            JsonSerializer<RemoteMedia> { src, _, _ ->
                 val jsonObject = JsonObject()
                 // NOTE: we can use `::id.name` here, but it is not available in `fromJson` (no `this`)
                 jsonObject.addProperty(AA_ID, src.anilistId)
@@ -55,7 +55,7 @@ private val gson: Gson by lazy {
                 jsonObject.addProperty(AA_MIN_AGE, src.minAge)
                 jsonObject
             })
-        .registerTypeAdapter(Media::class.java,
+        .registerTypeAdapter(RemoteMedia::class.java,
             JsonDeserializer { dst, _, _ ->
                 if (!dst.isJsonObject) {
                     Timber.e("Specified JSON text is not an object!")
@@ -75,7 +75,7 @@ private val gson: Gson by lazy {
                     }
                 }
 
-                val media = Media()
+                val media = RemoteMedia()
                 var releaseDateString: String
                 var nextEpisodeDateString: String
                 with (media) {
@@ -119,9 +119,9 @@ private val gson: Gson by lazy {
         ).create()
 }
 
-fun mediaListFromJson(inputStreamReader: InputStreamReader): List<Media> {
+fun mediaListFromJson(inputStreamReader: InputStreamReader): List<RemoteMedia> {
     JsonReader(inputStreamReader).use { jsonReader ->
-        val mediaType = object : TypeToken<List<Media>>() {}.type
+        val mediaType = object : TypeToken<List<RemoteMedia>>() {}.type
         return gson.fromJson(jsonReader, mediaType)
     }
 }

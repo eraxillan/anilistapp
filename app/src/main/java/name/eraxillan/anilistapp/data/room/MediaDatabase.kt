@@ -52,7 +52,7 @@ import name.eraxillan.anilistapp.workers.MediaDatabaseWorker
         MediaTagEntry::class,
         MediaTitleSynonym::class,
 
-        Media::class,
+        LocalMedia::class,
         FavoriteMedia::class,
         RemoteKeys::class
     ],
@@ -61,7 +61,7 @@ import name.eraxillan.anilistapp.workers.MediaDatabaseWorker
         MediaWithTags::class,
         MediaWithServices::class
     ],
-    version = 8,
+    version = 9,
     //exportSchema = false
 )
 @TypeConverters(DatabaseTypeConverters::class)

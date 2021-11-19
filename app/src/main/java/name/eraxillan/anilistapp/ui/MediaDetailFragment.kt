@@ -81,7 +81,7 @@ class MediaDetailFragment : Fragment() {
     }
 
     private fun setupFab() {
-        val mediaId = (args.media!!).anilistId
+        val mediaId = (args.media!!).localMedia.anilistId
 
         binding.addToFavoriteButton.setOnClickListener {
             favoriteViewModel.addMediaToFavorite(args.media!!, findNavController())

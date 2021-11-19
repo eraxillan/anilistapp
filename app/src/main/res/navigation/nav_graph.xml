@@ -40,7 +40,7 @@
         tools:layout="@layout/fragment_media_detail" >
         <argument
             android:name="media"
-            app:argType="name.eraxillan.anilistapp.model.Media"
+            app:argType="name.eraxillan.anilistapp.data.room.LocalMediaWithRelations"
             app:nullable="true"
             android:defaultValue="@null" />
         <argument

@@ -1,109 +1,260 @@
 package name.eraxillan.anilistapp.data.room
 
-import androidx.room.Embedded
-import androidx.room.Junction
-import androidx.room.Relation
-import name.eraxillan.anilistapp.data.room.relations.MediaGenreEntry
-import name.eraxillan.anilistapp.data.room.relations.MediaStudioEntry
-import name.eraxillan.anilistapp.data.room.relations.MediaTagEntry
+import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 import name.eraxillan.anilistapp.model.*
+import name.eraxillan.anilistapp.utilities.ZonedScheduledTime
+import java.net.URL
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 
-/** An anime/manga detailed information from local database,
- * which should be previously filled from Anilist ([Media])
- * */
-data class LocalMedia(
-    @Embedded
-    val media: Media = Media(),
+/**
+ * An anime/manga detailed information from local database,
+ * without one-to-one and one-to-many compound fields like genres, tags, etc.
+ * which was originally obtained from remote service.
+ * Compound fields are stored in [LocalMediaWithRelations]
+ */
+@Entity(tableName = "media_collection")
+@Parcelize
+data class LocalMedia constructor(
+    /** The unique identifier ("id") of the media, also serve as a SQLite primary key */
+    @PrimaryKey
+    @ColumnInfo(name = "anilist_id")
+    var anilistId: Long = -1,
 
-    // Many-to-many relations
+    /** The MyAnimeList ("mal") id of the media */
+    @ColumnInfo(name = "mal_id")
+    var malId: Long = -1,
 
-    @Relation(
-        parentColumn = "anilist_id",
-        entity = MediaGenre::class,
-        entityColumn = "genre_id",
-        associateBy = Junction(
-            value = MediaGenreEntry::class,
-            parentColumn = "media_id",
-            entityColumn = "genre_id"
-        )
-    )
-    val genres: List<MediaGenre> = emptyList(),
+    /** The URL for the media page on the AniList website */
+    @ColumnInfo(name = "anilist_url")
+    var anilistUrl: URL = INVALID_URL,
 
-    @Relation(
-        parentColumn = "anilist_id",
-        entity = MediaTag::class,
-        entityColumn = "tag_id",
-        associateBy = Junction(
-            value = MediaTagEntry::class,
-            parentColumn = "media_id",
-            entityColumn = "tag_id"
-        )
-    )
-    val tags: List<MediaTag> = emptyList(),
+    /** The URL for the media page on the MyAnimeList("mal") website */
+    @ColumnInfo(name = "mal_url")
+    var malUrl: URL = INVALID_URL,
 
-    @Relation(
-        parentColumn = "anilist_id",
-        entity = MediaStudio::class,
-        entityColumn = "studio_id",
-        associateBy = Junction(
-            value = MediaStudioEntry::class,
-            parentColumn = "media_id",
-            entityColumn = "studio_id"
-        )
-    )
-    val studios: List<MediaStudio> = emptyList(),
+    /**
+     * When the media's data was last updated (seconds from the epoch of 1970-01-01T00:00:00Z)
+     */
+    @ColumnInfo(name = "updated_at")
+    var updatedAt: LocalDateTime? = null,
 
-    // One-to-many relations
+    /** The official titles of the media in various languages */
 
-    @Relation(
-        parentColumn = "anilist_id",
-        entity = MediaTitleSynonym::class,
-        entityColumn = "media_id"
-    )
-    val titleSynonyms: List<MediaTitleSynonym> = emptyList(),
+    /** The romanization of the native language title */
+    @ColumnInfo(name = "romaji_title")
+    var romajiTitle: String = "",
 
-    @Relation(
-        parentColumn = "anilist_id",
-        entity = MediaExternalLink::class,
-        entityColumn = "media_id"
-    )
-    val externalLinks: List<MediaExternalLink> = emptyList(),
+    /** The official English title */
+    @ColumnInfo(name = "english_title")
+    var englishTitle: String = "",
 
-    @Relation(
-        parentColumn = "anilist_id",
-        entity = MediaStreamingEpisode::class,
-        entityColumn = "media_id"
-    )
-    val streamingEpisodes: List<MediaStreamingEpisode>,
+    /** Official title in it's native language (usually Japanese) */
+    @ColumnInfo(name = "native_title")
+    var nativeTitle: String = "",
 
-    @Relation(
-        parentColumn = "anilist_id",
-        entity = MediaRank::class,
-        entityColumn = "media_id"
-    )
-    val rankings: List<MediaRank>,
-    ) {
+    /**
+     * The type of the media: anime or manga
+     *
+     * NOTE: only anime type is currently supported, so this field is meaningless now
+     */
+    /*@ColumnInfo(name = "type")*/
+    /*var type: MediaType = MediaType.UNKNOWN,*/
 
-    override fun toString(): String {
-        val genresStr = genres.joinToString(", ") { mediaGenre -> mediaGenre.name }
-        val tagsStr = tags.joinToString(", ") { mediaTag -> mediaTag.name }
-        val studiosStr = studios.joinToString(", ") { mediaStudio -> mediaStudio.name }
-        val synonymsStr = titleSynonyms.joinToString(", ") { synonym -> synonym.name }
-        val linksStr = externalLinks.joinToString(", ") { link -> link.site + ": " + link.url }
-        val episodesStr = streamingEpisodes.joinToString(", ") { episode -> "'${episode.title}'" }
-        val rankingsStr = rankings.joinToString(", ") { rank -> rank.context + ": " + rank.rankValue }
-        return """
-            {
-            media: '${media.romajiTitle}',
-            genres: [$genresStr],
-            tags: [$tagsStr],
-            studios: [$studiosStr],
-            synonyms: [$synonymsStr],
-            externalLinks: [$linksStr],
-            streamingEpisodes: [$episodesStr],
-            rankings: [$rankingsStr]
-            }
-        """.trimIndent()
-    }
+    /** The format the media was released in */
+    @ColumnInfo(name = "format")
+    var format: MediaFormatEnum = MediaFormatEnum.UNKNOWN,
+
+    /** The current releasing status of the media */
+    @ColumnInfo(name = "status")
+    var status: MediaStatus = MediaStatus.UNKNOWN,
+
+    /** Short description of the media's story and characters */
+    @ColumnInfo(name = "description")
+    var description: String = "",
+
+    /** The first official release date of the media (day+month+year) */
+    @ColumnInfo(name = "start_date")
+    var startDate: LocalDate? = null,
+
+    /** The last official release date of the media */
+    @ColumnInfo(name = "end_date")
+    var endDate: LocalDate? = null,
+
+    /** The season the media was initially released in */
+    @ColumnInfo(name = "start_season")
+    var startSeason: MediaSeason = MediaSeason.UNKNOWN,
+
+    /** The season year the media was initially released in */
+    @ColumnInfo(name = "start_season_year")
+    var startSeasonYear: Int = -1,
+
+    /**
+     * The amount of episodes the anime has when complete
+     *
+     * NOTE: can be absent, if anime is infinite one or just haven't the end date defined
+     */
+    @ColumnInfo(name = "episode_count")
+    var episodeCount: Int = -1,
+
+    /** Manga only: the amount of chapters the manga has when complete */
+    /*@ColumnInfo(name = "chapter_count")*/
+    /*var chapterCount: Int = -1,*/
+
+    /** Manga only: the amount of volumes the manga has when complete */
+    /*@ColumnInfo(name = "volume_count")*/
+    /*var volumeCount: Int = -1,*/
+
+    /** The general length of each anime episode in minutes */
+    @ColumnInfo(name = "episode_duration")
+    var episodeDuration: Int = -1,
+
+    // The media's next episode airing schedule
+
+    /**
+     * The time the episode airs at
+     *
+     */
+    @ColumnInfo(name = "next_episode_airing_at")
+    var nextEpisodeAiringAt: ZonedScheduledTime? = null,
+
+    /** Seconds until episode starts airing */
+    @ColumnInfo(name = "next_episode_time_until_airing")
+    var nextEpisodeTimeUntilAiring: LocalDateTime? = null,
+
+    /** The airing episode number */
+    @ColumnInfo(name = "next_episode_number")
+    var nextEpisodeNo: Int = -1,
+
+    /** Where the media was created (ISO 3166-1 alpha-2, i.e. two-letter country code) */
+    // TODO: replace with `MediaCountry` enum
+    @ColumnInfo(name = "country_of_origin")
+    var countryOfOrigin: String = "",
+
+    /** If the media is officially licensed or a self-published ("doujin") release */
+    @ColumnInfo(name = "is_licensed")
+    var isLicensed: Boolean = true,
+
+    /** Source type the media was adapted from */
+    @ColumnInfo(name = "source")
+    var source: MediaSourceEnum = MediaSourceEnum.UNKNOWN,
+
+    /** Official Twitter hashtags for the media */
+    @ColumnInfo(name = "hashtag")
+    var hashtag: String = "",
+
+    // Media trailer or advertisement
+
+    /** The site the video is hosted by (currently either "youtube" or "dailymotion") */
+    @ColumnInfo(name = "trailer_site")
+    var trailerSite: String = "",
+
+    /**
+     * The URL for the thumbnail image of the video
+     *
+     * TODO: use `URL` type instead of raw `String`
+     */
+    @ColumnInfo(name = "trailer_thumbnail")
+    var trailerThumbnail: String = "",
+
+    // The cover images of the media
+
+    /**
+     * The cover image URL of the media at its largest size.
+     * If this size isn't available, large will be provided instead
+     *
+     * TODO: use `URL` type instead of raw `String`
+     */
+    @ColumnInfo(name = "cover_image_extra_large")
+    var coverImageExtraLarge: String = "",
+
+    /**
+     * The cover image URL of the media at a large size
+     *
+     * TODO: use `URL` type instead of raw `String`
+     */
+    @ColumnInfo(name = "cover_image_large")
+    var coverImageLarge: String = "",
+
+    /**
+     * The cover image URL of the media at medium size
+     *
+     * TODO: use `URL` type instead of raw `String`
+     */
+    @ColumnInfo(name = "cover_image_medium")
+    var coverImageMedium: String = "",
+
+    /**
+     * Average #hex color of cover image
+     *
+     * TODO: use `Color` type instead of raw `String`
+     */
+    @ColumnInfo(name = "cover_image_color")
+    var coverImageColor: String = "",
+
+    /** The banner image of the media */
+    @ColumnInfo(name = "banner_image")
+    var bannerImage: String = "",
+
+    // The media appreciation by users statistics
+
+    /** A weighted average score of all the user's scores of the media (in percents) */
+    @ColumnInfo(name = "average_score")
+    var averageScore: Int = -1,
+
+    /** Mean score of all the user's scores of the media (in percents) */
+    @ColumnInfo(name = "mean_score")
+    var meanScore: Int = -1,
+
+    /** The number of users with the media on their list */
+    @ColumnInfo(name = "popularity")
+    var popularity: Int = -1,
+
+    /** The amount of user's who have added the media to favorites */
+    @ColumnInfo(name = "favorites")
+    var favorites: Int = -1,
+
+    /** The amount of related activity in the past hour */
+    @ColumnInfo(name = "trending")
+    var trending: Int = -1,
+
+    /** Whether the media is marked as favourite by the current authenticated user */
+    /*var isFavorite: Boolean = false,*/
+
+    /**
+     * Whether the media is intended only for 18+ adult audiences
+     *
+     * NOTE: currently such kind of media is filtered on GraphQL query step, to avoid legal risks
+     */
+    /*var isAdult: Boolean = false,*/
+
+    // Calculated fields which not present in Anilist data
+
+    /**
+     * The season number of the media
+     *
+     * NOTE: Anilist response don't contain this field, so it calculated using "relations" info:
+     * just recursively request prequels until they exists, and increase the counter
+     */
+    @ColumnInfo(name = "season")
+    var season: Int = -1,
+
+    /**
+     * Minimal accepted age for watching: e.g. 16 years old only and older
+     *
+     * NOTE: Anilist response don't contain this field, so it calculated using "tags" info:
+     * some tags describe target auditory, e.g. "shounen" means "males 10-17 years old"
+     */
+    @ColumnInfo(name = "min_age")
+    var minAge: Int = -1,
+
+) : Parcelable {
+
+    // Required for static extension functions
+    //companion object
 }

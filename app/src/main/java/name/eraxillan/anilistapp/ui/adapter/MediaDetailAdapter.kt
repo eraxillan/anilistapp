@@ -22,11 +22,11 @@ import androidx.annotation.ColorInt
 import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.anilistapp.databinding.ListItemMediaDetailBinding
-import name.eraxillan.anilistapp.model.Media
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.ui.correctTextColor
 import name.eraxillan.anilistapp.ui.holder.MediaDetailHolder
 
-class MediaDetailAdapter(var media: Media, @ColorInt val surfaceColor: Int) : RecyclerView.Adapter<MediaDetailHolder>() {
+class MediaDetailAdapter(var media: LocalMediaWithRelations, @ColorInt val surfaceColor: Int) : RecyclerView.Adapter<MediaDetailHolder>() {
 
     companion object {
         private const val fieldCount = 22
@@ -44,37 +44,39 @@ class MediaDetailAdapter(var media: Media, @ColorInt val surfaceColor: Int) : Re
     override fun onBindViewHolder(holder: MediaDetailHolder, position: Int) {
         val PLACEHOLDER_STRING = "?"
 
-        val format = media.format.toString()
-        val episodes = if (media.episodeCount != -1) media.episodeCount.toString() else PLACEHOLDER_STRING
-        val episodeDuration = if (media.episodeDuration != -1) media.episodeDuration.toString() else PLACEHOLDER_STRING
-        val status = media.status.toString()
-        val startDate = media.startDate?.toString() ?: PLACEHOLDER_STRING
-        val startSeason = media.startSeason.toString()
-        val startSeasonYear = if (media.startSeasonYear != -1) media.startSeasonYear.toString() else PLACEHOLDER_STRING
-        val averageScore = if (media.averageScore != -1) media.averageScore.toString() else PLACEHOLDER_STRING
-        val meanScore = if (media.meanScore != -1) media.meanScore.toString() else PLACEHOLDER_STRING
-        val popularity = if (media.popularity != -1) media.popularity.toString() else PLACEHOLDER_STRING
-        val favorites = if (media.favorites != -1) media.favorites.toString() else PLACEHOLDER_STRING
+        val localMedia = media.localMedia
+
+        val format = localMedia.format.toString()
+        val episodes = if (localMedia.episodeCount != -1) localMedia.episodeCount.toString() else PLACEHOLDER_STRING
+        val episodeDuration = if (localMedia.episodeDuration != -1) localMedia.episodeDuration.toString() else PLACEHOLDER_STRING
+        val status = localMedia.status.toString()
+        val startDate = localMedia.startDate?.toString() ?: PLACEHOLDER_STRING
+        val startSeason = localMedia.startSeason.toString()
+        val startSeasonYear = if (localMedia.startSeasonYear != -1) localMedia.startSeasonYear.toString() else PLACEHOLDER_STRING
+        val averageScore = if (localMedia.averageScore != -1) localMedia.averageScore.toString() else PLACEHOLDER_STRING
+        val meanScore = if (localMedia.meanScore != -1) localMedia.meanScore.toString() else PLACEHOLDER_STRING
+        val popularity = if (localMedia.popularity != -1) localMedia.popularity.toString() else PLACEHOLDER_STRING
+        val favorites = if (localMedia.favorites != -1) localMedia.favorites.toString() else PLACEHOLDER_STRING
         val studios = media.studios.filter { studio -> studio.isAnimationStudio }.joinToString(", ") { studio -> studio.name }
         val producers = media.studios.filter { studio -> !studio.isAnimationStudio }.joinToString(", ") { producer -> producer.name }
-        val source = media.source.toString()
-        val hashtag = if (media.hashtag.isNotEmpty()) media.hashtag else PLACEHOLDER_STRING
+        val source = localMedia.source.toString()
+        val hashtag = if (localMedia.hashtag.isNotEmpty()) localMedia.hashtag else PLACEHOLDER_STRING
         val genres = media.genres.filter { true }.joinToString(", ") { genre -> genre.name }
-        val romajiTitle = if (media.romajiTitle.isNotEmpty()) media.romajiTitle else PLACEHOLDER_STRING
-        val englishTitle = if (media.englishTitle.isNotEmpty()) media.englishTitle else PLACEHOLDER_STRING
-        val nativeTitle = if (media.nativeTitle.isNotEmpty()) media.nativeTitle else PLACEHOLDER_STRING
+        val romajiTitle = if (localMedia.romajiTitle.isNotEmpty()) localMedia.romajiTitle else PLACEHOLDER_STRING
+        val englishTitle = if (localMedia.englishTitle.isNotEmpty()) localMedia.englishTitle else PLACEHOLDER_STRING
+        val nativeTitle = if (localMedia.nativeTitle.isNotEmpty()) localMedia.nativeTitle else PLACEHOLDER_STRING
         val synonyms = media.titleSynonyms.joinToString(", ") { synonym -> synonym.name }
 
         // Airing anime specific fields
-        val nextEpisodeNo = if (media.nextEpisodeNo != -1) media.nextEpisodeNo.toString() else PLACEHOLDER_STRING
-        val nextEpisodeDate = if (media.nextEpisodeAiringAt != null) media.nextEpisodeAiringAt!!.getDisplayString() else PLACEHOLDER_STRING
+        val nextEpisodeNo = if (localMedia.nextEpisodeNo != -1) localMedia.nextEpisodeNo.toString() else PLACEHOLDER_STRING
+        val nextEpisodeDate = if (localMedia.nextEpisodeAiringAt != null) localMedia.nextEpisodeAiringAt!!.getDisplayString() else PLACEHOLDER_STRING
         // TODO: add remaining time too
 
         // Our custom fields not present on Anilist
-        val season = if (media.season != -1) media.season.toString() else PLACEHOLDER_STRING
-        val minAge = if (media.minAge != -1) media.minAge.toString() else PLACEHOLDER_STRING
+        val season = if (localMedia.season != -1) localMedia.season.toString() else PLACEHOLDER_STRING
+        val minAge = if (localMedia.minAge != -1) localMedia.minAge.toString() else PLACEHOLDER_STRING
 
-        val imageColorStr = if (media.coverImageColor.isNotEmpty()) media.coverImageColor else "#000000"
+        val imageColorStr = if (localMedia.coverImageColor.isNotEmpty()) localMedia.coverImageColor else "#000000"
 
         // TODO: extract these strings to resources
         val text = when (position) {

@@ -41,9 +41,7 @@ import name.eraxillan.anilistapp.utilities.INIT_DATABASE_WORKER_TAG
 import name.eraxillan.anilistapp.viewmodel.MediaViewModel
 import timber.log.Timber
 import java.util.*
-import androidx.paging.map
 import dagger.hilt.android.AndroidEntryPoint
-import name.eraxillan.anilistapp.api.convertLocalMedia
 import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.repository.PreferenceRepository
 import java.time.LocalDate
@@ -297,7 +295,7 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
         // Observe media list loading
         searchJob = viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getMediaListStream(filter, sortBy).collectLatest {
-                listAdapter.submitData(it.map { media -> convertLocalMedia(media) })
+                listAdapter.submitData(it)
             }
         }
     }

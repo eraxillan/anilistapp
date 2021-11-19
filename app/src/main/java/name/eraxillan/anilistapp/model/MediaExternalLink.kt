@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
+import name.eraxillan.anilistapp.data.room.LocalMedia
 
 /**
  * An external link to another site related to the media
@@ -14,7 +15,7 @@ import kotlinx.parcelize.Parcelize
     tableName = "media_external_links",
     foreignKeys = [
         androidx.room.ForeignKey(
-            entity = Media::class,
+            entity = LocalMedia::class,
             parentColumns = ["anilist_id"],
             childColumns = ["media_id"],
             onUpdate = ForeignKey.CASCADE,

@@ -204,7 +204,7 @@ class MediaDatabaseHelper(
         val rankingsWithMediaId = rankings.map { rank ->
             check(rank.rankId != -1L) { Timber.e("rank.rankId == -1") }
             check(rank.rankValue != -1) { Timber.e("rank.rankValue == -1") }
-            check(rank.type != MediaRankType.UNKNOWN) { Timber.e("rank.type == UNKNOWN") }
+            check(rank.type != MediaRankingType.UNKNOWN) { Timber.e("rank.type == UNKNOWN") }
             check(rank.format != MediaFormatEnum.UNKNOWN) { Timber.e("rank.format == UNKNOWN") }
             //check(rank.year != -1) { Timber.e("rank.year == -1") }
             //check(rank.season != MediaSeason.UNKNOWN) { Timber.e("rank.season == UNKNOWN") }

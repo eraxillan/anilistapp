@@ -24,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import name.eraxillan.anilistapp.R
+import name.eraxillan.anilistapp.api.convertRemoteMediaToLocal
 import name.eraxillan.anilistapp.data.room.MediaDatabase
 import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.utilities.ANIME_DATA_FILENAME
@@ -61,7 +62,7 @@ class MediaDatabaseWorker(
             Timber.d("Mock media list loaded: ${mediaList.size}")
 
             val database = MediaDatabase.getInstance(applicationContext)
-            database.mediaDao().insertAll(mediaList)
+            database.mediaDao().insertAll(mediaList.map { convertRemoteMediaToLocal(it) })
             Result.success()
         }
     }

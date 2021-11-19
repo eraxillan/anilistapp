@@ -24,7 +24,8 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import name.eraxillan.anilistapp.api.AnilistApi
 import name.eraxillan.anilistapp.api.convertAnilistMedia
-import name.eraxillan.anilistapp.data.room.LocalMedia
+import name.eraxillan.anilistapp.api.convertRemoteMedia
+import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.data.room.MediaDatabase
 import name.eraxillan.anilistapp.data.room.MediaDatabaseHelper
 import name.eraxillan.anilistapp.data.room.RemoteKeys
@@ -34,7 +35,7 @@ import java.io.IOException
 import java.lang.Exception
 
 
-typealias MediaPagingState = PagingState<Int, LocalMedia>
+typealias MediaPagingState = PagingState<Int, LocalMediaWithRelations>
 
 // Anilist page API is 1 based: https://anilist.gitbook.io/anilist-apiv2-docs/overview/graphql/pagination
 private const val ANILIST_STARTING_PAGE_INDEX = 1
@@ -45,7 +46,7 @@ class AnilistRemoteMediator(
     private val backend: AnilistApi,
     private val filter: MediaFilter,
     private val sortBy: MediaSort
-) : RemoteMediator<Int, LocalMedia>() {
+) : RemoteMediator<Int, LocalMediaWithRelations>() {
 
     private val databaseHelper: MediaDatabaseHelper = MediaDatabaseHelper(database)
 
@@ -56,7 +57,8 @@ class AnilistRemoteMediator(
         // triggering remote refresh.
         return InitializeAction.LAUNCH_INITIAL_REFRESH
 
-        // TODO: implement caching with timeout, because media information can be updated on server side
+        // TODO: implement caching with timeout using `updatedAt` field,
+        //  because media information can be updated on server side
         /*
         val cacheTimeout = TimeUnit.HOURS.convert(1, TimeUnit.MILLISECONDS)
         return if (System.currentTimeMillis() - mediaDao.lastUpdated() >= cacheTimeout) {
@@ -112,7 +114,12 @@ class AnilistRemoteMediator(
                 """.trimIndent()
             )
 
-            saveMediasToDatabase(loadType, page, /*pageSize, state.config.pageSize,*/ endOfPaginationReached, mediaList)
+            saveMediasToDatabase(
+                loadType, page,
+                /*pageSize, state.config.pageSize,*/
+                endOfPaginationReached,
+                mediaList.map { convertRemoteMedia(it) }
+            )
             return MediatorResult.Success(endOfPaginationReached)
         } catch (exception: IOException) {
             Timber.e("Unable to fetch data from network (IOException): ${exception.localizedMessage}")
@@ -134,7 +141,7 @@ class AnilistRemoteMediator(
         return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
             ?.let { media ->
                 // Get the remote keys of the last item retrieved
-                database.remoteKeysDao().remoteKeysById(media.media.anilistId)
+                database.remoteKeysDao().remoteKeysById(media.localMedia.anilistId)
             }
     }
 
@@ -144,7 +151,7 @@ class AnilistRemoteMediator(
         return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
             ?.let { media ->
                 // Get the remote keys of the first items retrieved
-                database.remoteKeysDao().remoteKeysById(media.media.anilistId)
+                database.remoteKeysDao().remoteKeysById(media.localMedia.anilistId)
             }
     }
 
@@ -152,7 +159,7 @@ class AnilistRemoteMediator(
         // The paging library is trying to load data after the anchor position.
         // Get the item closest to the anchor position
         return state.anchorPosition?.let { position ->
-            state.closestItemToPosition(position)?.media?.anilistId?.let { anilistId ->
+            state.closestItemToPosition(position)?.localMedia?.anilistId?.let { anilistId ->
                 database.remoteKeysDao().remoteKeysById(anilistId)
             }
         }
@@ -161,8 +168,10 @@ class AnilistRemoteMediator(
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private suspend fun insertRemoteKeys(
-        page: Int, /*pageSize: Int, statePageSize: Int,*/
-        endOfPaginationReached: Boolean, mediaList: List<Media>
+        page: Int,
+        /*pageSize: Int, statePageSize: Int,*/
+        endOfPaginationReached: Boolean,
+        mediaList: List<LocalMediaWithRelations>
     ): Int {
         val prevKey = if (page == ANILIST_STARTING_PAGE_INDEX) null else (page - 1)
 
@@ -175,7 +184,7 @@ class AnilistRemoteMediator(
         Timber.d("prevKey=$prevKey, nextKey=$nextKey")
 
         val keys = mediaList.map {
-            RemoteKeys(anilistId = it.anilistId, prevKey = prevKey, nextKey = nextKey)
+            RemoteKeys(anilistId = it.localMedia.anilistId, prevKey = prevKey, nextKey = nextKey)
         }
         database.remoteKeysDao().insertAll(keys)
         Timber.d("${keys.size} remoteKeys inserted to database")
@@ -186,8 +195,10 @@ class AnilistRemoteMediator(
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private suspend fun saveMediasToDatabase(
-        loadType: LoadType, page: Int, /*pageSize: Int, statePageSize: Int,*/
-        endOfPaginationReached: Boolean, mediaList: List<Media>
+        loadType: LoadType, page: Int,
+        /*pageSize: Int, statePageSize: Int,*/
+        endOfPaginationReached: Boolean,
+        mediaList: List<LocalMediaWithRelations>
     ) {
         database.withTransaction {
             if (loadType == REFRESH) {
@@ -195,11 +206,14 @@ class AnilistRemoteMediator(
                 databaseHelper.deleteAllMedias()
             }
 
-            val keysSize = insertRemoteKeys(page, /*pageSize, statePageSize,*/
-                endOfPaginationReached, mediaList
+            val keysSize = insertRemoteKeys(
+                page,
+                /*pageSize, statePageSize,*/
+                endOfPaginationReached,
+                mediaList
             )
 
-            val mediaIds = database.mediaDao().insertAll(mediaList)
+            val mediaIds = database.mediaDao().insertAll(mediaList.map { it.localMedia })
             check(mediaIds.size == mediaList.size) { Timber.e("mediaIds.size != mediaList.size") }
 
             for (i in mediaIds.indices) {
