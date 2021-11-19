@@ -93,6 +93,7 @@ dependencies {
     // Kotlin annotation processors
     kapt "androidx.room:room-compiler:$room_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
+    //kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     implementation "androidx.core:core-ktx:$core_ctx_version"
@@ -118,9 +119,9 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
     // Main Lifecycle classes along with extensions such as LiveData
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_livedata_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    //implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
     // Room library
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
@@ -148,6 +149,7 @@ dependencies {
     implementation "com.google.dagger:hilt-android:2.38.1"
 
     testImplementation "junit:junit:$junit_version"
+    testImplementation "androidx.arch.core:core-testing:$arch_version"
     //androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     //androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
