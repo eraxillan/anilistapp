@@ -19,16 +19,16 @@ package name.eraxillan.anilistapp.api
 import android.os.Looper
 import androidx.core.text.isDigitsOnly
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.ApolloExperimental
-import com.apollographql.apollo.api.Response
-import com.apollographql.apollo.api.toInput
+import com.apollographql.apollo.api.*
 import com.apollographql.apollo.coroutines.await
+import com.apollographql.apollo.exception.ApolloException
 import com.apollographql.apollo.http.OkHttpExecutionContext
 import kotlinx.coroutines.delay
-import name.eraxillan.anilistapp.AiringAnimeQuery
-import name.eraxillan.anilistapp.AnimeRelationsQuery
+import name.eraxillan.anilistapp.*
 import name.eraxillan.anilistapp.model.RemoteMedia
 import name.eraxillan.anilistapp.model.MediaFilter
+import name.eraxillan.anilistapp.utilities.NETWORK_REQUEST_RETRY_COUNT
+import name.eraxillan.anilistapp.utilities.NETWORK_REQUEST_RETRY_INVERVAL_MS
 import name.eraxillan.anilistapp.model.MediaSort as MediaSort
 import name.eraxillan.anilistapp.type.MediaRelation as AnilistMediaRelation
 import name.eraxillan.anilistapp.type.MediaSort as AnilistMediaSort
@@ -45,27 +45,31 @@ import java.lang.NumberFormatException
  */
 class AnilistApi(private val client: ApolloClient) {
 
-    /**
-     * Get currently airing anime list, ordered by popularity (must popular first)
-     */
-    suspend fun getAiringAnimeList(
-        page: Int, perPage: Int, filter: MediaFilter, sortBy: MediaSort
-    ): Response<AiringAnimeQuery.Data> {
+    suspend fun getGenreList(): Response<MediaGenresQuery.Data> = postRequestInternal(MediaGenresQuery(), 0)
+
+    suspend fun getTagList(): Response<MediaTagsQuery.Data> = postRequestInternal(MediaTagsQuery(), 0)
+
+    // TODO: Anilist API does not have such kind of query now, but it can be added in future
+    //suspend fun getStudioList(): Response<MediaStudiosQuery.Data>? = postRequestInternal(MediaStudiosQuery(), 0)
+    suspend fun findStudio(name: String): Response<MediaStudioQuery.Data> = postRequestInternal(MediaStudioQuery(name), 0)
+
+    suspend fun getMediaList(page: Int, perPage: Int, filter: MediaFilter, sort: MediaSort)
+        : Response<AiringAnimeQuery.Data> {
 
         check(page >= 1) { Timber.e("page < 0") }
         check(perPage >= 1) { Timber.e("perPage < 0") }
-        check(sortBy != MediaSort.UNKNOWN) { Timber.e("sortBy == MediaSort.UNKNOWN") }
+        check(sort != MediaSort.UNKNOWN) { Timber.e("sortBy == MediaSort.UNKNOWN") }
 
-        val formats = filter.formats?.mapNotNull {
-            mediaFormat -> convertMediaFormat(mediaFormat)
+        val formats = filter.formats?.mapNotNull { mediaFormat ->
+            convertMediaFormat(mediaFormat)
         }.toInput()
 
-        val sortByAnilist = convertMediaSortType(sortBy) ?: AnilistMediaSort.POPULARITY_DESC
-        check(sortByAnilist != AnilistMediaSort.UNKNOWN__) {
+        val sortAnilist = convertMediaSortType(sort) ?: AnilistMediaSort.POPULARITY_DESC
+        check(sortAnilist != AnilistMediaSort.UNKNOWN__) {
             Timber.e("sortByAnilist == AnilistMediaSort.UNKNOWN__")
         }
 
-        val airingAnimeQuery = AiringAnimeQuery(
+        val mediaListQuery = AiringAnimeQuery(
             page = page,
             perPage = perPage,
 
@@ -80,11 +84,51 @@ class AnilistApi(private val client: ApolloClient) {
             country = convertMediaCountry(filter.country).toInput(),
             isLicensed = filter.isLicensed.toInput(),
 
-            sort = listOf(sortByAnilist).toInput()
+            sort = listOf(sortAnilist).toInput()
         )
 
-        // TODO: use `client.query(airingAnimeQuery).enqueue(...)` instead?
-        return client.query(airingAnimeQuery).await()
+        return postRequestInternal(mediaListQuery, 0)
+    }
+
+    private suspend fun <Q : Query<R, R, Operation.Variables>, R : Operation.Data>
+            postRequestInternal(query: Q, retryNumber: Int): Response<R> {
+
+        return try {
+            //client.query(airingAnimeQuery).toFlow()
+
+            val response = client.query(query).await()
+            if (response.hasErrors()) {
+                val messages = response.errors?.joinToString(", ") { error -> error.message }
+                throw ApolloException("GraphQL error: $messages")
+            }
+
+            val rateLimit = getResponseRateLimit(response)
+            Timber.d(
+                "Network query rate limit status: ${rateLimit.remaining} from ${rateLimit.total}"
+            )
+
+            response
+        } catch (e: ApolloException) {
+            // Handle protocol errors
+            Timber.e("Apollo exception: %s", e.message)
+
+            // Retry on rate limit exceed error (HTTP code 429)
+            // TODO: an unreliable way to get HTTP result code, find another one
+            if (e.message?.trim() == "HTTP 429") {
+                Timber.e("Rate limit exceeded!")
+                if (retryNumber > NETWORK_REQUEST_RETRY_COUNT) {
+                    Timber.e("$NETWORK_REQUEST_RETRY_COUNT attempts to reset rate limit failed! Abort")
+                    throw e
+                }
+
+                Timber.d("Sleep ${NETWORK_REQUEST_RETRY_INVERVAL_MS / 1_000} seconds and try again...")
+                delay(NETWORK_REQUEST_RETRY_INVERVAL_MS)
+
+                return postRequestInternal(query, retryNumber + 1)
+            }
+
+            throw e
+        }
     }
 
     /*suspend fun getAnimeDetail(id: Int, page: Int, perPage: Int): Response<AnimeDetailQuery.Data> {
@@ -95,17 +139,19 @@ class AnilistApi(private val client: ApolloClient) {
             //search = Input.fromNullable("anime_name")
         )
 
-        return client.query(animeDetailQuery).await()
+        return postRequestInternal(animeDetailQuery, 0)
     }*/
 
-    private suspend fun getAnimeRelations(ids: List<Long>, page: Int, perPage: Int): Response<AnimeRelationsQuery.Data> {
+    private suspend fun getAnimeRelations(ids: List<Long>, page: Int, perPage: Int)
+        : Response<AnimeRelationsQuery.Data> {
+
         val animeRelationsQuery = AnimeRelationsQuery(
             page = page,
             perPage = perPage,
             id_in = ids.map { it.toInt() }
         )
 
-        return client.query(animeRelationsQuery).await()
+        return postRequestInternal(animeRelationsQuery, 0)
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,7 +187,7 @@ class AnilistApi(private val client: ApolloClient) {
         if (finishedCount == relations.size) return 0
 
         val ids = relations.map { entry -> entry.value.last() }.filter { entry -> entry != -1L }
-        Timber.d("Remaining anime ids: ${ids.toString()}")
+        Timber.d("Remaining anime ids: $ids")
 
         val responseInner = getAnimeRelations(ids = ids, page = 1, perPage = 30)
 
@@ -201,7 +247,6 @@ class AnilistApi(private val client: ApolloClient) {
 
     data class AnilistRateLimit(val total: Int, val remaining: Int)
 
-    // FIXME: create a response pool class to handle server query rate limit
     fun <T> getResponseRateLimit(response: Response<T>): AnilistRateLimit {
         val DEFAULT_RATE_LIMIT = 90
         val RATE_LIMIT_TOTAL_KEY = "X-RateLimit-Limit"

@@ -1,0 +1,9 @@
+query MediaStudioQuery($name: String!) {
+  Studio(search: $name) {
+    id
+    name
+    isAnimationStudio
+    siteUrl
+    favourites
+  }
+}
