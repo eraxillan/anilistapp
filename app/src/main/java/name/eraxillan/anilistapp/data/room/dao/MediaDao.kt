@@ -107,6 +107,70 @@ abstract class MediaDao {
         )
     }
 
+    /*@RawQuery
+    protected abstract fun getFilteredMediaInternalPaged(query: SupportSQLiteQuery): List<LocalMedia>
+
+    fun getFilteredAndSortedMediaPaged(filter: MediaFilter, sort: MediaSort): List<LocalMedia> {
+        val hasGenres = filter.genres?.isNotEmpty() == true
+        val hasTags = filter.tags?.isNotEmpty() == true
+        val hasServices = filter.services?.isNotEmpty() == true
+
+        val query = StringBuilder()
+        val queryArgs: MutableList<Any> = mutableListOf()
+
+        query.append("SELECT * FROM media_collection WHERE anilist_id IN (")
+
+        if (hasGenres) {
+            check(filter.genres != null)
+            val placeholders = List(filter.genres.size) { "?" }.joinToString(", ")
+
+            query.append("""
+                SELECT anilist_id FROM media_with_genres
+                WHERE genre_name IN ($placeholders)
+                GROUP BY anilist_id HAVING COUNT(*) = ?
+            """.trimIndent())
+            queryArgs.addAll(filter.genres)
+            queryArgs.add(filter.genres.size)
+        }
+
+        if (hasTags) {
+            check(filter.tags != null)
+            val placeholders = List(filter.tags.size) { "?" }.joinToString(", ")
+
+            if (hasGenres)
+                query.append(" INTERSECT ")
+
+            query.append("""
+                SELECT anilist_id FROM media_with_tags
+                WHERE tag_name IN ($placeholders)
+                GROUP BY anilist_id HAVING COUNT(*) = ?
+            """.trimIndent())
+            queryArgs.addAll(filter.tags)
+            queryArgs.add(filter.tags.size)
+        }
+
+        if (hasServices) {
+            check(filter.services != null)
+            val placeholders = List(filter.services.size) { "?" }.joinToString(", ")
+
+            if (hasGenres || hasTags)
+                query.append(" INTERSECT ")
+
+            query.append("""
+                SELECT anilist_id FROM media_with_services
+                WHERE service_name IN ($placeholders)
+                GROUP BY anilist_id HAVING COUNT(*) = ?
+            """.trimIndent())
+            queryArgs.addAll(filter.services)
+            queryArgs.add(filter.services.size)
+        }
+
+        query.append(")")
+
+        val queryObj = SimpleSQLiteQuery(query.toString(), queryArgs.toTypedArray())
+        return getFilteredMediaInternal(queryObj)
+    }*/
+
     // TODO: do not work in current Android Room version, [MediaDatabaseHelper] class do this job
     /*@Insert(onConflict = REPLACE)
     abstract suspend fun insertAll(entities: Collection<LocalMediaWithRelations>): List<Long>*/
