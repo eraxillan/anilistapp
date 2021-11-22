@@ -146,6 +146,16 @@ fun convertAnilistMedia(input: AiringAnimeQuery.Medium): RemoteMedia {
         else -> MediaRankingType.UNKNOWN
     }
 
+    fun hasAdultGenres(): Boolean {
+        return input.genres?.filterNotNull()?.any { genre ->
+            if (genre.compareTo("Ecchi", true) == 0)
+                return true
+            if (genre.compareTo("Hentai", true) == 0)
+                return true
+            false
+        } ?: false
+    }
+
     fun hasAdultTags(): Boolean {
         return input.tags?.any { tag ->
             if (tag?.isAdult == true) {
@@ -178,7 +188,7 @@ fun convertAnilistMedia(input: AiringAnimeQuery.Medium): RemoteMedia {
         var minAge = demographicTagAges[minAgeTag] ?: -1
 
         // Finally search for adult tags and increase minimal age to 18 if at least one found
-        if (hasAdultTags())
+        if (hasAdultGenres() || hasAdultTags())
             minAge = 18
 
         return minAge
