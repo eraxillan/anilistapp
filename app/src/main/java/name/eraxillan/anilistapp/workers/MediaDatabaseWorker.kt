@@ -17,19 +17,13 @@
 package name.eraxillan.anilistapp.workers
 
 import android.content.Context
+import androidx.room.withTransaction
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
-import name.eraxillan.anilistapp.R
-import name.eraxillan.anilistapp.api.convertRemoteMediaToLocal
+import kotlinx.coroutines.*
 import name.eraxillan.anilistapp.data.room.MediaDatabase
-import name.eraxillan.anilistapp.model.*
-import name.eraxillan.anilistapp.utilities.ANIME_DATA_FILENAME
-import name.eraxillan.anilistapp.utilities.INIT_DATABASE_WORKER_PROGRESS_KEY
-import name.eraxillan.anilistapp.utilities.mediaListFromJson
+import name.eraxillan.anilistapp.utilities.*
 import timber.log.Timber
 
 
@@ -38,11 +32,16 @@ class MediaDatabaseWorker(
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
 
+    private lateinit var database: MediaDatabase
+
     override suspend fun doWork(): Result = coroutineScope {
+        database = MediaDatabase.getInstance(applicationContext)
+
         // NOTE: see https://developer.android.com/topic/libraries/architecture/workmanager/advanced/coroutineworker
+        // `runCatching` used just to suppress "Inappropriate blocking call" false positive
         withContext(Dispatchers.IO) {
             val result = kotlin.runCatching {
-                //fillMediaData()
+                ///fillMediaData()
                 fillMediaTables()
 
                 Result.success()
@@ -55,17 +54,21 @@ class MediaDatabaseWorker(
         }
     }
 
-    private suspend fun fillMediaData() {
+    /*private suspend fun fillMediaData() {
         // Load test media list from resources and append to database
-        applicationContext.assets.open(ANIME_DATA_FILENAME).use { inputStream ->
-            val mediaList = mediaListFromJson(inputStream.reader())
-            Timber.d("Mock media list loaded: ${mediaList.size}")
+        kotlin.runCatching {
+            applicationContext.assets.open(MEDIA_DATA_FILENAME).use { inputStream ->
+                val mediaList = mediaListFromJson(inputStream.reader())
+                Timber.d("Mock media list loaded: ${mediaList.size}")
 
-            val database = MediaDatabase.getInstance(applicationContext)
+                mediaList
+            }
+        }.onSuccess { mediaList ->
             database.mediaDao().insertAll(mediaList.map { convertRemoteMediaToLocal(it) })
-            Result.success()
+        }.onFailure {
+            throw Exception("fillMediaData failed")
         }
-    }
+    }*/
 
     private suspend fun fillMediaTables() {
         val firstUpdate = workDataOf(INIT_DATABASE_WORKER_PROGRESS_KEY to 0)
@@ -74,53 +77,66 @@ class MediaDatabaseWorker(
         Timber.d("Filling media predefined tables...")
         setProgress(firstUpdate)
 
-        val database = MediaDatabase.getInstance(applicationContext)
+        // TODO: update info from backend first
 
-        // Load media genre list from resources and append it to database
-        val genreStrings = applicationContext.resources.getStringArray(R.array.genres_dialog_genres)
-        val genreObjects = genreStrings.mapIndexed { index, element ->
-            MediaGenre(genreId = (index + 1).toLong(), name = element)
-        }
-        check(genreStrings.isNotEmpty() && genreObjects.isNotEmpty())
-        database.mediaGenreDao().insertAll(genreObjects)
-        Timber.d("${genreStrings.size} media genres added to database")
+        database.withTransaction {
+            // Load media genre list from resources and append it to database
+            kotlin.runCatching {
+                applicationContext.assets.open(GENRE_DATA_FILENAME).use { inputStream ->
+                    val mediaGenreList = mediaGenreListFromJson(inputStream.reader())
+                    check(mediaGenreList.isNotEmpty())
 
-        // Load media tag list from resources and append it to database
-        // FIXME: fill other fields
-        val tagStrings = applicationContext.resources.getStringArray(R.array.tags_dialog_tags)
-        val tagObjects = tagStrings.mapIndexed { index, element ->
-            MediaTag(tagId = (index + 1).toLong(), name = element)
-        }
-        check(tagStrings.isNotEmpty() && tagObjects.isNotEmpty())
-        database.mediaTagDao().insertAll(tagObjects)
-        Timber.d("${tagStrings.size} media tags added to database")
+                    Timber.d("Predefined media genre list loaded: ${mediaGenreList.size} elements")
+                    mediaGenreList
+                }
+            }.onSuccess { mediaGenreList ->
+                check(database.mediaGenreDao().getCount() == 0L)
+                database.mediaGenreDao().insertAll(mediaGenreList)
+                check(database.mediaGenreDao().getCount() == mediaGenreList.size.toLong())
 
-        // Load media format list from resources and append it to database
-        /*
-        val formatStrings = applicationContext.resources.getStringArray(R.array.media_format_enum)
-        val formatObjects = formatStrings.mapIndexed { index, element ->
-            MediaFormat(formatId = (index + 1).toLong(), format = MediaFormatEnum.valueOf(element))
-        }
-        check(formatStrings.isNotEmpty() && formatObjects.isNotEmpty())
-        database.mediaFormatDao().insertAll(formatObjects)
-        Timber.d("${formatStrings.size} media formats added to database")
+                Timber.d("${mediaGenreList.size} media genres added to database")
+            }.onFailure {
+                throw Exception("fillMediaTables failed: genre list not filled!")
+            }
 
-        // Load media external link list from resources and append it to database
-        // TODO: fill URL
-        val serviceStrings = applicationContext.resources.getStringArray(R.array.streaming_on_dialog_services)
-        val serviceObjects = serviceStrings.mapIndexed { index, element ->
-            MediaExternalLink(externalLinkId = (index + 1).toLong(), url = "", site = element)
-        }
-        check(serviceStrings.isNotEmpty() && serviceObjects.isNotEmpty())
-        database.mediaExternalLinkDao().insertAll(serviceObjects)
+            // Load media tag list from resources and append it to database
+            kotlin.runCatching {
+                applicationContext.assets.open(TAG_DATA_FILENAME).use { inputStream ->
+                    val mediaTagList = mediaTagListFromJson(inputStream.reader())
+                    check(mediaTagList.isNotEmpty())
 
-        // Load media source list from resources and append it to database
-        val sourceStrings = applicationContext.resources.getStringArray(R.array.media_source_enum)
-        val sourceObjects = sourceStrings.mapIndexed { index, element ->
-            MediaSource(sourceId = (index + 1).toLong(), source = MediaSourceEnum.valueOf(element))
+                    Timber.d("Predefined media tag list loaded: ${mediaTagList.size} elements")
+                    mediaTagList
+                }
+            }.onSuccess { mediaTagList ->
+                check(database.mediaTagDao().getCount() == 0L)
+                database.mediaTagDao().insertAll(mediaTagList)
+                check(database.mediaTagDao().getCount() == mediaTagList.size.toLong())
+
+                Timber.d("${mediaTagList.size} media tags added to database")
+            }.onFailure {
+                throw Exception("fillMediaTables failed: tag list not filled!")
+            }
+
+            // Load media studio list from resources and append it to database
+            kotlin.runCatching {
+                applicationContext.assets.open(STUDIO_DATA_FILENAME).use { inputStream ->
+                    val mediaStudioList = mediaStudioListFromJson(inputStream.reader())
+                    check(mediaStudioList.isNotEmpty())
+
+                    Timber.d("Predefined media studio list loaded: ${mediaStudioList.size} elements")
+                    mediaStudioList
+                }
+            }.onSuccess { mediaStudioList ->
+                check(database.mediaStudioDao().getCount() == 0L)
+                database.mediaStudioDao().insertAll(mediaStudioList)
+                check(database.mediaStudioDao().getCount() == mediaStudioList.size.toLong())
+
+                Timber.d("${mediaStudioList.size} media studios added to database")
+            }.onFailure {
+                throw Exception("fillMediaTables failed: studio list not filled!")
+            }
         }
-        check(serviceStrings.isNotEmpty() && sourceObjects.isNotEmpty())
-        database.mediaSourceDao().insertAll(sourceObjects)*/
 
         Timber.d("Media predefined tables were saved to database")
         setProgress(lastUpdate)

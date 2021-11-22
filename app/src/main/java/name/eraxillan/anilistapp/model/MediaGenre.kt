@@ -34,4 +34,8 @@ data class MediaGenre constructor(
     /** The name of the genre */
     @ColumnInfo(name = "name", defaultValue = "")
     val name: String = "",
+
+    /** If the tag is only for adult 18+ media */
+    @ColumnInfo(name = "is_adult", defaultValue = "0")
+    val isAdult: Boolean = false,
 ) : Parcelable

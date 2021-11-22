@@ -1,0 +1,102 @@
+[
+  {
+    "genreId": 1,
+    "name": "Action",
+    "isAdult": false
+  },
+  {
+    "genreId": 2,
+    "name": "Adventure",
+    "isAdult": false
+  },
+  {
+    "genreId": 3,
+    "name": "Comedy",
+    "isAdult": false
+  },
+  {
+    "genreId": 4,
+    "name": "Drama",
+    "isAdult": false
+  },
+  {
+    "genreId": 5,
+    "name": "Ecchi",
+    "isAdult": true
+  },
+  {
+    "genreId": 6,
+    "name": "Fantasy",
+    "isAdult": false
+  },
+  {
+    "genreId": 7,
+    "name": "Hentai",
+    "isAdult": true
+  },
+  {
+    "genreId": 8,
+    "name": "Horror",
+    "isAdult": false
+  },
+  {
+    "genreId": 9,
+    "name": "Mahou Shoujo",
+    "isAdult": false
+  },
+  {
+    "genreId": 10,
+    "name": "Mecha",
+    "isAdult": false
+  },
+  {
+    "genreId": 11,
+    "name": "Music",
+    "isAdult": false
+  },
+  {
+    "genreId": 12,
+    "name": "Mystery",
+    "isAdult": false
+  },
+  {
+    "genreId": 13,
+    "name": "Psychological",
+    "isAdult": false
+  },
+  {
+    "genreId": 14,
+    "name": "Romance",
+    "isAdult": false
+  },
+  {
+    "genreId": 15,
+    "name": "Sci-Fi",
+    "isAdult": false
+  },
+  {
+    "genreId": 16,
+    "name": "Slice of Life",
+    "isAdult": false
+  },
+  {
+    "genreId": 17,
+    "name": "Sports",
+    "isAdult": false
+  },
+  {
+    "genreId": 18,
+    "name": "Supernatural",
+    "isAdult": false
+  },
+  {
+    "genreId": 19,
+    "name": "Thriller",
+    "isAdult": false
+  },
+  {
+    "genreId": 20,
+    "name": "?",
+    "isAdult": false
+  }
+]

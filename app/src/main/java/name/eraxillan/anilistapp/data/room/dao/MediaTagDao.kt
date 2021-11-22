@@ -29,6 +29,9 @@ abstract class MediaTagDao {
     @Query("SELECT * FROM media_tags")
     abstract suspend fun getAll(): List<MediaTag>
 
+    @Query("SELECT COUNT(tag_id) FROM media_tags")
+    abstract suspend fun getCount(): Long
+
     @Insert(onConflict = REPLACE)
     abstract suspend fun insert(entity: MediaTag): Long
 

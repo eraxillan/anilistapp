@@ -1,0 +1,1029 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 10,
+    "identityHash": "de1ab721659978ef96fafcb21266cc1d",
+    "entities": [
+      {
+        "tableName": "media_sources",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`source_id` INTEGER NOT NULL, `source` TEXT NOT NULL, PRIMARY KEY(`source_id`))",
+        "fields": [
+          {
+            "fieldPath": "sourceId",
+            "columnName": "source_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "source_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "media_formats",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`format_id` INTEGER NOT NULL, `format` TEXT NOT NULL, PRIMARY KEY(`format_id`))",
+        "fields": [
+          {
+            "fieldPath": "formatId",
+            "columnName": "format_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "format",
+            "columnName": "format",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "format_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "media_external_links",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`external_link_id` INTEGER NOT NULL, `url` TEXT NOT NULL, `site` TEXT NOT NULL, `media_id` INTEGER NOT NULL DEFAULT -1, PRIMARY KEY(`external_link_id`), FOREIGN KEY(`media_id`) REFERENCES `media_collection`(`anilist_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "externalLinkId",
+            "columnName": "external_link_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "site",
+            "columnName": "site",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaId",
+            "columnName": "media_id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "-1"
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "external_link_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_media_external_links_media_id",
+            "unique": false,
+            "columnNames": [
+              "media_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_media_external_links_media_id` ON `${TABLE_NAME}` (`media_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "media_collection",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "media_id"
+            ],
+            "referencedColumns": [
+              "anilist_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "media_genres",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`genre_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL DEFAULT '', `is_adult` INTEGER NOT NULL DEFAULT 0)",
+        "fields": [
+          {
+            "fieldPath": "genreId",
+            "columnName": "genre_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "isAdult",
+            "columnName": "is_adult",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "genre_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "media_genre_entries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`media_id` INTEGER NOT NULL, `genre_id` INTEGER NOT NULL, PRIMARY KEY(`media_id`, `genre_id`), FOREIGN KEY(`media_id`) REFERENCES `media_collection`(`anilist_id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`genre_id`) REFERENCES `media_genres`(`genre_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "mediaId",
+            "columnName": "media_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "genreId",
+            "columnName": "genre_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "media_id",
+            "genre_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_media_genre_entries_media_id_genre_id",
+            "unique": true,
+            "columnNames": [
+              "media_id",
+              "genre_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_media_genre_entries_media_id_genre_id` ON `${TABLE_NAME}` (`media_id`, `genre_id`)"
+          },
+          {
+            "name": "index_media_genre_entries_media_id",
+            "unique": false,
+            "columnNames": [
+              "media_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_media_genre_entries_media_id` ON `${TABLE_NAME}` (`media_id`)"
+          },
+          {
+            "name": "index_media_genre_entries_genre_id",
+            "unique": false,
+            "columnNames": [
+              "genre_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_media_genre_entries_genre_id` ON `${TABLE_NAME}` (`genre_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "media_collection",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "media_id"
+            ],
+            "referencedColumns": [
+              "anilist_id"
+            ]
+          },
+          {
+            "table": "media_genres",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "genre_id"
+            ],
+            "referencedColumns": [
+              "genre_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "media_ranks",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`rank_id` INTEGER NOT NULL, `rank` INTEGER NOT NULL, `type` TEXT NOT NULL, `format` TEXT NOT NULL, `year` INTEGER NOT NULL, `season` TEXT NOT NULL, `all_time` INTEGER NOT NULL, `context` TEXT NOT NULL, `media_id` INTEGER NOT NULL DEFAULT -1, PRIMARY KEY(`rank_id`), FOREIGN KEY(`media_id`) REFERENCES `media_collection`(`anilist_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "rankId",
+            "columnName": "rank_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rankValue",
+            "columnName": "rank",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "format",
+            "columnName": "format",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "year",
+            "columnName": "year",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "season",
+            "columnName": "season",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "allTime",
+            "columnName": "all_time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "context",
+            "columnName": "context",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaId",
+            "columnName": "media_id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "-1"
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "rank_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_media_ranks_media_id",
+            "unique": false,
+            "columnNames": [
+              "media_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_media_ranks_media_id` ON `${TABLE_NAME}` (`media_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "media_collection",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "media_id"
+            ],
+            "referencedColumns": [
+              "anilist_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "media_streaming_episodes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`streaming_episode_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `thumbnail` TEXT NOT NULL, `url` TEXT NOT NULL, `site` TEXT NOT NULL, `media_id` INTEGER NOT NULL DEFAULT -1, FOREIGN KEY(`media_id`) REFERENCES `media_collection`(`anilist_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "streamingEpisodeId",
+            "columnName": "streaming_episode_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnail",
+            "columnName": "thumbnail",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "site",
+            "columnName": "site",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaId",
+            "columnName": "media_id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "-1"
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "streaming_episode_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_media_streaming_episodes_media_id",
+            "unique": false,
+            "columnNames": [
+              "media_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_media_streaming_episodes_media_id` ON `${TABLE_NAME}` (`media_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "media_collection",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "media_id"
+            ],
+            "referencedColumns": [
+              "anilist_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "media_studios",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`studio_id` INTEGER NOT NULL, `name` TEXT NOT NULL DEFAULT '', `is_animation_studio` INTEGER NOT NULL DEFAULT 0, `site_url` TEXT NOT NULL DEFAULT '', `favorites` INTEGER NOT NULL DEFAULT -1, PRIMARY KEY(`studio_id`))",
+        "fields": [
+          {
+            "fieldPath": "studioId",
+            "columnName": "studio_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "isAnimationStudio",
+            "columnName": "is_animation_studio",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "siteUrl",
+            "columnName": "site_url",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "favorites",
+            "columnName": "favorites",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "-1"
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "studio_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "media_studio_entries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`media_id` INTEGER NOT NULL, `studio_id` INTEGER NOT NULL, PRIMARY KEY(`media_id`, `studio_id`), FOREIGN KEY(`media_id`) REFERENCES `media_collection`(`anilist_id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`studio_id`) REFERENCES `media_studios`(`studio_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "mediaId",
+            "columnName": "media_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "studioId",
+            "columnName": "studio_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "media_id",
+            "studio_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_media_studio_entries_media_id_studio_id",
+            "unique": true,
+            "columnNames": [
+              "media_id",
+              "studio_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_media_studio_entries_media_id_studio_id` ON `${TABLE_NAME}` (`media_id`, `studio_id`)"
+          },
+          {
+            "name": "index_media_studio_entries_media_id",
+            "unique": false,
+            "columnNames": [
+              "media_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_media_studio_entries_media_id` ON `${TABLE_NAME}` (`media_id`)"
+          },
+          {
+            "name": "index_media_studio_entries_studio_id",
+            "unique": false,
+            "columnNames": [
+              "studio_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_media_studio_entries_studio_id` ON `${TABLE_NAME}` (`studio_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "media_collection",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "media_id"
+            ],
+            "referencedColumns": [
+              "anilist_id"
+            ]
+          },
+          {
+            "table": "media_studios",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "studio_id"
+            ],
+            "referencedColumns": [
+              "studio_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "media_tags",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`tag_id` INTEGER NOT NULL, `name` TEXT NOT NULL DEFAULT '', `description` TEXT NOT NULL DEFAULT '', `category` TEXT NOT NULL DEFAULT '', `rank` INTEGER NOT NULL DEFAULT -1, `is_general_spoiler` INTEGER NOT NULL DEFAULT 0, `is_media_spoiler` INTEGER NOT NULL DEFAULT 0, `is_adult` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`tag_id`))",
+        "fields": [
+          {
+            "fieldPath": "tagId",
+            "columnName": "tag_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "rank",
+            "columnName": "rank",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "-1"
+          },
+          {
+            "fieldPath": "isGeneralSpoiler",
+            "columnName": "is_general_spoiler",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "isMediaSpoiler",
+            "columnName": "is_media_spoiler",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "isAdult",
+            "columnName": "is_adult",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "tag_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "media_tag_entries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`media_id` INTEGER NOT NULL, `tag_id` INTEGER NOT NULL, PRIMARY KEY(`media_id`, `tag_id`), FOREIGN KEY(`media_id`) REFERENCES `media_collection`(`anilist_id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`tag_id`) REFERENCES `media_tags`(`tag_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "mediaId",
+            "columnName": "media_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tagId",
+            "columnName": "tag_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "media_id",
+            "tag_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_media_tag_entries_media_id_tag_id",
+            "unique": true,
+            "columnNames": [
+              "media_id",
+              "tag_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_media_tag_entries_media_id_tag_id` ON `${TABLE_NAME}` (`media_id`, `tag_id`)"
+          },
+          {
+            "name": "index_media_tag_entries_media_id",
+            "unique": false,
+            "columnNames": [
+              "media_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_media_tag_entries_media_id` ON `${TABLE_NAME}` (`media_id`)"
+          },
+          {
+            "name": "index_media_tag_entries_tag_id",
+            "unique": false,
+            "columnNames": [
+              "tag_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_media_tag_entries_tag_id` ON `${TABLE_NAME}` (`tag_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "media_collection",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "media_id"
+            ],
+            "referencedColumns": [
+              "anilist_id"
+            ]
+          },
+          {
+            "table": "media_tags",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "tag_id"
+            ],
+            "referencedColumns": [
+              "tag_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "media_title_synonyms",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`title_synonym_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL DEFAULT '', `media_id` INTEGER NOT NULL DEFAULT -1, FOREIGN KEY(`media_id`) REFERENCES `media_collection`(`anilist_id`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "titleSynonymId",
+            "columnName": "title_synonym_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "mediaId",
+            "columnName": "media_id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "-1"
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "title_synonym_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_media_title_synonyms_media_id",
+            "unique": false,
+            "columnNames": [
+              "media_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_media_title_synonyms_media_id` ON `${TABLE_NAME}` (`media_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "media_collection",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "media_id"
+            ],
+            "referencedColumns": [
+              "anilist_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "media_collection",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`anilist_id` INTEGER NOT NULL, `mal_id` INTEGER NOT NULL, `anilist_url` TEXT NOT NULL, `mal_url` TEXT NOT NULL, `updated_at` TEXT, `romaji_title` TEXT NOT NULL, `english_title` TEXT NOT NULL, `native_title` TEXT NOT NULL, `format` TEXT NOT NULL, `status` TEXT NOT NULL, `description` TEXT NOT NULL, `start_date` TEXT, `end_date` TEXT, `start_season` TEXT NOT NULL, `start_season_year` INTEGER NOT NULL, `episode_count` INTEGER NOT NULL, `episode_duration` INTEGER NOT NULL, `next_episode_airing_at` TEXT, `next_episode_time_until_airing` TEXT, `next_episode_number` INTEGER NOT NULL, `country_of_origin` TEXT NOT NULL, `is_licensed` INTEGER NOT NULL, `source` TEXT NOT NULL, `hashtag` TEXT NOT NULL, `trailer_site` TEXT NOT NULL, `trailer_thumbnail` TEXT NOT NULL, `cover_image_extra_large` TEXT NOT NULL, `cover_image_large` TEXT NOT NULL, `cover_image_medium` TEXT NOT NULL, `cover_image_color` TEXT NOT NULL, `banner_image` TEXT NOT NULL, `average_score` INTEGER NOT NULL, `mean_score` INTEGER NOT NULL, `popularity` INTEGER NOT NULL, `favorites` INTEGER NOT NULL, `trending` INTEGER NOT NULL, `season` INTEGER NOT NULL, `min_age` INTEGER NOT NULL, PRIMARY KEY(`anilist_id`))",
+        "fields": [
+          {
+            "fieldPath": "anilistId",
+            "columnName": "anilist_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "malId",
+            "columnName": "mal_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "anilistUrl",
+            "columnName": "anilist_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "malUrl",
+            "columnName": "mal_url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updated_at",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "romajiTitle",
+            "columnName": "romaji_title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "englishTitle",
+            "columnName": "english_title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nativeTitle",
+            "columnName": "native_title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "format",
+            "columnName": "format",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startDate",
+            "columnName": "start_date",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "endDate",
+            "columnName": "end_date",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "startSeason",
+            "columnName": "start_season",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startSeasonYear",
+            "columnName": "start_season_year",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "episodeCount",
+            "columnName": "episode_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "episodeDuration",
+            "columnName": "episode_duration",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nextEpisodeAiringAt",
+            "columnName": "next_episode_airing_at",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nextEpisodeTimeUntilAiring",
+            "columnName": "next_episode_time_until_airing",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nextEpisodeNo",
+            "columnName": "next_episode_number",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "countryOfOrigin",
+            "columnName": "country_of_origin",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isLicensed",
+            "columnName": "is_licensed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hashtag",
+            "columnName": "hashtag",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trailerSite",
+            "columnName": "trailer_site",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trailerThumbnail",
+            "columnName": "trailer_thumbnail",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coverImageExtraLarge",
+            "columnName": "cover_image_extra_large",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coverImageLarge",
+            "columnName": "cover_image_large",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coverImageMedium",
+            "columnName": "cover_image_medium",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coverImageColor",
+            "columnName": "cover_image_color",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bannerImage",
+            "columnName": "banner_image",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "averageScore",
+            "columnName": "average_score",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "meanScore",
+            "columnName": "mean_score",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "popularity",
+            "columnName": "popularity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "favorites",
+            "columnName": "favorites",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trending",
+            "columnName": "trending",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "season",
+            "columnName": "season",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minAge",
+            "columnName": "min_age",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "anilist_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "favorite_media_collection",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`anilist_id` INTEGER NOT NULL, PRIMARY KEY(`anilist_id`))",
+        "fields": [
+          {
+            "fieldPath": "anilistId",
+            "columnName": "anilist_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "anilist_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "remote_keys",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`anilistId` INTEGER NOT NULL, `prevKey` INTEGER, `nextKey` INTEGER, PRIMARY KEY(`anilistId`))",
+        "fields": [
+          {
+            "fieldPath": "anilistId",
+            "columnName": "anilistId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "prevKey",
+            "columnName": "prevKey",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nextKey",
+            "columnName": "nextKey",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "anilistId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [
+      {
+        "viewName": "media_with_genres",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT media_collection.*, media_genres.name AS genre_name FROM media_collection\n    INNER JOIN media_genres\n    WHERE genre_id IN (SELECT genre_id FROM media_genre_entries WHERE media_id = anilist_id)"
+      },
+      {
+        "viewName": "media_with_tags",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT media_collection.*, media_tags.name AS tag_name FROM media_collection\n        INNER JOIN media_tags\n        WHERE tag_id IN (SELECT tag_id FROM media_tag_entries WHERE media_id = anilist_id)"
+      },
+      {
+        "viewName": "media_with_services",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT media_collection.*, media_external_links.site AS service_name FROM media_collection\n        INNER JOIN media_external_links ON media_id = anilist_id"
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'de1ab721659978ef96fafcb21266cc1d')"
+    ]
+  }
+}

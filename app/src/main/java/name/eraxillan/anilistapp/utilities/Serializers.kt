@@ -19,6 +19,9 @@ package name.eraxillan.anilistapp.utilities
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
+import name.eraxillan.anilistapp.model.MediaGenre
+import name.eraxillan.anilistapp.model.MediaStudio
+import name.eraxillan.anilistapp.model.MediaTag
 import name.eraxillan.anilistapp.model.RemoteMedia
 import timber.log.Timber
 import java.io.InputStreamReader
@@ -123,5 +126,26 @@ fun mediaListFromJson(inputStreamReader: InputStreamReader): List<RemoteMedia> {
     JsonReader(inputStreamReader).use { jsonReader ->
         val mediaType = object : TypeToken<List<RemoteMedia>>() {}.type
         return gson.fromJson(jsonReader, mediaType)
+    }
+}
+
+fun mediaGenreListFromJson(inputStreamReader: InputStreamReader): List<MediaGenre> {
+    JsonReader(inputStreamReader).use { jsonReader ->
+        val mediaGenreType = object : TypeToken<List<MediaGenre>>() {}.type
+        return gson.fromJson(jsonReader, mediaGenreType)
+    }
+}
+
+fun mediaTagListFromJson(inputStreamReader: InputStreamReader): List<MediaTag> {
+    JsonReader(inputStreamReader).use { jsonReader ->
+        val mediaTagType = object : TypeToken<List<MediaTag>>() {}.type
+        return gson.fromJson(jsonReader, mediaTagType)
+    }
+}
+
+fun mediaStudioListFromJson(inputStreamReader: InputStreamReader): List<MediaStudio> {
+    JsonReader(inputStreamReader).use { jsonReader ->
+        val mediaStudioType = object : TypeToken<List<MediaStudio>>() {}.type
+        return gson.fromJson(jsonReader, mediaStudioType)
     }
 }

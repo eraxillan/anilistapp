@@ -42,7 +42,7 @@ class AnilistPagingSource(
         return try {
             Timber.d( "Requesting ${page}st page with ${params.loadSize} items per page...")
             // TODO: how to sync `params.loadSize` here and in `MediaRepository.getMediaListStream`?
-            val response = service.getAiringAnimeList(
+            val response = service.getMediaList(
                 page,
                 /*params.loadSize*/ NETWORK_PAGE_SIZE,
                 filter,

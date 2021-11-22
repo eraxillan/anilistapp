@@ -25,31 +25,31 @@ import timber.log.Timber
 
 private const val FAKE_GENRE = "?"
 private const val FAKE_TAG = "?"
+private const val FAKE_STUDIO = "?"
 //private const val FAKE_SERVICE = "?"
+//private const val FAKE_FORMAT = "?"
+//private const val FAKE_SOURCE = "?"
 
 
 class MediaDatabaseHelper(
     private val database: MediaDatabase
 ) {
 
-    private var _genreCache: Map<String, Long>? = null //id, name
-    private var _tagCache: Map<String, Long>? = null // id, name
-    // TODO: AniList haven't API for querying the full media studio list, but MAL has.
-    //       Right now we populate this cache on the fly while adding new media
-    //private var _studioCache: Map<String, Long>? = null // id, name
+    private var _genreCache: MutableMap<String, Long>? = null  // id, name
+    private var _tagCache: MutableMap<String, Long>? = null    // id, name
+    private var _studioCache: MutableMap<String, Long>? = null // id, name
 
     private suspend fun genreIdForName(name: String): Long {
         if (_genreCache == null) {
             _genreCache = database.mediaGenreDao().getAll().associate { genre ->
                 Pair(genre.name, genre.genreId)
-            }
+            }.toMutableMap()
             check(_genreCache?.isNotEmpty() == true) { Timber.e("Genre cache is empty!") }
             check(_genreCache?.contains(FAKE_GENRE) == true)
         }
-        check(_genreCache != null) { Timber.e("Genre cache was set to null by another thread!") }
 
-        check(_genreCache?.contains(name) == true) { Timber.e("Genre cache does not contain genre '$name'!") }
-        return _genreCache?.get(name) ?: -1
+        check(_genreCache != null) { Timber.e("Genre cache was set to null by another thread!") }
+        return if (_genreCache?.contains(name) == true) _genreCache?.get(name) ?: -1 else -1
     }
 
     private suspend fun fakeGenre() = MediaGenre(genreId = genreIdForName(FAKE_GENRE), name = FAKE_GENRE)
@@ -58,38 +58,31 @@ class MediaDatabaseHelper(
         if (_tagCache == null) {
             _tagCache = database.mediaTagDao().getAll().associate { tag ->
                 Pair(tag.name, tag.tagId)
-            }
+            }.toMutableMap()
             check(_tagCache?.isNotEmpty() == true) { Timber.e("Tag cache is empty!") }
             check(_tagCache?.contains(FAKE_TAG) == true)
         }
-        check(_tagCache != null) { Timber.e("Tag cache was set to null by another thread!") }
 
-        check(_tagCache?.contains(name) == true) { Timber.e("Tag cache does not contain genre '$name'!") }
-        return _tagCache?.get(name) ?: -1
+        check(_tagCache != null) { Timber.e("Tag cache was set to null by another thread!") }
+        return if (_tagCache?.contains(name) == true) _tagCache?.get(name) ?: -1 else -1
     }
 
-    private suspend fun fakeTag() = MediaTag(tagId = tagIdForName(FAKE_GENRE), name = FAKE_TAG)
+    private suspend fun fakeTag() = MediaTag(tagId = tagIdForName(FAKE_TAG), name = FAKE_TAG)
 
-    /*
-    private suspend fun studioCache(): Map<String, Long> {
+    private suspend fun studioIdForName(name: String): Long {
         if (_studioCache == null) {
             _studioCache = database.mediaStudioDao().getAll().associate { studio ->
                 Pair(studio.name, studio.studioId)
-            }
-            check(_studioCache?.isNotEmpty() == true) { Timber.e("studioCache is empty!") }
+            }.toMutableMap()
+            check(_studioCache?.isNotEmpty() == true) { Timber.e("Studio cache is empty!") }
+            check(_studioCache?.contains(FAKE_STUDIO) == true)
         }
-        return _studioCache ?: throw AssertionError("Set to null by another thread")
-    }
-    */
 
-    private suspend fun insertNotExistingStudios(studios: List<MediaStudio>): List<Long> {
-        val studiosWithIds = studios.associateBy { studio -> studio.studioId }
-        val existingStudioIds = database.mediaStudioDao().getExistingIds(studiosWithIds.keys.toList())
-        val absentStudioIds = studiosWithIds.keys.minus(existingStudioIds.toSet())
-        val absentStudios = studiosWithIds.filterKeys { absentStudioIds.contains(it) }
-        val addedStudioIds = database.mediaStudioDao().insertAll(absentStudios.values.toList())
-        return existingStudioIds.toSet().union(addedStudioIds).toList()
+        check(_studioCache != null) { Timber.e("Studio cache was set to null by another thread!") }
+        return if (_studioCache?.contains(name) == true) _studioCache?.get(name) ?: -1 else -1
     }
+
+    private suspend fun fakeStudio() = MediaStudio(studioId = studioIdForName(FAKE_STUDIO), name = FAKE_STUDIO)
 
     suspend fun deleteAllMedias() {
         database.apply {
@@ -102,7 +95,7 @@ class MediaDatabaseHelper(
             mediaGenreEntryDao().deleteAll()
             //mediaTagDao().deleteAll()
             mediaTagEntryDao().deleteAll()
-            mediaStudioDao().deleteAll()
+            //mediaStudioDao().deleteAll()
             mediaStudioEntryDao().deleteAll()
 
             // One-to-many tables
@@ -119,17 +112,24 @@ class MediaDatabaseHelper(
 
     suspend fun insertGenres(genres: List<MediaGenre>, mediaId: Long) {
         // Genres
-        // TODO: update genreCache from Anilist
+        // TODO: update genreCache from Anilist/MyAnimeList
 
         // If the media have no genres, add fake one to simplify subsequent search
         val genresEx = if (genres.isNotEmpty()) genres else listOf(fakeGenre())
 
         val genresWithMediaId = genresEx.map { genre ->
-            //val genreId = database.mediaGenreDao().getGenreWithName(genre.name)?.genreId ?: -1L
-            //check(genreId != -1L)
+            var genreId = genreIdForName(genre.name)
+            if (genreId == -1L) {
+                Timber.w("Tag $genre is absent in cache! Adding...")
 
-            val genreId = genreIdForName(genre.name)
-            check(genreId != -1L) { Timber.e("genreId == -1") }
+                // Insert genre entry
+                genreId = database.mediaGenreDao().insert(genre)
+                check(genreId != -1L)
+
+                val prev = _genreCache?.put(genre.name, genreId)
+                check(prev == null)
+            }
+
             MediaGenreEntry(genreId = genreId, mediaId = mediaId)
         }
         database.mediaGenreEntryDao().insertAll(genresWithMediaId)
@@ -137,17 +137,24 @@ class MediaDatabaseHelper(
 
     suspend fun insertTags(tags: List<MediaTag>, mediaId: Long) {
         // Tags
-        // TODO: update tagCache from Anilist
+        // TODO: update tagCache from Anilist/MyAnimeList
 
         // If the media have no tags, add fake one to simplify subsequent search
         val tagsEx = if (tags.isNotEmpty()) tags else listOf(fakeTag())
 
         val tagsWithMediaId = tagsEx.map { tag ->
-            //val tagId = database.mediaTagDao().getTagWithName(tag.name)?.tagId ?: -1L
-            //check(tagId != -1L)
+            var tagId = tagIdForName(tag.name)
+            if (tagId == -1L) {
+                Timber.w("Tag $tag is absent in cache! Adding...")
 
-            val tagId = tagIdForName(tag.name)
-            check(tagId != -1L) { Timber.e("tagId == -1") }
+                // Insert tag entry
+                tagId = database.mediaTagDao().insert(tag)
+                check(tagId != -1L)
+
+                val prev = _tagCache?.put(tag.name, tagId)
+                check(prev == null)
+            }
+
             MediaTagEntry(tagId = tagId, mediaId = mediaId)
         }
         database.mediaTagEntryDao().insertAll(tagsWithMediaId)
@@ -155,21 +162,27 @@ class MediaDatabaseHelper(
 
     suspend fun insertStudios(studios: List<MediaStudio>, mediaId: Long) {
         // Studios
-        // TODO: implement and update studioCache using MAL studio list
-        val studioIds = insertNotExistingStudios(studios)
+        // TODO: update studioCache from Anilist/MyAnimeList
 
-        val studioEntries = studios.mapIndexed { index, studio ->
-            check(studio.studioId != -1L) { Timber.e("studio.studioId == -1") }
-            check(studio.name.isNotEmpty()) { Timber.e("studio.name == \"\"") }
-            //check(studio.isAnimationStudio != null) { Timber.e("studio.isAnimationStudio == null") }
-            check(studio.siteUrl.isNotEmpty()) { Timber.e("studio.siteUrl == \"\"") }
-            check(studio.favorites != -1) { Timber.e("studio.favorites == -1") }
+        // If the media have no studios, add fake one to simplify subsequent search
+        val studiosEx = if (studios.isNotEmpty()) studios else listOf(fakeStudio())
 
-            val studioId = studioIds[index]
-            check(studioId != -1L) { Timber.e("studioId == -1") }
+        val studiosWithMediaId = studiosEx.map { studio ->
+            var studioId = studioIdForName(studio.name)
+            if (studioId == -1L) {
+                Timber.w("Studio $studio is absent in cache! Adding...")
+
+                // Insert new studio entry
+                studioId = database.mediaStudioDao().insert(studio)
+                check(studioId != -1L)
+
+                val prev = _studioCache?.put(studio.name, studioId)
+                check(prev == null)
+            }
+
             MediaStudioEntry(studioId = studioId, mediaId = mediaId)
         }
-        database.mediaStudioEntryDao().insertAll(studioEntries)
+        database.mediaStudioEntryDao().insertAll(studiosWithMediaId)
     }
 
     // One-to-many tables

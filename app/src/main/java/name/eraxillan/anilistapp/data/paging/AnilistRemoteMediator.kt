@@ -85,13 +85,8 @@ class AnilistRemoteMediator(
                 else -> state.config.pageSize
             }*/
             Timber.d("Querying server: pageNo=$page with $pageSize per page...")
-            val backendResponse = backend.getAiringAnimeList(page, pageSize, filter, sortBy)
+            val backendResponse = backend.getMediaList(page, pageSize, filter, sortBy)
             Timber.d("Successfully got response from server")
-
-            val rateLimit = backend.getResponseRateLimit(backendResponse)
-            Timber.d(
-                "Network query rate limit status: ${rateLimit.remaining} from ${rateLimit.total}"
-            )
 
             val pagination = backend.getResponsePagination(backendResponse)
             val endOfPaginationReached = pagination.totalItems == 0 || !pagination.hasNextPage

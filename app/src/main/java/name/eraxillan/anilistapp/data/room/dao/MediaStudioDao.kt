@@ -32,6 +32,9 @@ abstract class MediaStudioDao {
     @Query("SELECT * FROM media_studios")
     abstract suspend fun getAll(): List<MediaStudio>
 
+    @Query("SELECT COUNT(studio_id) FROM media_studios")
+    abstract suspend fun getCount(): Long
+
     @Insert(onConflict = REPLACE)
     abstract suspend fun insert(entity: MediaStudio): Long
 
