@@ -16,23 +16,30 @@
 -->
 
 <resources>
-<declare-styleable name="ChippedEditText">
-    <attr name="title" format="string" localization="suggested" />
-    <attr name="selectionMode" format="enum">
-        <enum name="singleChoice" value="0" />
-        <enum name="multiChoice" value="1" />
-    </attr>
-    <attr name="elementType" format="enum">
-        <enum name="string" value="0" />
-        <enum name="integer" value="1" />
-        <enum name="enumeration" value="2" />
-    </attr>
-    <attr name="integerElementFrom" format="integer" />
-    <attr name="integerElementTo" format="integer" />
-    <attr name="enumerationFullName" format="string" />
-    <attr name="enumerationSkipEntryName" format="string" />
-    <attr name="stringElements" format="reference" />
-    <attr name="stringSkipEntryName" format="string" />
-    <attr name="checkedElements" format="reference"/>
-</declare-styleable>
+    <declare-styleable name="ChippedEditText">
+        <attr name="title" format="string" localization="suggested" />
+        <attr name="selectionMode" format="enum">
+            <enum name="singleChoice" value="0" />
+            <enum name="multiChoice" value="1" />
+        </attr>
+        <attr name="elementType" format="enum">
+            <enum name="string" value="0" />
+            <enum name="integer" value="1" />
+            <enum name="enumeration" value="2" />
+        </attr>
+        <attr name="integerElementFrom" format="integer" />
+        <attr name="integerElementTo" format="integer" />
+        <attr name="enumerationFullName" format="string" />
+        <attr name="enumerationSkipEntryName" format="string" />
+        <attr name="stringElements" format="reference" />
+        <attr name="stringSkipEntryName" format="string" />
+        <attr name="checkedElements" format="reference"/>
+    </declare-styleable>
+
+    <declare-styleable name="BackdropPanel">
+    </declare-styleable>
+
+    <declare-styleable name="BackdropToolbar">
+    </declare-styleable>
+
 </resources>

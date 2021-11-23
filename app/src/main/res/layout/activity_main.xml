@@ -45,7 +45,10 @@
                 android:title="@string/app_name" />
         </com.google.android.material.appbar.AppBarLayout>
 
-        <include android:id="@+id/backdrop_views" layout="@layout/backdrop_views" />
+        <name.eraxillan.anilistapp.ui.views.BackdropPanel
+            android:id="@+id/backdrop_views"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <!--
         * app:behavior_skipCollapsed=”true”:

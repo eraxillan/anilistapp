@@ -53,8 +53,6 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!
 
-    private var currentState: Int = BottomSheetBehavior.STATE_EXPANDED
-
     /**
      * `by viewModels<MediaViewModel>()` is a lazy delegate that creates a new `viewModel`
      * only the first time the `Activity` is created.
@@ -128,17 +126,9 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
 
         binding.retryButton.setOnClickListener { listAdapter.retry() }
 
-        binding.resultText.setOnClickListener {
-            (requireActivity() as MainActivity).openBottomSheet()
-        }
-
-        binding.filterImage.setOnClickListener {
-            if (currentState == BottomSheetBehavior.STATE_EXPANDED) {
-                (requireActivity() as MainActivity).closeBottomSheet()
-            } else {
-                (requireActivity() as MainActivity).openBottomSheet()
-            }
-        }
+        binding.toolbarBackdrop.openBottomSheetCallback = { (requireActivity() as MainActivity).openBottomSheet() }
+        binding.toolbarBackdrop.closeBottomSheetCallback = { (requireActivity() as MainActivity).closeBottomSheet() }
+        binding.toolbarBackdrop.setListeners()
 
         if (preferences.isFirstRun) {
             setupDefaultFilterOptions()
@@ -180,21 +170,10 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
     }
 
     override fun onStateChanged(bottomSheet: View, newState: Int) {
-        currentState = newState
+        binding.toolbarBackdrop.currentState = newState
 
         if (_binding == null) return
-
-        when (newState) {
-            BottomSheetBehavior.STATE_EXPANDED -> {
-                binding.resultText.text = getString(R.string.search_results_count, listAdapter.itemCount)
-                binding.filterImage.setImageResource(R.drawable.ic_baseline_filter_list_24)
-            }
-            BottomSheetBehavior.STATE_COLLAPSED -> {
-                binding.resultText.text = getString(R.string.see_the_results)
-                binding.filterImage.setImageResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
-            }
-            // TODO: when the bottom sheet is moving update data
-        }
+        binding.toolbarBackdrop.changeState(listAdapter.itemCount)
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -216,8 +195,10 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
         listAdapter.addLoadStateListener { loadState ->
             val isRefreshSucceeds = loadState.source.refresh is LoadState.NotLoading ||
                     loadState.mediator?.refresh is LoadState.NotLoading
-            if (isRefreshSucceeds)
-                binding.resultText.text = getString(R.string.search_results_count, listAdapter.itemCount)
+            if (isRefreshSucceeds) {
+                binding.toolbarBackdrop.currentState = BottomSheetBehavior.STATE_EXPANDED
+                binding.toolbarBackdrop.changeState(listAdapter.itemCount)
+            }
 
             // Show empty list
             val isListEmpty = loadState.refresh is LoadState.NotLoading && listAdapter.itemCount == 0

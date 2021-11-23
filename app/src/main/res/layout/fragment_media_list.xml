@@ -26,38 +26,10 @@
     android:background="@drawable/corner"
     tools:context=".ui.MediaListFragment">
 
-    <FrameLayout
-        android:id="@+id/result_header_layout"
+    <name.eraxillan.anilistapp.ui.views.BackdropToolbar
+        android:id="@+id/toolbar_backdrop"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:animateLayoutChanges="true"
-        android:elevation="10dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/result_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|start"
-            android:layout_marginStart="15dp"
-            android:text="@string/search_results_count"
-            android:textSize="20sp" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/filter_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|end"
-            android:layout_marginEnd="15dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/filter_button"
-            android:minWidth="48dp"
-            android:minHeight="48dp"
-            android:src="@drawable/ic_baseline_filter_list_24" />
-    </FrameLayout>
+        android:layout_height="wrap_content" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:padding="5dp"
@@ -69,7 +41,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/result_header_layout">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_backdrop">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list"
