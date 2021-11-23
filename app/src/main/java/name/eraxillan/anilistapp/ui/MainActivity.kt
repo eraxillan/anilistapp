@@ -28,6 +28,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.ActivityMainBinding
+import name.eraxillan.anilistapp.ui.views.BackdropPanel
 import timber.log.Timber
 
 /**
@@ -47,7 +48,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     private var listener: OnBottomSheetCallbacks? = null
-    private var mBottomSheetBehavior: BottomSheetBehavior<View?>? = null
+
+    fun panel(): BackdropPanel = binding.backdropViews
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -103,8 +105,8 @@ class MainActivity : AppCompatActivity() {
                     parent.closeDrawer(GravityCompat.START)
             }
 
-            // Avoid layout shift to bottom 
-            openBottomSheet()
+            // Avoid layout shift to bottom
+            binding.backdropViews.openBottomSheet()
 
             isHandled
         }
@@ -124,16 +126,6 @@ class MainActivity : AppCompatActivity() {
         this.listener = onBottomSheetCallbacks
     }
 
-    fun closeBottomSheet() {
-        mBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
-    }
-
-    fun openBottomSheet() {
-        mBottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
-
-        getMediaListFragment().scrollUp()
-    }
-
     private fun configureBackdrop() {
         val fragment = supportFragmentManager.findFragmentById(R.id.nav_host)
 
@@ -151,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                 // Set the bottom sheet expanded by default
                 bs.state = BottomSheetBehavior.STATE_EXPANDED
 
-                mBottomSheetBehavior = bs
+                binding.backdropViews.setBehavior(bs)
             }
         }
 
@@ -160,13 +152,12 @@ class MainActivity : AppCompatActivity() {
         val currentFragment = navHost?.childFragmentManager?.primaryNavigationFragment
         binding.backdropViews.show(navHost == null || currentFragment is MediaListFragment)
 
-        binding.backdropViews.openBottomSheetCallback = { openBottomSheet() }
-        binding.backdropViews.closeBottomSheetCallback = { closeBottomSheet() }
-
         binding.backdropViews.setupListeners { filterOptions, sortOption ->
             Timber.d("Fetching filtered and sorted media list...")
             getMediaListFragment().search(filterOptions, sortOption)
         }
+
+        binding.backdropViews.scrollUpAction = { getMediaListFragment().scrollUp() }
     }
 
     private fun getMediaListFragment(): MediaListFragment {

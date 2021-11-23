@@ -126,8 +126,12 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
 
         binding.retryButton.setOnClickListener { listAdapter.retry() }
 
-        binding.toolbarBackdrop.openBottomSheetCallback = { (requireActivity() as MainActivity).openBottomSheet() }
-        binding.toolbarBackdrop.closeBottomSheetCallback = { (requireActivity() as MainActivity).closeBottomSheet() }
+        binding.toolbarBackdrop.openBottomSheetCallback = {
+            (requireActivity() as MainActivity).panel().openBottomSheet()
+        }
+        binding.toolbarBackdrop.closeBottomSheetCallback = {
+            (requireActivity() as MainActivity).panel().closeBottomSheet()
+        }
         binding.toolbarBackdrop.setListeners()
 
         if (preferences.isFirstRun) {

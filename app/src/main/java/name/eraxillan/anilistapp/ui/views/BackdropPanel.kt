@@ -20,18 +20,25 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.BackdropPanelBinding
 import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.repository.PreferenceRepository
 import timber.log.Timber
 
+
 class BackdropPanel : ConstraintLayout {
     private var _binding: BackdropPanelBinding? = null
     private val binding get() = _binding!!
+
+    private var mBottomSheetBehavior: BottomSheetBehavior<View?>? = null
+
+    var scrollUpAction: (() -> Unit)? = null
 
     constructor(context: Context): super(context) {
         init(context, null)
@@ -68,9 +75,6 @@ class BackdropPanel : ConstraintLayout {
 
     fun show(isVisible: Boolean) { binding.filterContainerLayout.isVisible = isVisible }
 
-    var openBottomSheetCallback: (() -> Unit)? = null
-    var closeBottomSheetCallback: (() -> Unit)? = null
-
     fun setupListeners(
         onApplyListener: (filterOptions: MediaFilter, sortOption: MediaSort) -> Unit
     ) {
@@ -93,8 +97,22 @@ class BackdropPanel : ConstraintLayout {
             saveSortOption(sortOption)
 
             onApplyListener(filterOptions, sortOption)
-            openBottomSheetCallback?.invoke()
+            openBottomSheet()
         }
+    }
+
+    fun closeBottomSheet() {
+        mBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+    fun openBottomSheet() {
+        mBottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
+
+        scrollUpAction?.invoke()
+    }
+
+    fun setBehavior(behavior: BottomSheetBehavior<View?>) {
+        mBottomSheetBehavior = behavior
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
