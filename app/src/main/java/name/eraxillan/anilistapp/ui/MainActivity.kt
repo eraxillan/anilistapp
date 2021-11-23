@@ -17,26 +17,18 @@
 package name.eraxillan.anilistapp.ui
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.*
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.ActivityMainBinding
 import name.eraxillan.anilistapp.ui.views.BackdropPanel
 import timber.log.Timber
 
-/**
- * An interface to communicate between fragment and activity
- */
-interface OnBottomSheetCallbacks {
-    fun onStateChanged(bottomSheet: View, newState: Int)
-}
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -46,8 +38,6 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-
-    private var listener: OnBottomSheetCallbacks? = null
 
     fun panel(): BackdropPanel = binding.backdropViews
 
@@ -122,31 +112,7 @@ class MainActivity : AppCompatActivity() {
         return navHostFragment.navController
     }
 
-    fun setOnBottomSheetCallbacks(onBottomSheetCallbacks: OnBottomSheetCallbacks) {
-        this.listener = onBottomSheetCallbacks
-    }
-
     private fun configureBackdrop() {
-        val fragment = supportFragmentManager.findFragmentById(R.id.nav_host)
-
-        (fragment?.view?.parent as View).let { view ->
-            BottomSheetBehavior.from(view).let { bs ->
-                bs.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                    override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-
-                    override fun onStateChanged(bottomSheet: View, newState: Int) {
-                        // Call the interface to notify a state change
-                        listener?.onStateChanged(bottomSheet, newState)
-                    }
-                })
-
-                // Set the bottom sheet expanded by default
-                bs.state = BottomSheetBehavior.STATE_EXPANDED
-
-                binding.backdropViews.setBehavior(bs)
-            }
-        }
-
         // Show backdrop controls only on `MediaListFragment` ("Discover" menu item)
         val navHost = supportFragmentManager.primaryNavigationFragment // NavHostFragment
         val currentFragment = navHost?.childFragmentManager?.primaryNavigationFragment

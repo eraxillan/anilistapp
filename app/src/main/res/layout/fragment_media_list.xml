@@ -29,7 +29,10 @@
     <name.eraxillan.anilistapp.ui.views.BackdropToolbar
         android:id="@+id/toolbar_backdrop"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:padding="5dp"

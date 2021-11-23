@@ -48,7 +48,7 @@ import java.time.LocalDate
 
 
 @AndroidEntryPoint
-class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
+class MediaListFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentMediaListBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!
@@ -102,8 +102,6 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        (requireActivity() as MainActivity).setOnBottomSheetCallbacks(this)
-
         // Inflate the layout for this fragment
         _binding = FragmentMediaListBinding.inflate(inflater, container, false)
         return binding.root
@@ -126,6 +124,7 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
 
         binding.retryButton.setOnClickListener { listAdapter.retry() }
 
+        initBackdrop()
         binding.toolbarBackdrop.openBottomSheetCallback = {
             (requireActivity() as MainActivity).panel().openBottomSheet()
         }
@@ -171,13 +170,6 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onStateChanged(bottomSheet: View, newState: Int) {
-        binding.toolbarBackdrop.currentState = newState
-
-        if (_binding == null) return
-        binding.toolbarBackdrop.changeState(listAdapter.itemCount)
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -281,6 +273,28 @@ class MediaListFragment : BottomSheetDialogFragment(), OnBottomSheetCallbacks {
         searchJob = viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getMediaListStream(filter, sortBy).collectLatest {
                 listAdapter.submitData(it)
+            }
+        }
+    }
+
+    fun initBackdrop() {
+        (parentFragment?.view?.parent as View).let { view ->
+            BottomSheetBehavior.from(view).let { bs ->
+                bs.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                    override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+
+                    override fun onStateChanged(bottomSheet: View, newState: Int) {
+                        binding.toolbarBackdrop.currentState = newState
+
+                        if (_binding == null) return
+                        binding.toolbarBackdrop.changeState(listAdapter.itemCount)
+                    }
+                })
+
+                // Set the bottom sheet expanded by default
+                bs.state = BottomSheetBehavior.STATE_EXPANDED
+
+                (requireActivity() as MainActivity).panel().setBehavior(bs)
             }
         }
     }
