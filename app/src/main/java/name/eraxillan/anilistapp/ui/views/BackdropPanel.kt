@@ -38,8 +38,6 @@ class BackdropPanel : ConstraintLayout {
 
     private var mBottomSheetBehavior: BottomSheetBehavior<View?>? = null
 
-    var scrollUpAction: (() -> Unit)? = null
-
     constructor(context: Context): super(context) {
         init(context, null)
     }
@@ -107,8 +105,6 @@ class BackdropPanel : ConstraintLayout {
 
     fun openBottomSheet() {
         mBottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
-
-        scrollUpAction?.invoke()
     }
 
     fun setBehavior(behavior: BottomSheetBehavior<View?>) {

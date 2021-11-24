@@ -26,11 +26,26 @@
         app:destination="@id/mediaDetailFragment" >
     </action>
 
+    <action
+        android:id="@+id/actionMediaSearch"
+        app:destination="@id/mediaListFragment" >
+    </action>
+
     <fragment
         android:id="@+id/mediaListFragment"
         android:name="name.eraxillan.anilistapp.ui.MediaListFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_media_list">
+        <argument
+            android:name="filterOptions"
+            app:argType="name.eraxillan.anilistapp.model.MediaFilter"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="sortOption"
+            app:argType="name.eraxillan.anilistapp.model.MediaSort"
+            app:nullable="false"
+            android:defaultValue="UNKNOWN" />
     </fragment>
 
     <fragment

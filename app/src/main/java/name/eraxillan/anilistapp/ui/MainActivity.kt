@@ -120,15 +120,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.backdropViews.setupListeners { filterOptions, sortOption ->
             Timber.d("Fetching filtered and sorted media list...")
-            getMediaListFragment().search(filterOptions, sortOption)
+            searchMedia(filterOptions, sortOption, findNavController())
         }
-
-        binding.backdropViews.scrollUpAction = { getMediaListFragment().scrollUp() }
-    }
-
-    private fun getMediaListFragment(): MediaListFragment {
-        val navHost = supportFragmentManager.primaryNavigationFragment // NavHostFragment
-        val currentFragment = navHost?.childFragmentManager?.primaryNavigationFragment
-        return currentFragment as MediaListFragment
     }
 }

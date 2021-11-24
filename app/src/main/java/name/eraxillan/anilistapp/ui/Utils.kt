@@ -22,10 +22,19 @@ import androidx.core.graphics.ColorUtils
 import androidx.navigation.NavController
 import name.eraxillan.anilistapp.NavGraphDirections
 import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
+import name.eraxillan.anilistapp.model.MediaFilter
+import name.eraxillan.anilistapp.model.MediaSort
 
 fun showMediaInfo(media: LocalMediaWithRelations, navController: NavController) {
     val directions = NavGraphDirections.actionMediaDetails(
         media, media.localMedia.romajiTitle
+    )
+    navController.navigate(directions)
+}
+
+fun searchMedia(filterOptions: MediaFilter, sortOption: MediaSort, navController: NavController) {
+    val directions = NavGraphDirections.actionMediaSearch(
+        filterOptions, sortOption
     )
     navController.navigate(directions)
 }

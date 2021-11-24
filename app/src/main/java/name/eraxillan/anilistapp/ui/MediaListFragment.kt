@@ -23,6 +23,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.work.WorkInfo
@@ -49,9 +50,12 @@ import java.time.LocalDate
 
 @AndroidEntryPoint
 class MediaListFragment : BottomSheetDialogFragment() {
+
     private var _binding: FragmentMediaListBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!
+
+    private val args: MediaListFragmentArgs by navArgs()
 
     /**
      * `by viewModels<MediaViewModel>()` is a lazy delegate that creates a new `viewModel`
@@ -138,7 +142,11 @@ class MediaListFragment : BottomSheetDialogFragment() {
             setupDefaultSortOption()
             waitForDatabaseReady()
         } else {
-            search(preferences.filterOptions, preferences.sortOption)
+            val filterOptions = args.filterOptions ?: preferences.filterOptions
+            val sortOption = if (args.sortOption != MediaSort.UNKNOWN) args.sortOption
+                else preferences.sortOption
+
+            search(filterOptions, sortOption)
         }
     }
 
@@ -284,9 +292,9 @@ class MediaListFragment : BottomSheetDialogFragment() {
                     override fun onSlide(bottomSheet: View, slideOffset: Float) {}
 
                     override fun onStateChanged(bottomSheet: View, newState: Int) {
-                        binding.toolbarBackdrop.currentState = newState
-
                         if (_binding == null) return
+
+                        binding.toolbarBackdrop.currentState = newState
                         binding.toolbarBackdrop.changeState(listAdapter.itemCount)
                     }
                 })

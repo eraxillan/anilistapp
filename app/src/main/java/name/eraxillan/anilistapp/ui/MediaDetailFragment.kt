@@ -31,7 +31,6 @@ import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.ui.adapter.MediaDetailAdapter
 import name.eraxillan.anilistapp.databinding.FragmentMediaDetailBinding
 import name.eraxillan.anilistapp.viewmodel.FavoriteMediaViewModel
-import name.eraxillan.anilistapp.viewmodel.MediaViewModel
 
 
 @AndroidEntryPoint
