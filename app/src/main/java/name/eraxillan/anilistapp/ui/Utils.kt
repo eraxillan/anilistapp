@@ -24,6 +24,7 @@ import name.eraxillan.anilistapp.NavGraphDirections
 import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort
+import name.eraxillan.anilistapp.model.MediaSortArg
 
 fun showMediaInfo(media: LocalMediaWithRelations, navController: NavController) {
     val directions = NavGraphDirections.actionMediaDetails(
@@ -34,7 +35,7 @@ fun showMediaInfo(media: LocalMediaWithRelations, navController: NavController) 
 
 fun searchMedia(filterOptions: MediaFilter, sortOption: MediaSort, navController: NavController) {
     val directions = NavGraphDirections.actionMediaSearch(
-        filterOptions, sortOption
+        filterOptions, MediaSortArg(sortOption)
     )
     navController.navigate(directions)
 }

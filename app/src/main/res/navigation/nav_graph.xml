@@ -43,9 +43,9 @@
             android:defaultValue="@null" />
         <argument
             android:name="sortOption"
-            app:argType="name.eraxillan.anilistapp.model.MediaSort"
-            app:nullable="false"
-            android:defaultValue="UNKNOWN" />
+            app:argType="name.eraxillan.anilistapp.model.MediaSortArg"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 
     <fragment

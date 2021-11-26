@@ -16,6 +16,10 @@
 
 package name.eraxillan.anilistapp.model
 
+import android.os.Parcelable
+import androidx.navigation.NavArgs
+import kotlinx.parcelize.Parcelize
+
 /** The current releasing status of the media */
 enum class MediaStatus {
     /** Has completed and is no longer being released */
@@ -209,3 +213,8 @@ enum class MediaSort {
     /** Constant for unknown enum values */
     UNKNOWN,
 }
+
+@Parcelize
+data class MediaSortArg(
+    val value: MediaSort
+) : NavArgs, Parcelable

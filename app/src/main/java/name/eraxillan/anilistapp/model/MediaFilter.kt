@@ -17,6 +17,7 @@
 package name.eraxillan.anilistapp.model
 
 import android.os.Parcelable
+import androidx.navigation.NavArgs
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
@@ -34,7 +35,7 @@ data class MediaFilter(
     val country: MediaCountry? = null,
     val sources: List<MediaSourceEnum>? = null,
     val isLicensed: Boolean? = null,
-) : Parcelable {
+) : NavArgs, Parcelable {
 
     fun isAbsent(): Boolean {
         return genres == null && tags == null && year == null && season == null &&

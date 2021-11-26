@@ -48,14 +48,19 @@ import name.eraxillan.anilistapp.repository.PreferenceRepository
 import java.time.LocalDate
 
 
+const val ARG_FILTER = "filter_fragment_argument"
+const val ARG_SORT = "sort_fragment_argument"
+
+
 @AndroidEntryPoint
-class MediaListFragment constructor() : BottomSheetDialogFragment() {
+class MediaListFragment: BottomSheetDialogFragment() {
 
     private var _binding: FragmentMediaListBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
     private val binding get() = _binding!!
 
-    private val args: MediaListFragmentArgs by navArgs()
+    private val argsNavigation: MediaListFragmentArgs by navArgs()
+    private lateinit var argsConstructor: MediaListFragmentArgs
 
     /**
      * `by viewModels<MediaViewModel>()` is a lazy delegate that creates a new `viewModel`
@@ -99,6 +104,14 @@ class MediaListFragment constructor() : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
+        arguments?.let {
+            it.takeIf { !it.isEmpty }?.let { bundle ->
+                val filterOptions = bundle.getParcelable<MediaFilter>(ARG_FILTER)
+                val sortOptions = bundle.getParcelable<MediaSortArg>(ARG_SORT)
+                argsConstructor = MediaListFragmentArgs(filterOptions, sortOptions)
+            }
+        }
 
         // Trigger database creation and initialization by doing some query
         initializeDatabase()
@@ -144,9 +157,14 @@ class MediaListFragment constructor() : BottomSheetDialogFragment() {
             setupDefaultSortOption()
             waitForDatabaseReady()
         } else {
+            val args = if (arguments != null && arguments?.isEmpty == false) {
+                argsConstructor
+            } else {
+                argsNavigation
+            }
+
             val filterOptions = args.filterOptions ?: preferences.filterOptions
-            val sortOption = if (args.sortOption != MediaSort.UNKNOWN) args.sortOption
-                else preferences.sortOption
+            val sortOption = args.sortOption?.value ?: preferences.sortOption
 
             search(filterOptions, sortOption)
         }
@@ -366,5 +384,18 @@ class MediaListFragment constructor() : BottomSheetDialogFragment() {
                 // TODO: do something with progress information
                 //val value = workInfo.progress.getInt(INIT_DATABASE_WORKER_PROGRESS_KEY, 0)
             })
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    companion object {
+        @JvmStatic
+        fun newInstance(filter: MediaFilter, sort: MediaSort) =
+            MediaListFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(ARG_FILTER, filter)
+                    putParcelable(ARG_SORT, MediaSortArg(sort))
+                }
+            }
     }
 }
