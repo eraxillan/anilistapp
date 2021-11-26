@@ -51,9 +51,9 @@
             android:layout_height="match_parent" />
 
         <!--
-        * app:behavior_skipCollapsed=”true”:
+        * app:behavior_skipCollapsed="true":
           prevents bottom sheet component to stop in the middle when we’re dragging it down
-        * app:behavior_peekHeight="70dp":
+        * app:behavior_peekHeight="120dp":
           the height when the bottom sheet is collapsed
         * app:layout_behavior=".GestureLockedBottomSheetBehavior":
           sets a custom class to block any gesture on the bottom sheet

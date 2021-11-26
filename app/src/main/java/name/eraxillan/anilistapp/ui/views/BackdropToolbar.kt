@@ -26,6 +26,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.ToolbarBackdropBinding
 
+
+/**
+ * Backdrop toolbar control to allow user show/hide back layer
+ */
 class BackdropToolbar: ConstraintLayout {
     private var _binding: ToolbarBackdropBinding? = null
     private val binding get() = _binding!!
@@ -63,13 +67,17 @@ class BackdropToolbar: ConstraintLayout {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    var currentState: Int = BottomSheetBehavior.STATE_EXPANDED
+    var currentState: Int = BottomSheetBehavior.STATE_COLLAPSED
     var openBottomSheetCallback: (() -> Unit)? = null
     var closeBottomSheetCallback: (() -> Unit)? = null
 
     fun setListeners() {
         binding.resultText.setOnClickListener {
-            openBottomSheetCallback?.invoke()
+            if (currentState == BottomSheetBehavior.STATE_EXPANDED) {
+                closeBottomSheetCallback?.invoke()
+            } else {
+                openBottomSheetCallback?.invoke()
+            }
         }
 
         binding.filterImage.setOnClickListener {

@@ -49,7 +49,7 @@ import java.time.LocalDate
 
 
 @AndroidEntryPoint
-class MediaListFragment : BottomSheetDialogFragment() {
+class MediaListFragment constructor() : BottomSheetDialogFragment() {
 
     private var _binding: FragmentMediaListBinding? = null
     // This property is only valid between `onCreateView` and `onDestroyView`
@@ -131,9 +131,11 @@ class MediaListFragment : BottomSheetDialogFragment() {
         initBackdrop()
         binding.toolbarBackdrop.openBottomSheetCallback = {
             (requireActivity() as MainActivity).panel().openBottomSheet()
+            (requireActivity() as MainActivity).panel().show(false)
         }
         binding.toolbarBackdrop.closeBottomSheetCallback = {
             (requireActivity() as MainActivity).panel().closeBottomSheet()
+            (requireActivity() as MainActivity).panel().show(true)
         }
         binding.toolbarBackdrop.setListeners()
 
@@ -268,10 +270,10 @@ class MediaListFragment : BottomSheetDialogFragment() {
         }
     }
 
-    fun scrollUp() {
+    /*fun scrollUp() {
         //listAdapter.retry()
         binding.list.scrollToPosition(0)
-    }
+    }*/
 
     fun search(filter: MediaFilter, sortBy: MediaSort) {
         // Make sure we cancel the previous job before creating a new one
@@ -285,7 +287,7 @@ class MediaListFragment : BottomSheetDialogFragment() {
         }
     }
 
-    fun initBackdrop() {
+    private fun initBackdrop() {
         (parentFragment?.view?.parent as View).let { view ->
             BottomSheetBehavior.from(view).let { bs ->
                 bs.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
