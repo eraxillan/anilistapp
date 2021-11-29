@@ -49,11 +49,11 @@ abstract class MediaDao {
             -- TODO: implement fuzzy full text search like Anilist backend do
             (:search IS NULL OR :search = '' OR romaji_title LIKE '%' || :search || '%') AND
             (:year IS NULL OR :year = 0 OR start_season_year = :year) AND
-            (:country IS NULL OR :country = '' OR country_of_origin = :country) AND            
+            (:country IS NULL OR :country = '' OR country_of_origin = :country) AND
             (:season IS NULL OR :season = 'UNKNOWN' OR start_season = :season) AND
             (:status IS NULL OR :status = 'UNKNOWN' OR status = :status) AND
             (:isLicensed IS NULL OR is_licensed = :isLicensed) AND
-            (:formatsCount = 0 OR format IN (:formats)) AND            
+            (:formatsCount = 0 OR format IN (:formats)) AND
             (:sourcesCount = 0 OR source IN (:sources)) AND
             anilist_id IN (
                 SELECT anilist_id FROM media_with_genres
