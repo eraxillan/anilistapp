@@ -100,10 +100,12 @@ class BackdropPanel : ConstraintLayout {
     }
 
     fun closeBottomSheet() {
+        check(mBottomSheetBehavior != null)
         mBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
     fun openBottomSheet() {
+        check(mBottomSheetBehavior != null)
         mBottomSheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
