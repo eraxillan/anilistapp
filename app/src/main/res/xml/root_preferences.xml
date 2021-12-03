@@ -30,24 +30,28 @@
             app:useSimpleSummaryProvider="true"/>
 
         <SwitchPreferenceCompat
+            android:enabled="false"
             android:id="@+id/english_titles_switch"
             app:key="english_titles"
             app:summary="Show English titles if available"
             app:title="English Titles" />
 
         <SwitchPreferenceCompat
+            android:enabled="false"
             android:id="@+id/upcoming_as_countdown_switch"
             app:key="upcoming_as_countdown"
             app:summary="Airing episode times will appear as days and hours remaining instead of the date"
             app:title="Show Airing Episode Times as Countdowns" />
 
         <SwitchPreferenceCompat
+            android:enabled="false"
             android:id="@+id/swipe_to_refresh_switch"
             app:key="swipe_to_refresh"
             app:summary="With this enabled, you can swipe down to refresh the content on the Home screen"
             app:title="Swipe to Refresh Home Screen" />
 
         <SwitchPreferenceCompat
+            android:enabled="false"
             android:id="@+id/external_browser_switch"
             app:key="external_browser"
             app:summary="Use external browser to open links"
@@ -58,12 +62,14 @@
     <PreferenceCategory app:title="List">
 
         <SwitchPreferenceCompat
+            android:enabled="false"
             android:id="@+id/auto_synchronize_switch"
             app:key="list_auto_synchronize"
             app:summary="Synchronize your list when the application starts"
             app:title="Auto Synchronization" />
 
         <ListPreference
+            android:enabled="false"
             android:id="@+id/default_list"
             app:key="default_list"
             app:defaultValue="anime"
@@ -73,18 +79,21 @@
             app:useSimpleSummaryProvider="true" />
 
         <SwitchPreferenceCompat
+            android:enabled="false"
             android:id="@+id/save_sorting_state_switch"
             app:key="save_sorting_state"
             app:summary="Don't lose sorting state when app is closing"
             app:title="Save Sorting State" />
 
         <SwitchPreferenceCompat
+            android:enabled="false"
             android:id="@+id/display_tags_switch"
             app:key="display_tags"
             app:summary="Displaying your tags in list"
             app:title="Display Tags" />
 
         <SwitchPreferenceCompat
+            android:enabled="false"
             android:id="@+id/simple_view_switch"
             app:key="simple_view"
             app:summary="Don't show posters in list"
@@ -97,12 +106,14 @@
         app:summary="NSFW means Not Safe For Work content">
 
         <SwitchPreferenceCompat
+            android:enabled="false"
             android:id="@+id/nsfw_in_list_switch"
             app:key="nsfw_in_list"
             app:summary="Display NSFW content in your list"
             app:title="Your List" />
 
         <SwitchPreferenceCompat
+            android:enabled="false"
             android:id="@+id/nsfw_in_discover_switch"
             app:key="nsfw_in_discover"
             app:summary="Display NSFW content in Discover section and Search results"

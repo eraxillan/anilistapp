@@ -67,7 +67,7 @@ class MediaDetailAdapter(var media: LocalMediaWithRelations, @ColorInt val surfa
         val nativeTitle = if (localMedia.nativeTitle.isNotEmpty()) localMedia.nativeTitle else PLACEHOLDER_STRING
         val synonyms = media.titleSynonyms.joinToString(", ") { synonym -> synonym.name }
 
-        // Airing anime specific fields
+        // Airing media specific fields
         val nextEpisodeNo = if (localMedia.nextEpisodeNo != -1) localMedia.nextEpisodeNo.toString() else PLACEHOLDER_STRING
         val nextEpisodeDate = if (localMedia.nextEpisodeAiringAt != null) localMedia.nextEpisodeAiringAt!!.getDisplayString() else PLACEHOLDER_STRING
         // TODO: add remaining time too
@@ -80,8 +80,7 @@ class MediaDetailAdapter(var media: LocalMediaWithRelations, @ColorInt val surfa
 
         // TODO: extract these strings to resources
         val text = when (position) {
-            // NOTE: currently only airing anime requested from Anilist;
-            // else we need to hide airing-specific data fields for non-airing media
+            // TODO: hide airing-specific data fields for non-airing media
             0 -> "Airing\nEpisode $nextEpisodeNo: $nextEpisodeDate"
             1 -> "Format: $format"
             2 -> "Episodes: $episodes"

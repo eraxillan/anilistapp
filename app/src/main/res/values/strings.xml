@@ -15,7 +15,7 @@
  -->
 
 <resources>
-    <string name="app_name">Airing anime schedule</string>
+    <string name="app_name">Anime list</string>
 
     <!-- TODO: global constants -->
     <string name="invalid_url">https://www.invalid.com</string>

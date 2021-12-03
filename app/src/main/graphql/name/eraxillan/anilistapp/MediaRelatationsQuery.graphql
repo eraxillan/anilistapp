@@ -1,4 +1,4 @@
-query AnimeRelations($id_in: [Int!]!, $page: Int!, $perPage: Int!) {
+query MediaRelations($id_in: [Int!]!, $page: Int!, $perPage: Int!) {
   Page(page: $page, perPage: $perPage) {
     pageInfo {
       total

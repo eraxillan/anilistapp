@@ -1,4 +1,4 @@
-query AnimeDetail($id: Int, $page: Int!, $perPage: Int!) {
+query MediaDetail($id: Int, $page: Int!, $perPage: Int!) {
   Page(page: $page, perPage: $perPage) {
     pageInfo {
       total

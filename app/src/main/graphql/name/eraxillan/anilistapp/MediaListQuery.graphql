@@ -1,4 +1,4 @@
-query AiringAnime(
+query MediaList(
   $page: Int!, $perPage: Int!,
   $genres: [String!], $tags: [String!],
   $seasonYear: Int, $season: MediaSeason,

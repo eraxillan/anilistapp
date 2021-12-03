@@ -25,7 +25,7 @@ import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.ui.holder.MediaListHolder
 
 class MediaListAdapter
-    : PagingDataAdapter<LocalMediaWithRelations, MediaListHolder>(AiringAnimeDiffCallback()) {
+    : PagingDataAdapter<LocalMediaWithRelations, MediaListHolder>(MediaDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaListHolder {
         return MediaListHolder(
@@ -36,12 +36,12 @@ class MediaListAdapter
     }
 
     override fun onBindViewHolder(holder: MediaListHolder, position: Int) {
-        val anime = getItem(position)
-        anime?.let { holder.bind(position, anime) }
+        val media = getItem(position)
+        media?.let { holder.bind(position, media) }
     }
 }
 
-class AiringAnimeDiffCallback : DiffUtil.ItemCallback<LocalMediaWithRelations>() {
+class MediaDiffCallback : DiffUtil.ItemCallback<LocalMediaWithRelations>() {
     override fun areItemsTheSame(oldItem: LocalMediaWithRelations, newItem: LocalMediaWithRelations): Boolean {
         return oldItem.localMedia.anilistId == newItem.localMedia.anilistId
     }

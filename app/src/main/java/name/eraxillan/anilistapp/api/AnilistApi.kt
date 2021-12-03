@@ -41,20 +41,20 @@ import java.lang.NumberFormatException
 
 
 /**
- * Used to connect to the Anilist API to fetch airing anime schedule and details
+ * Used to connect to the Anilist API to fetch media schedule and details
  */
 class AnilistApi(private val client: ApolloClient) {
 
-    suspend fun getGenreList(): Response<MediaGenresQuery.Data> = postRequestInternal(MediaGenresQuery(), 0)
+    /*suspend fun getGenreList(): Response<MediaGenresQuery.Data> = postRequestInternal(MediaGenresQuery(), 0)*/
 
-    suspend fun getTagList(): Response<MediaTagsQuery.Data> = postRequestInternal(MediaTagsQuery(), 0)
+    /*suspend fun getTagList(): Response<MediaTagsQuery.Data> = postRequestInternal(MediaTagsQuery(), 0)*/
 
     // TODO: Anilist API does not have such kind of query now, but it can be added in future
     //suspend fun getStudioList(): Response<MediaStudiosQuery.Data>? = postRequestInternal(MediaStudiosQuery(), 0)
-    suspend fun findStudio(name: String): Response<MediaStudioQuery.Data> = postRequestInternal(MediaStudioQuery(name), 0)
+    /*suspend fun findStudio(name: String): Response<MediaStudioQuery.Data> = postRequestInternal(MediaStudioQuery(name), 0)*/
 
     suspend fun getMediaList(page: Int, perPage: Int, filter: MediaFilter, sort: MediaSort)
-        : Response<AiringAnimeQuery.Data> {
+        : Response<MediaListQuery.Data> {
 
         check(page >= 1) { Timber.e("page < 0") }
         check(perPage >= 1) { Timber.e("perPage < 0") }
@@ -69,7 +69,7 @@ class AnilistApi(private val client: ApolloClient) {
             Timber.e("sortByAnilist == AnilistMediaSort.UNKNOWN__")
         }
 
-        val mediaListQuery = AiringAnimeQuery(
+        val mediaListQuery = MediaListQuery(
             page = page,
             perPage = perPage,
 
@@ -94,8 +94,6 @@ class AnilistApi(private val client: ApolloClient) {
             postRequestInternal(query: Q, retryNumber: Int): Response<R> {
 
         return try {
-            //client.query(airingAnimeQuery).toFlow()
-
             val response = client.query(query).await()
             if (response.hasErrors()) {
                 val messages = response.errors?.joinToString(", ") { error -> error.message }
@@ -131,40 +129,40 @@ class AnilistApi(private val client: ApolloClient) {
         }
     }
 
-    /*suspend fun getAnimeDetail(id: Int, page: Int, perPage: Int): Response<AnimeDetailQuery.Data> {
-        val animeDetailQuery = AnimeDetailQuery(
+    /*suspend fun getMediaDetail(id: Int, page: Int, perPage: Int): Response<MediaDetailQuery.Data> {
+        val mediaDetailQuery = MediaDetailQuery(
             page = page,
             perPage = perPage,
             id = Input.fromNullable(id),
-            //search = Input.fromNullable("anime_name")
+            //search = Input.fromNullable("media_name")
         )
 
-        return postRequestInternal(animeDetailQuery, 0)
+        return postRequestInternal(mediaDetailQuery, 0)
     }*/
 
-    private suspend fun getAnimeRelations(ids: List<Long>, page: Int, perPage: Int)
-        : Response<AnimeRelationsQuery.Data> {
+    private suspend fun getMediaRelations(ids: List<Long>, page: Int, perPage: Int)
+        : Response<MediaRelationsQuery.Data> {
 
-        val animeRelationsQuery = AnimeRelationsQuery(
+        val mediaRelationsQuery = MediaRelationsQuery(
             page = page,
             perPage = perPage,
             id_in = ids.map { it.toInt() }
         )
 
-        return postRequestInternal(animeRelationsQuery, 0)
+        return postRequestInternal(mediaRelationsQuery, 0)
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private fun getPrequel(medium: AnimeRelationsQuery.Medium): Pair<Boolean, Int> {
+    private fun getPrequel(medium: MediaRelationsQuery.Medium): Pair<Boolean, Int> {
         val prequelEdge = medium.relations?.edges?.filterNotNull()?.find { edge ->
-            // Anime can have only one prequel and have not at all
+            // Media can have only one prequel and have not at all
             if (edge.relationType == AnilistMediaRelation.PREQUEL &&
                 edge.node?.type == AnilistMediaType.ANIME &&
                 edge.node.status == AnilistMediaStatus.FINISHED
             ) {
                 val title = edge.node.title?.romaji
-                Timber.d("Prequel anime found: $title")
+                Timber.d("Prequel media found: $title")
                 true
             } else
                 false
@@ -177,19 +175,19 @@ class AnilistApi(private val client: ApolloClient) {
     private tailrec suspend fun searchPrequels(relations: Map<Long, MutableList<Long>>): Int {
         // Free AniList API rate limit restricted with just 90 req/sec!
         // So we need to make as few requests as possible.
-        // To achieve this, query all airing anime relations in one request using `id_in` argument
+        // To achieve this, query all media relations in one request using `id_in` argument
 
         if (relations.isEmpty()) return 0
 
-        // Recursion stop condition: all anime in list marked with special stop-value (-1)
+        // Recursion stop condition: all media in list marked with special stop-value (-1)
         val finishedCount = relations.count { entry -> entry.value.last() == -1L }
         Timber.d("Relations search progress: $finishedCount from ${relations.size}")
         if (finishedCount == relations.size) return 0
 
         val ids = relations.map { entry -> entry.value.last() }.filter { entry -> entry != -1L }
-        Timber.d("Remaining anime ids: $ids")
+        Timber.d("Remaining media ids: $ids")
 
-        val responseInner = getAnimeRelations(ids = ids, page = 1, perPage = 30)
+        val responseInner = getMediaRelations(ids = ids, page = 1, perPage = 30)
 
         val rateLimit = getResponseRateLimit(responseInner)
         Timber.d(
@@ -202,12 +200,12 @@ class AnilistApi(private val client: ApolloClient) {
             Timber.e("Relations request failed: `${responseInner.errors.toString()}`!")
             return -1
         }
-        Timber.d("Relations response succeed: ${responseInner.data?.page?.media?.size} anime found")
+        Timber.d("Relations response succeed: ${responseInner.data?.page?.media?.size} media found")
         if (responseInner.data?.page?.media?.isEmpty() == true) return -1
 
-        val animeList = responseInner.data?.page?.media?.filterNotNull() ?: emptyList()
-        animeList.forEach { medium ->
-            Timber.d("Calculation episode count for anime '${medium.title?.romaji}'...")
+        val mediaList = responseInner.data?.page?.media?.filterNotNull() ?: emptyList()
+        mediaList.forEach { medium ->
+            Timber.d("Calculation episode count for media '${medium.title?.romaji}'...")
 
             // Find key with value
             val parent = relations.entries.find { entry -> entry.value.indexOf(medium.id.toLong()) != -1 }
@@ -227,21 +225,21 @@ class AnilistApi(private val client: ApolloClient) {
 
     // TODO: move to custom Worker to increase load speed and avoid rate limit
     suspend fun fillEpisodeCount(
-        serverAnimeList: List<AiringAnimeQuery.Medium>, animeList: List<RemoteMedia>) {
-        val ids = animeList.associateBy(
+        serverMediaList: List<MediaListQuery.Medium>, mediaList: List<RemoteMedia>) {
+        val ids = mediaList.associateBy(
             { it.anilistId }, { mutableListOf(it.anilistId) }
         )
         searchPrequels(ids)
         ids.forEach { entry ->
             val seasonCount = entry.value.size - 1
 
-            val medium = serverAnimeList.find { medium -> medium.id.toLong() == entry.key }
+            val medium = serverMediaList.find { medium -> medium.id.toLong() == entry.key }
             Timber.d(
                 "Id=${entry.key} name '${medium?.title?.romaji}' season count: $seasonCount"
             )
 
-            val anime = animeList.find { anime -> anime.anilistId == entry.key }
-            anime?.season = seasonCount
+            val media = mediaList.find { media -> media.anilistId == entry.key }
+            media?.season = seasonCount
         }
     }
 
@@ -290,7 +288,7 @@ class AnilistApi(private val client: ApolloClient) {
         val hasNextPage: Boolean
     )
 
-    fun getResponsePagination(response: Response<AiringAnimeQuery.Data>): AnilistPagination {
+    fun getResponsePagination(response: Response<MediaListQuery.Data>): AnilistPagination {
         return AnilistPagination(
             totalItems = response.data?.page?.pageInfo?.total ?: 0,
             currentPage = response.data?.page?.pageInfo?.currentPage ?: 0,

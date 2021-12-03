@@ -212,6 +212,10 @@ class MediaListFragment: BottomSheetDialogFragment() {
             val isRefreshSucceeds = loadState.source.refresh is LoadState.NotLoading ||
                     loadState.mediator?.refresh is LoadState.NotLoading
 
+            if (listAdapter.itemCount != 0 && listAdapter.itemCount != NETWORK_PAGE_SIZE) {
+                onMediaListLoaded?.invoke(listAdapter.itemCount)
+            }
+
             // Show empty list
             val isListEmpty = loadState.refresh is LoadState.NotLoading && listAdapter.itemCount == 0
             showEmptyList(isListEmpty)
@@ -289,10 +293,6 @@ class MediaListFragment: BottomSheetDialogFragment() {
         searchJob = viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getMediaListStream(filter, sortBy).collectLatest {
                 listAdapter.submitData(it)
-
-                if (listAdapter.itemCount != NETWORK_PAGE_SIZE) {
-                    onMediaListLoaded?.invoke(listAdapter.itemCount)
-                }
             }
         }
     }

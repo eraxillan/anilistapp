@@ -16,7 +16,7 @@
 
 package name.eraxillan.anilistapp.api
 
-import name.eraxillan.anilistapp.AiringAnimeQuery
+import name.eraxillan.anilistapp.MediaListQuery
 import name.eraxillan.anilistapp.data.room.LocalMedia
 import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.model.*
@@ -95,7 +95,7 @@ fun convertMediaSource(value: MediaSource?) = when (value) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-fun convertAnilistMedia(input: AiringAnimeQuery.Medium): RemoteMedia {
+fun convertAnilistMedia(input: MediaListQuery.Medium): RemoteMedia {
 
     fun convertFormat(value: AnilistMediaFormat?) = when (value) {
         AnilistMediaFormat.TV -> MediaFormat.TV

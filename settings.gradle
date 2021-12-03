@@ -15,4 +15,4 @@
  */
 
 include ':app'
-rootProject.name = "AiringAnimeSchedule"
+rootProject.name = "anilistapp"

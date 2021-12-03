@@ -26,7 +26,6 @@ import name.eraxillan.anilistapp.model.*
 
 /**
  * Media database CRUD: create-read-update-delete
- * NOTE: currently only airing anime stored
  *
  * `LiveData` objects can be observed by another object.
  * `LiveData` notifies any observers when the data changes.
@@ -39,8 +38,76 @@ import name.eraxillan.anilistapp.model.*
  */
 @Dao
 abstract class MediaDao {
+    @Query("SELECT * FROM media_collection")
+    abstract fun getAllMedia(): List<LocalMediaWithRelations>
+
     @Query("SELECT COUNT(*) FROM media_collection")
     abstract fun getAllMediaCount(): Long
+
+    @Transaction
+    @Query(
+        """
+        SELECT * FROM media_collection WHERE
+            -- TODO: implement fuzzy full text search like Anilist backend do
+            (:search IS NULL OR :search = '' OR romaji_title LIKE '%' || :search || '%') AND
+            (:year IS NULL OR :year = 0 OR start_season_year = :year) AND
+            (:country IS NULL OR :country = '' OR country_of_origin = :country) AND
+            (:season IS NULL OR :season = 'UNKNOWN' OR start_season = :season) AND
+            (:status IS NULL OR :status = 'UNKNOWN' OR status = :status) AND
+            (:isLicensed IS NULL OR is_licensed = :isLicensed) AND
+            (:formatsCount = 0 OR format IN (:formats)) AND
+            (:sourcesCount = 0 OR source IN (:sources)) AND
+            anilist_id IN (
+                SELECT anilist_id FROM media_with_genres
+                WHERE :genresCount = 0 OR genre_name IN (:genres) GROUP BY anilist_id
+                HAVING COUNT(*) = :genresCount OR :genresCount = 0
+                INTERSECT
+                SELECT anilist_id FROM media_with_tags
+                WHERE :tagsCount = 0 OR tag_name IN (:tags) GROUP BY anilist_id
+                HAVING COUNT(*) = :tagsCount OR :tagsCount = 0
+                INTERSECT
+                SELECT anilist_id FROM media_with_services
+                WHERE :servicesCount = 0 OR service_name IN (:services) GROUP BY anilist_id
+                --HAVING COUNT(*) = :servicesCount OR :servicesCount = 0
+            )
+            ORDER BY
+            CASE WHEN :sortOption = 1 THEN popularity END DESC,
+            CASE WHEN :sortOption = 2 THEN average_score END DESC,
+            CASE WHEN :sortOption = 3 THEN trending END DESC,
+            CASE WHEN :sortOption = 4 THEN favorites END DESC,
+            CASE WHEN :sortOption = 5 THEN anilist_id END DESC,
+            CASE WHEN :sortOption = 6 THEN start_date END DESC,
+            romaji_title COLLATE NOCASE ASC
+    """
+    )
+    protected abstract fun getFilteredMediaInternal(
+        search: String? = null, year: Int? = null, season: MediaSeason? = null,
+        formats: List<MediaFormatEnum> = emptyList(), formatsCount: Int = 0,
+        status: MediaStatus? = null, country: MediaCountry? = null,
+        sources: List<MediaSourceEnum> = emptyList(), sourcesCount: Int = 0,
+        isLicensed: Boolean? = null,
+        genres: List<String> = emptyList(), genresCount: Int = 0,
+        tags: List<String> = emptyList(), tagsCount: Int = 0,
+        services: List<String> = emptyList(), servicesCount: Int = 0,
+        sortOption: Int = 0
+    ): List<LocalMediaWithRelations>
+
+    fun getFilteredAndSortedMedia(
+        filter: MediaFilter,
+        sort: MediaSort
+    ): List<LocalMediaWithRelations> {
+        return getFilteredMediaInternal(
+            search = filter.search, year = filter.year, season = filter.season,
+            formats = filter.formats.orEmpty(), formatsCount = filter.formats?.size ?: 0,
+            status = filter.status, country = filter.country,
+            sources = filter.sources.orEmpty(), sourcesCount = filter.sources?.size ?: 0,
+            isLicensed = filter.isLicensed,
+            genres = filter.genres.orEmpty(), genresCount = filter.genres?.size ?: 0,
+            tags = filter.tags.orEmpty(), tagsCount = filter.tags?.size ?: 0,
+            services = filter.services.orEmpty(), servicesCount = filter.services?.size ?: 0,
+            sortOption = sort.ordinal
+        )
+    }
 
     @Transaction
     @Query(
