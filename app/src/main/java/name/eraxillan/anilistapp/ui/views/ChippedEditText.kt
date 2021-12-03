@@ -20,10 +20,12 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.os.Parcelable
 import android.text.Editable
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.util.AttributeSet
+import android.util.SparseArray
 import android.view.LayoutInflater
 import androidx.annotation.IntDef
 import androidx.appcompat.content.res.AppCompatResources
@@ -49,11 +51,14 @@ class ChippedEditText : ConstraintLayout {
     private lateinit var dropDownDrawable: Drawable
     private lateinit var clearDrawable: Drawable
 
+    private var chips: MutableList<String> = mutableListOf()
+
     fun interface Listener {
         fun onComplete()
     }
 
     var isCompleteListener: Listener? = null
+    private var suppressCompleteListener: Boolean = false
 
     var title: String
         get() {
@@ -75,7 +80,8 @@ class ChippedEditText : ConstraintLayout {
         checkedElements = Array(value.size) { false }.toBooleanArray()
         field = value
 
-        isCompleteListener?.onComplete()
+        if (!suppressCompleteListener)
+            isCompleteListener?.onComplete()
     }
     private var stringSkipEntry: String = ""
 
@@ -87,7 +93,8 @@ class ChippedEditText : ConstraintLayout {
         checkedElements = Array(value.size) { false }.toBooleanArray()
         field = value
 
-        isCompleteListener?.onComplete()
+        if (!suppressCompleteListener)
+            isCompleteListener?.onComplete()
     }
 
     // Enum entry name, enum entry display string
@@ -98,7 +105,8 @@ class ChippedEditText : ConstraintLayout {
             checkedElements = Array(value.size) { false }.toBooleanArray()
             field = value
 
-            isCompleteListener?.onComplete()
+            if (!suppressCompleteListener)
+                isCompleteListener?.onComplete()
         }
     private var enumSkipEntry: String = ""
 
@@ -300,6 +308,23 @@ class ChippedEditText : ConstraintLayout {
         init(context, attrs)
     }
 
+    override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>?) {
+        //super.dispatchSaveInstanceState(container)
+
+        // As we save our own instance state, ensure our children don't save
+        // and restore their state as well.
+        super.dispatchFreezeSelfOnly(container)
+    }
+
+    override fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>?) {
+        //super.dispatchRestoreInstanceState(container)
+
+        /** See comment in {@link #dispatchSaveInstanceState(android.util.SparseArray)} */
+        super.dispatchThawSelfOnly(container)
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     private fun fillStringElements(typedArray: TypedArray) {
         if (typedArray.hasValue(R.styleable.ChippedEditText_stringSkipEntryName)) {
             stringSkipEntry = typedArray.getString(R.styleable.ChippedEditText_stringSkipEntryName) ?: ""
@@ -459,11 +484,15 @@ class ChippedEditText : ConstraintLayout {
         // Add chip as image span
         val span = ImageSpan(drawable)
         editable.setSpan(span, prevLength, editable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        chips.add(text)
     }
 
     private fun removeChips(editable: Editable) {
         //editable.clearSpans()
         editable.clear()
+
+        chips.clear()
     }
 
     private enum class EndIconType { Clear, Dropdown, None }
@@ -569,6 +598,8 @@ class ChippedEditText : ConstraintLayout {
             setEndIcon(EndIconType.Clear)
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     companion object {
         // Data Binding properties support

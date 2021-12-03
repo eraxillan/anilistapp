@@ -40,6 +40,7 @@
 
     <!-- Media list fragment -->
     <string name="add_media_button_hint">Add media to favorites</string>
+    <string name="search_results_loading">Loading…</string>
     <string name="search_results_count">%1$d results</string>
     <string name="see_the_results">See the results</string>
     <string name="filter_button">Filtering and sorting options for media list</string>

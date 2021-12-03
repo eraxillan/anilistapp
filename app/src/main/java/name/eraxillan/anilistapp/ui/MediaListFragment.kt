@@ -28,7 +28,6 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -45,6 +44,7 @@ import java.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.repository.PreferenceRepository
+import name.eraxillan.anilistapp.utilities.NETWORK_PAGE_SIZE
 import java.time.LocalDate
 
 
@@ -74,6 +74,9 @@ class MediaListFragment: BottomSheetDialogFragment() {
 
     private var searchJob: Job? = null
     private val listAdapter: MediaListAdapter = MediaListAdapter()
+
+    // FIXME: use ViewModel + LiveData
+    var onMediaListLoaded: ((count: Int) -> Unit)? = null
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -140,17 +143,6 @@ class MediaListFragment: BottomSheetDialogFragment() {
         initSearch()
 
         binding.retryButton.setOnClickListener { listAdapter.retry() }
-
-        initBackdrop()
-        binding.toolbarBackdrop.openBottomSheetCallback = {
-            (requireActivity() as MainActivity).panel().openBottomSheet()
-            (requireActivity() as MainActivity).panel().show(false)
-        }
-        binding.toolbarBackdrop.closeBottomSheetCallback = {
-            (requireActivity() as MainActivity).panel().closeBottomSheet()
-            (requireActivity() as MainActivity).panel().show(true)
-        }
-        binding.toolbarBackdrop.setListeners()
 
         if (preferences.isFirstRun) {
             setupDefaultFilterOptions()
@@ -219,10 +211,6 @@ class MediaListFragment: BottomSheetDialogFragment() {
         listAdapter.addLoadStateListener { loadState ->
             val isRefreshSucceeds = loadState.source.refresh is LoadState.NotLoading ||
                     loadState.mediator?.refresh is LoadState.NotLoading
-            if (isRefreshSucceeds) {
-                binding.toolbarBackdrop.currentState = BottomSheetBehavior.STATE_EXPANDED
-                binding.toolbarBackdrop.changeState(listAdapter.itemCount)
-            }
 
             // Show empty list
             val isListEmpty = loadState.refresh is LoadState.NotLoading && listAdapter.itemCount == 0
@@ -301,28 +289,10 @@ class MediaListFragment: BottomSheetDialogFragment() {
         searchJob = viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getMediaListStream(filter, sortBy).collectLatest {
                 listAdapter.submitData(it)
-            }
-        }
-    }
 
-    private fun initBackdrop() {
-        (parentFragment?.view?.parent as View).let { view ->
-            BottomSheetBehavior.from(view).let { bs ->
-                bs.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                    override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-
-                    override fun onStateChanged(bottomSheet: View, newState: Int) {
-                        if (_binding == null) return
-
-                        binding.toolbarBackdrop.currentState = newState
-                        binding.toolbarBackdrop.changeState(listAdapter.itemCount)
-                    }
-                })
-
-                // Set the bottom sheet expanded by default
-                bs.state = BottomSheetBehavior.STATE_EXPANDED
-
-                (requireActivity() as MainActivity).panel().setBehavior(bs)
+                if (listAdapter.itemCount != NETWORK_PAGE_SIZE) {
+                    onMediaListLoaded?.invoke(listAdapter.itemCount)
+                }
             }
         }
     }
@@ -388,7 +358,7 @@ class MediaListFragment: BottomSheetDialogFragment() {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    companion object {
+    /*companion object {
         @JvmStatic
         fun newInstance(filter: MediaFilter, sort: MediaSort) =
             MediaListFragment().apply {
@@ -397,5 +367,5 @@ class MediaListFragment: BottomSheetDialogFragment() {
                     putParcelable(ARG_SORT, MediaSortArg(sort))
                 }
             }
-    }
+    }*/
 }

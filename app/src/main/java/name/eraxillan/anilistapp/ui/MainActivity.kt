@@ -26,8 +26,6 @@ import androidx.navigation.ui.*
 import dagger.hilt.android.AndroidEntryPoint
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.ActivityMainBinding
-import name.eraxillan.anilistapp.ui.views.BackdropPanel
-import timber.log.Timber
 
 
 @AndroidEntryPoint
@@ -38,8 +36,6 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-
-    fun panel(): BackdropPanel = binding.backdropViews
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,19 +54,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+
         _binding = null
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        configureBackdrop()
-    }
-
     override fun onSupportNavigateUp(): Boolean {
-        val result = findNavController().navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-        binding.backdropViews.show(true)
-        return result
+        return findNavController().navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,23 +73,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(findNavController(), appBarConfiguration)
         binding.navView.setupWithNavController(findNavController())
 
-        binding.navView.setNavigationItemSelectedListener { menuItem ->
-            // Show backdrop controls only on `MediaListFragment` ("Discover" menu item)
-            binding.backdropViews.show(menuItem.itemId == 2131296544)
-
-            val isHandled = NavigationUI.onNavDestinationSelected(menuItem, findNavController())
-            if (isHandled) {
-                val parent = binding.navView.parent
-                if (parent is DrawerLayout)
-                    parent.closeDrawer(GravityCompat.START)
-            }
-
-            // Avoid layout shift to bottom
-            binding.backdropViews.openBottomSheet()
-
-            isHandled
-        }
-
         // Set the elevation equal to zero to remove any shadows between the action bar
         // (same thing for the toolbar) and the layout
         supportActionBar?.elevation = 0f
@@ -110,17 +82,5 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host) as NavHostFragment
         return navHostFragment.navController
-    }
-
-    private fun configureBackdrop() {
-        // Show backdrop controls only on `MediaListFragment` ("Discover" menu item)
-        val navHost = supportFragmentManager.primaryNavigationFragment // NavHostFragment
-        val currentFragment = navHost?.childFragmentManager?.primaryNavigationFragment
-        binding.backdropViews.show(navHost == null || currentFragment is MediaListFragment)
-
-        binding.backdropViews.setupListeners { filterOptions, sortOption ->
-            Timber.d("Fetching filtered and sorted media list...")
-            searchMedia(filterOptions, sortOption, findNavController())
-        }
     }
 }

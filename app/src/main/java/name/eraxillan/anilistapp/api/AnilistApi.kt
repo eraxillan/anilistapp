@@ -28,7 +28,7 @@ import name.eraxillan.anilistapp.*
 import name.eraxillan.anilistapp.model.RemoteMedia
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.utilities.NETWORK_REQUEST_RETRY_COUNT
-import name.eraxillan.anilistapp.utilities.NETWORK_REQUEST_RETRY_INVERVAL_MS
+import name.eraxillan.anilistapp.utilities.NETWORK_REQUEST_RETRY_INTERVAL_MS
 import name.eraxillan.anilistapp.model.MediaSort as MediaSort
 import name.eraxillan.anilistapp.type.MediaRelation as AnilistMediaRelation
 import name.eraxillan.anilistapp.type.MediaSort as AnilistMediaSort
@@ -121,8 +121,8 @@ class AnilistApi(private val client: ApolloClient) {
                     throw e
                 }
 
-                Timber.d("Sleep ${NETWORK_REQUEST_RETRY_INVERVAL_MS / 1_000} seconds and try again...")
-                delay(NETWORK_REQUEST_RETRY_INVERVAL_MS)
+                Timber.d("Sleep ${NETWORK_REQUEST_RETRY_INTERVAL_MS / 1_000} seconds and try again...")
+                delay(NETWORK_REQUEST_RETRY_INTERVAL_MS)
 
                 return postRequestInternal(query, retryNumber + 1)
             }

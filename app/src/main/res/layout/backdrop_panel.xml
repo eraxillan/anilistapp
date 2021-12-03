@@ -33,6 +33,7 @@
         android:layout_gravity="center">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:visibility="gone"
             android:id="@+id/filter_container_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

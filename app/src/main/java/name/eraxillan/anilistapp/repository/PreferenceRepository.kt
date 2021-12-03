@@ -114,6 +114,15 @@ class PreferenceRepository private constructor(private val preferences: SharedPr
             field = value
         }
 
+    var isFilterCollapsed: Boolean = false
+    get() {
+            return preferences.getBoolean(PREF_IS_COLLAPSED_OPTION, false)
+        }
+        set(value) {
+            preferences.edit().putBoolean(PREF_IS_COLLAPSED_OPTION, value).apply()
+            field = value
+        }
+
     // Singleton object
     companion object {
         @Volatile

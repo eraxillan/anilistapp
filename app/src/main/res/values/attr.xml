@@ -42,4 +42,7 @@
     <declare-styleable name="BackdropToolbar">
     </declare-styleable>
 
+    <declare-styleable name="BackdropFrontView">
+    </declare-styleable>
+
 </resources>

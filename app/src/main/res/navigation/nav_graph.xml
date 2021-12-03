@@ -19,7 +19,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mediaListFragment">
+    app:startDestination="@id/mediaBackdropFragment">
 
     <action
         android:id="@+id/actionMediaDetails"
@@ -28,7 +28,7 @@
 
     <action
         android:id="@+id/actionMediaSearch"
-        app:destination="@id/mediaListFragment" >
+        app:destination="@id/mediaBackdropFragment" >
     </action>
 
     <fragment
@@ -36,6 +36,40 @@
         android:name="name.eraxillan.anilistapp.ui.MediaListFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_media_list">
+        <argument
+            android:name="filterOptions"
+            app:argType="name.eraxillan.anilistapp.model.MediaFilter"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="sortOption"
+            app:argType="name.eraxillan.anilistapp.model.MediaSortArg"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mediaBackdropFragment"
+        android:name="name.eraxillan.anilistapp.ui.BackdropFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_backdrop" >
+        <argument
+            android:name="filterOptions"
+            app:argType="name.eraxillan.anilistapp.model.MediaFilter"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="sortOption"
+            app:argType="name.eraxillan.anilistapp.model.MediaSortArg"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/mediaBackdropFrontFragment"
+        android:name="name.eraxillan.anilistapp.ui.views.BackdropFrontViewFragment"
+        android:label="Backdrop Front View"
+        tools:layout="@layout/backdrop_front_view" >
         <argument
             android:name="filterOptions"
             app:argType="name.eraxillan.anilistapp.model.MediaFilter"

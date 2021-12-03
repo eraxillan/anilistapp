@@ -20,31 +20,21 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginTop="?attr/actionBarSize"
+    android:layout_marginTop="0dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/corner"
     tools:context=".ui.MediaListFragment">
 
-    <name.eraxillan.anilistapp.ui.views.BackdropToolbar
-        android:id="@+id/toolbar_backdrop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:padding="5dp"
         android:id="@+id/swipe_refresh"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="0dp"
+        android:padding="5dp"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_backdrop">
+        app:layout_constraintTop_toTopOf="parent" >
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list"

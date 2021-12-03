@@ -22,10 +22,10 @@
     </data>
 
     <FrameLayout
-        android:layout_margin="0dp"
         android:id="@+id/result_header_layout"
+        android:background="@drawable/corner"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="?attr/actionBarSize"
         android:animateLayoutChanges="true"
         android:elevation="10dp"
         android:orientation="horizontal"
@@ -35,11 +35,11 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/result_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center|start"
             android:layout_marginStart="15dp"
-            android:text="@string/search_results_count"
+            android:text="@string/search_results_loading"
             android:textSize="20sp" />
 
         <androidx.appcompat.widget.AppCompatImageButton
