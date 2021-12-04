@@ -16,3 +16,4 @@
 
 include ':app'
 rootProject.name = "anilistapp"
+include ':customviews:chippededittext'
