@@ -29,6 +29,7 @@ import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.BackdropPanelBinding
 import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.repository.PreferenceRepository
+import name.eraxillan.customviews.ChippedEditText
 import timber.log.Timber
 
 

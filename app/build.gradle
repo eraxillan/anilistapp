@@ -97,7 +97,6 @@ dependencies {
     //kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
-    // FIXME: test
     implementation 'com.github.eraxillan:AiringAnimeSchedule:1.0'
 
     implementation "androidx.core:core-ktx:$core_ctx_version"
