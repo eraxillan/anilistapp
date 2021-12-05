@@ -38,6 +38,7 @@ import name.eraxillan.anilistapp.model.*
  */
 @Dao
 abstract class MediaDao {
+    @Transaction
     @Query("SELECT * FROM media_collection")
     abstract fun getAllMedia(): List<LocalMediaWithRelations>
 
