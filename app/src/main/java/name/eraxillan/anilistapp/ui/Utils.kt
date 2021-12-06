@@ -16,7 +16,9 @@
 
 package name.eraxillan.anilistapp.ui
 
+import android.content.Context
 import android.graphics.Color
+import android.util.TypedValue
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
 import androidx.navigation.NavController
@@ -25,6 +27,7 @@ import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort
 import name.eraxillan.anilistapp.model.MediaSortArg
+
 
 fun showMediaInfo(media: LocalMediaWithRelations, navController: NavController) {
     val directions = NavGraphDirections.actionMediaDetails(
@@ -52,4 +55,10 @@ fun correctTextColor(@ColorInt textColor: Int, @ColorInt backgroundColor: Int) :
     if (textColorIsLight && backgroundColorIsLight)
         return Color.BLACK
     return textColor
+}
+
+fun actionBarHeight(context: Context) = with(TypedValue().also {
+    context.theme.resolveAttribute(android.R.attr.actionBarSize, it, true)
+}) {
+    TypedValue.complexToDimensionPixelSize(this.data, context.resources.displayMetrics)
 }

@@ -30,17 +30,9 @@
     <name.eraxillan.anilistapp.ui.views.BackdropBackLayer
         android:id="@+id/fragment_backdrop_back"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:layout_marginBottom="0dp" />
+        android:layout_height="match_parent" />
 
     <name.eraxillan.anilistapp.ui.views.BackdropFrontLayer
-        app:behavior_skipCollapsed="true"
-        app:layout_behavior=".GestureLockedBottomSheetBehavior"
-        app:behavior_peekHeight="?attr/actionBarSize"
-
         android:id="@+id/fragment_backdrop_front"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

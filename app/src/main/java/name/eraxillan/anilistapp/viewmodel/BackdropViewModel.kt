@@ -16,6 +16,7 @@
 
 package name.eraxillan.anilistapp.viewmodel
 
+import android.util.AttributeSet
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import timber.log.Timber
@@ -33,6 +34,8 @@ class BackdropViewModel @Inject constructor() : ViewModel() {
 
     var isCollapsed: Boolean = false
     var resultCount: Int = 0
+
+    var containerAttrs: AttributeSet? = null
 
     /*private val _resultCount = MutableLiveData<Int>(0)
     val resultCount: LiveData<Int> = _resultCount*/

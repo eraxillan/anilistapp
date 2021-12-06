@@ -16,20 +16,25 @@
 
 package name.eraxillan.anilistapp.ui.views
 
+import android.content.Context
 import android.os.Bundle
+import android.util.AttributeSet
 import androidx.core.os.bundleOf
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
+import name.eraxillan.anilistapp.GestureLockedBottomSheetBehavior
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.BackdropFrontLayerContainerBinding
 import name.eraxillan.anilistapp.repository.PreferenceRepository
 import name.eraxillan.anilistapp.utilities.autoCleared
 import name.eraxillan.anilistapp.ui.MediaListFragment
+import name.eraxillan.anilistapp.ui.actionBarHeight
 import name.eraxillan.anilistapp.viewmodel.BackdropViewModel
 import timber.log.Timber
 
@@ -41,6 +46,8 @@ class BackdropFrontLayerContainer : Fragment() {
     //private val viewModel by viewModels<BackdropViewModel>()
     private val sharedViewModel: BackdropViewModel by activityViewModels()
     private lateinit var frontLayerFragment: MediaListFragment
+    private var attrs: AttributeSet? = null
+    private var behavior: BottomSheetBehavior<View>? = null
 
     override fun onResume() {
         super.onResume()
@@ -101,9 +108,42 @@ class BackdropFrontLayerContainer : Fragment() {
         createListFragment()
 
         val (container, front, paddingTop, panel) = getParentViews()
+        setPanelLayoutBehavior(front)
         setPanelBehavior(front, panel)
         setPanelCallbacks(container, paddingTop, panel)
         setToolbarCallbacks()
+    }
+
+    override fun onInflate(context: Context, attrs: AttributeSet, savedInstanceState: Bundle?) {
+        super.onInflate(context, attrs, savedInstanceState)
+
+        check(savedInstanceState == null)
+        this.attrs = attrs
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (attrs != null) {
+            sharedViewModel.containerAttrs = attrs
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private fun setPanelLayoutBehavior(front: View) {
+        check(sharedViewModel.containerAttrs != null)
+        check(front.layoutParams is CoordinatorLayout.LayoutParams)
+
+        behavior = GestureLockedBottomSheetBehavior(
+            requireContext(), sharedViewModel.containerAttrs
+        )
+        check(behavior != null)
+        behavior?.skipCollapsed = true
+        behavior?.peekHeight = actionBarHeight(requireContext())
+
+        val frontLayoutParams = front.layoutParams as CoordinatorLayout.LayoutParams
+        frontLayoutParams.behavior = behavior
     }
 
     private fun createListFragment() {
