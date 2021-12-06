@@ -27,8 +27,8 @@
     tools:context=".ui.BackdropFragment"
     android:fitsSystemWindows="false" >
 
-    <name.eraxillan.anilistapp.ui.views.BackdropPanel
-        android:id="@+id/fragment_backdrop_panel"
+    <name.eraxillan.anilistapp.ui.views.BackdropBackLayer
+        android:id="@+id/fragment_backdrop_back"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="0dp"
@@ -36,18 +36,12 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:layout_marginBottom="0dp" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_backdrop_container"
+    <name.eraxillan.anilistapp.ui.views.BackdropFrontLayer
         app:behavior_skipCollapsed="true"
         app:layout_behavior=".GestureLockedBottomSheetBehavior"
         app:behavior_peekHeight="?attr/actionBarSize"
-        android:layout_weight="1"
-        android:elevation="1dp"
+
+        android:id="@+id/fragment_backdrop_front"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="?actionBarSize"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp" />
+        android:layout_height="match_parent" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

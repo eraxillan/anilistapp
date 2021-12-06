@@ -26,15 +26,15 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import name.eraxillan.anilistapp.R
-import name.eraxillan.anilistapp.databinding.BackdropPanelBinding
+import name.eraxillan.anilistapp.databinding.BackdropBackLayerBinding
 import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.repository.PreferenceRepository
 import name.eraxillan.customviews.ChippedEditText
 import timber.log.Timber
 
 
-class BackdropPanel : ConstraintLayout {
-    private var _binding: BackdropPanelBinding? = null
+class BackdropBackLayer : ConstraintLayout {
+    private var _binding: BackdropBackLayerBinding? = null
     private val binding get() = _binding!!
 
     private var mBottomSheetBehavior: BottomSheetBehavior<View?>? = null
@@ -55,13 +55,13 @@ class BackdropPanel : ConstraintLayout {
         // The layout for this activity is a Data Binding layout so it needs
         // to be inflated using DataBindingUtil.
         _binding = DataBindingUtil.inflate(
-            LayoutInflater.from(context), R.layout.backdrop_panel,this, true
+            LayoutInflater.from(context), R.layout.backdrop_back_layer,this, true
         )
         check(_binding != null)
 
         if (attrs != null) {
             val typedArray: TypedArray = context.obtainStyledAttributes(
-                attrs, R.styleable.BackdropPanel
+                attrs, R.styleable.BackdropBackLayer
             )
 
             // ...

@@ -26,7 +26,7 @@ import androidx.fragment.app.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import dagger.hilt.android.AndroidEntryPoint
 import name.eraxillan.anilistapp.R
-import name.eraxillan.anilistapp.databinding.BackdropFrontViewBinding
+import name.eraxillan.anilistapp.databinding.BackdropFrontLayerContainerBinding
 import name.eraxillan.anilistapp.repository.PreferenceRepository
 import name.eraxillan.anilistapp.utilities.autoCleared
 import name.eraxillan.anilistapp.ui.MediaListFragment
@@ -35,8 +35,8 @@ import timber.log.Timber
 
 
 @AndroidEntryPoint
-class BackdropFrontViewFragment : Fragment() {
-    private var binding by autoCleared<BackdropFrontViewBinding>()
+class BackdropFrontLayerContainer : Fragment() {
+    private var binding by autoCleared<BackdropFrontLayerContainerBinding>()
 
     //private val viewModel by viewModels<BackdropViewModel>()
     private val sharedViewModel: BackdropViewModel by activityViewModels()
@@ -86,9 +86,9 @@ class BackdropFrontViewFragment : Fragment() {
 
         // The layout for this activity is a Data Binding layout so it needs
         // to be inflated using DataBindingUtil.
-        binding = DataBindingUtil.inflate<BackdropFrontViewBinding>(
+        binding = DataBindingUtil.inflate(
             inflater,
-            R.layout.backdrop_front_view,
+            R.layout.backdrop_front_layer_container,
             container,
             false
         )
@@ -100,8 +100,8 @@ class BackdropFrontViewFragment : Fragment() {
 
         createListFragment()
 
-        val (container, paddingTop, panel) = getParentViews()
-        setPanelBehavior(container, panel)
+        val (container, front, paddingTop, panel) = getParentViews()
+        setPanelBehavior(front, panel)
         setPanelCallbacks(container, paddingTop, panel)
         setToolbarCallbacks()
     }
@@ -122,8 +122,9 @@ class BackdropFrontViewFragment : Fragment() {
 
     private data class ParentContainer(
         val containerView: View,
+        val frontContainerView: View,
         val containerTopPadding: Int,
-        val panel: BackdropPanel
+        val backLayer: BackdropBackLayer
     )
 
     private fun getParentViews(): ParentContainer {
@@ -133,13 +134,21 @@ class BackdropFrontViewFragment : Fragment() {
         val paddingTop = container.paddingTop
 
         // app:id/fragment_backdrop_panel
-        val panel = (binding.root.parent.parent as View).findViewById<BackdropPanel>(R.id.fragment_backdrop_panel)
-        check(panel.id == R.id.fragment_backdrop_panel)
+        val childContainer = parentFragment?.view
+        check(childContainer != null)
+        val panel = childContainer.findViewById<BackdropBackLayer>(R.id.fragment_backdrop_back)
+        check(panel.id == R.id.fragment_backdrop_back)
 
-        return ParentContainer(container, paddingTop, panel)
+        // app:id/fragment_backdrop_front
+        val frontContainer = parentFragment?.view
+        check(frontContainer != null)
+        val front = frontContainer.findViewById<BackdropFrontLayer>(R.id.fragment_backdrop_front)
+        check(front.id == R.id.fragment_backdrop_front)
+
+        return ParentContainer(container, front, paddingTop, panel)
     }
 
-    private fun setPanelBehavior(container: View, panel: BackdropPanel) {
+    private fun setPanelBehavior(container: View, backLayer: BackdropBackLayer) {
         container.let { view1 ->
             BottomSheetBehavior.from(view1).let { bs ->
                 bs.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
@@ -157,22 +166,22 @@ class BackdropFrontViewFragment : Fragment() {
                 // Set the bottom sheet expanded by default
                 bs.state = BottomSheetBehavior.STATE_EXPANDED
 
-                panel.setBehavior(bs)
+                backLayer.setBehavior(bs)
             }
         }
     }
 
-    private fun setPanelCallbacks(container: View, paddingTop: Int, panel: BackdropPanel) {
+    private fun setPanelCallbacks(container: View, paddingTop: Int, backLayer: BackdropBackLayer) {
         binding.toolbarBackdropFrontView.openBottomSheetCallback = {
-            panel.openBottomSheet()
-            panel.show(false)
+            backLayer.openBottomSheet()
+            backLayer.show(false)
 
             // FIXME: a crunch
             container.setPadding(0, paddingTop, 0, 0)
         }
         binding.toolbarBackdropFrontView.closeBottomSheetCallback = {
-            panel.closeBottomSheet()
-            panel.show(true)
+            backLayer.closeBottomSheet()
+            backLayer.show(true)
 
             // FIXME: a crunch
             container.setPadding(0, 0, 0, 0)

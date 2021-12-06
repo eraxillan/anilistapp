@@ -16,12 +16,9 @@
 -->
 
 <resources>
-    <declare-styleable name="BackdropPanel">
+    <declare-styleable name="BackdropBackLayer">
     </declare-styleable>
 
-    <declare-styleable name="BackdropToolbar">
-    </declare-styleable>
-
-    <declare-styleable name="BackdropFrontView">
+    <declare-styleable name="BackdropFrontLayer">
     </declare-styleable>
 </resources>

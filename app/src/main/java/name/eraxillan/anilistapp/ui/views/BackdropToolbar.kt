@@ -53,7 +53,7 @@ class BackdropToolbar: ConstraintLayout {
         init(context, attrs)
     }
 
-    private fun init(context: Context, attrs: AttributeSet?) {
+    private fun init(context: Context, @Suppress("UNUSED_PARAMETER") attrs: AttributeSet?) {
         // The layout for this activity is a Data Binding layout so it needs
         // to be inflated using DataBindingUtil.
         _binding = DataBindingUtil.inflate(
@@ -61,7 +61,7 @@ class BackdropToolbar: ConstraintLayout {
         )
         check(_binding != null)
 
-        if (attrs != null) {
+        /*if (attrs != null) {
             val typedArray: TypedArray = context.obtainStyledAttributes(
                 attrs, R.styleable.BackdropToolbar
             )
@@ -69,7 +69,7 @@ class BackdropToolbar: ConstraintLayout {
             // ...
 
             typedArray.recycle()
-        }
+        }*/
     }
 
     override fun onAttachedToWindow() {

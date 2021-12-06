@@ -20,15 +20,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.*
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
-import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.FragmentBackdropBinding
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort
-import name.eraxillan.anilistapp.ui.views.BackdropFrontViewFragment
 import timber.log.Timber
 
 
@@ -70,15 +67,15 @@ class BackdropFragment : Fragment() {
     private fun configureBackdrop() {
         //if (sharedViewModel.isFirstRun) {
         if (childFragmentManager.fragments.size == 0) {
-            childFragmentManager.commitNow {
+            /*childFragmentManager.commitNow {
                 setReorderingAllowed(true)
-                add<BackdropFrontViewFragment>(R.id.fragment_backdrop_container, args = bundleOf())
-            }
+                add<BackdropFrontLayerContainer>(R.id.fragment_backdrop_container, args = bundleOf())
+            }*/
 
             Timber.d("Backdrop front view fragment was dynamically created")
         }
 
-        binding.fragmentBackdropPanel.setupListeners {
+        binding.fragmentBackdropBack.setupListeners {
                 filterOptions: MediaFilter, sortOption: MediaSort ->
 
             Timber.d("Fetching filtered and sorted media list...")

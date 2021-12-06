@@ -67,9 +67,9 @@
 
     <fragment
         android:id="@+id/mediaBackdropFrontFragment"
-        android:name="name.eraxillan.anilistapp.ui.views.BackdropFrontViewFragment"
+        android:name="name.eraxillan.anilistapp.ui.views.BackdropFrontLayerContainer"
         android:label="Backdrop Front View"
-        tools:layout="@layout/backdrop_front_view" >
+        tools:layout="@layout/backdrop_front_layer_container" >
         <argument
             android:name="filterOptions"
             app:argType="name.eraxillan.anilistapp.model.MediaFilter"
