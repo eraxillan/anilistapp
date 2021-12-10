@@ -26,13 +26,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import name.eraxillan.anilistapp.databinding.FragmentBackdropBinding
 import name.eraxillan.anilistapp.model.MediaFilter
 import name.eraxillan.anilistapp.model.MediaSort
+import name.eraxillan.anilistapp.utilities.autoCleared
 import timber.log.Timber
 
 
 @AndroidEntryPoint
 class BackdropFragment : Fragment() {
-    private var _binding: FragmentBackdropBinding? = null
-    private val binding get() = _binding!!
+    private var binding by autoCleared<FragmentBackdropBinding>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,16 +43,8 @@ class BackdropFragment : Fragment() {
         //check(savedInstanceState == null)
 
         // Inflate the layout for this fragment
-        _binding = FragmentBackdropBinding.inflate(inflater, container, false)
-        check(_binding != null)
-
+        binding = FragmentBackdropBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,24 +54,13 @@ class BackdropFragment : Fragment() {
         configureBackdrop()
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     private fun configureBackdrop() {
-        //if (sharedViewModel.isFirstRun) {
-        if (childFragmentManager.fragments.size == 0) {
-            /*childFragmentManager.commitNow {
-                setReorderingAllowed(true)
-                add<BackdropFrontLayerContainer>(R.id.fragment_backdrop_container, args = bundleOf())
-            }*/
-
-            Timber.d("Backdrop front view fragment was dynamically created")
-        }
-
-        binding.fragmentBackdropBack.setupListeners {
+        binding.backLayer.setupListeners {
                 filterOptions: MediaFilter, sortOption: MediaSort ->
 
             Timber.d("Fetching filtered and sorted media list...")
             searchMedia(filterOptions, sortOption, findNavController())
+            binding.fragmentBackdropBackLayer.openBottomSheet()
         }
     }
 }

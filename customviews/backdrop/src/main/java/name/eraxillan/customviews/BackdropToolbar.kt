@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.ui.views
+package name.eraxillan.customviews
 
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import name.eraxillan.anilistapp.R
-import name.eraxillan.anilistapp.databinding.ToolbarBackdropBinding
-import timber.log.Timber
-
-
-private const val EXPANSION_STATE_KEY = "expansion_state_key"
-private const val ITEM_COUNT_STATE_KEY = "item_count_state_key"
+import name.eraxillan.customviews.databinding.BackdropToolbarBinding
 
 
 /**
@@ -38,7 +31,7 @@ private const val ITEM_COUNT_STATE_KEY = "item_count_state_key"
 class BackdropToolbar: ConstraintLayout {
     var itemCount: Int = 0
 
-    private var _binding: ToolbarBackdropBinding? = null
+    private var _binding: BackdropToolbarBinding? = null
     private val binding get() = _binding!!
 
     constructor(context: Context): super(context) {
@@ -54,14 +47,10 @@ class BackdropToolbar: ConstraintLayout {
     }
 
     private fun init(context: Context, @Suppress("UNUSED_PARAMETER") attrs: AttributeSet?) {
-        // The layout for this activity is a Data Binding layout so it needs
-        // to be inflated using DataBindingUtil.
-        _binding = DataBindingUtil.inflate(
-            LayoutInflater.from(context), R.layout.toolbar_backdrop,this, true
-        )
+        _binding = BackdropToolbarBinding.inflate(LayoutInflater.from(context), this, true)
         check(_binding != null)
 
-        /*if (attrs != null) {
+        if (attrs != null) {
             val typedArray: TypedArray = context.obtainStyledAttributes(
                 attrs, R.styleable.BackdropToolbar
             )
@@ -69,7 +58,7 @@ class BackdropToolbar: ConstraintLayout {
             // ...
 
             typedArray.recycle()
-        }*/
+        }
     }
 
     override fun onAttachedToWindow() {

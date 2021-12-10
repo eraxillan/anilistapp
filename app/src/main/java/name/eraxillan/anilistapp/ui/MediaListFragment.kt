@@ -28,7 +28,6 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import name.eraxillan.anilistapp.R
@@ -45,7 +44,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import name.eraxillan.anilistapp.model.*
 import name.eraxillan.anilistapp.repository.PreferenceRepository
 import name.eraxillan.anilistapp.utilities.NETWORK_PAGE_SIZE
+import name.eraxillan.customviews.ResultFragment
 import java.time.LocalDate
+import name.eraxillan.anilistapp.utilities.autoCleared
 
 
 const val ARG_FILTER = "filter_fragment_argument"
@@ -53,11 +54,8 @@ const val ARG_SORT = "sort_fragment_argument"
 
 
 @AndroidEntryPoint
-class MediaListFragment: BottomSheetDialogFragment() {
-
-    private var _binding: FragmentMediaListBinding? = null
-    // This property is only valid between `onCreateView` and `onDestroyView`
-    private val binding get() = _binding!!
+class MediaListFragment : ResultFragment() {
+    private var binding by autoCleared<FragmentMediaListBinding>()
 
     private val argsNavigation: MediaListFragmentArgs by navArgs()
     private lateinit var argsConstructor: MediaListFragmentArgs
@@ -74,9 +72,6 @@ class MediaListFragment: BottomSheetDialogFragment() {
 
     private var searchJob: Job? = null
     private val listAdapter: MediaListAdapter = MediaListAdapter()
-
-    // FIXME: use ViewModel + LiveData
-    var onMediaListLoaded: ((count: Int) -> Unit)? = null
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -123,15 +118,8 @@ class MediaListFragment: BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-        _binding = FragmentMediaListBinding.inflate(inflater, container, false)
+        binding = FragmentMediaListBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    // NOTE: fragments outlive their views!
-    //       One must clean up any references to the binging class instance here
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -209,12 +197,18 @@ class MediaListFragment: BottomSheetDialogFragment() {
         }
 
         listAdapter.addLoadStateListener { loadState ->
+            val isLoading = loadState.mediator?.refresh is LoadState.Loading
             val isRefreshSucceeds = loadState.source.refresh is LoadState.NotLoading ||
                     loadState.mediator?.refresh is LoadState.NotLoading
 
-            if (listAdapter.itemCount != 0 && listAdapter.itemCount != NETWORK_PAGE_SIZE) {
-                onMediaListLoaded?.invoke(listAdapter.itemCount)
+            if (!isLoading && isRefreshSucceeds && (listAdapter.itemCount != NETWORK_PAGE_SIZE)) {
+                onDataLoaded?.invoke(listAdapter.itemCount)
             }
+        }
+
+        listAdapter.addLoadStateListener { loadState ->
+            val isRefreshSucceeds = loadState.source.refresh is LoadState.NotLoading ||
+                    loadState.mediator?.refresh is LoadState.NotLoading
 
             // Show empty list
             val isListEmpty = loadState.refresh is LoadState.NotLoading && listAdapter.itemCount == 0

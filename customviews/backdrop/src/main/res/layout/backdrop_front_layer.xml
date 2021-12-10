@@ -18,9 +18,11 @@
 <androidx.fragment.app.FragmentContainerView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".BackdropFrontLayer"
 
     android:id="@+id/fragment_backdrop_container"
-    android:name="name.eraxillan.anilistapp.ui.views.BackdropFrontLayerContainer"
+    android:name="name.eraxillan.customviews.BackdropFrontLayerContainer"
 
     app:behavior_skipCollapsed="true"
     app:layout_behavior=".GestureLockedBottomSheetBehavior"

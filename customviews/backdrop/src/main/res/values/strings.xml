@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
  ~ Copyright 2021 Aleksandr Kamyshnikov
  ~
@@ -13,9 +12,11 @@
  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  ~ See the License for the specific language governing permissions and
  ~ limitations under the License.
--->
+ -->
 
 <resources>
-    <declare-styleable name="BackdropBackLayerImpl">
-    </declare-styleable>
+    <string name="search_results_loading">Loading…</string>
+    <string name="search_results_count">%1$d results</string>
+    <string name="see_the_results">See the results</string>
+    <string name="filter_button">Filtering and sorting options</string>
 </resources>

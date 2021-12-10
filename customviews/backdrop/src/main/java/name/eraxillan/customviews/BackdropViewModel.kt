@@ -13,9 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-rootProject.name = "anilistapp"
 
-if (!System.env.JITPACK)
-    include ':app'
-include ':customviews:chippededittext'
-include ':customviews:backdrop'
+package name.eraxillan.customviews
+
+import android.util.AttributeSet
+import androidx.lifecycle.ViewModel
+
+
+class BackdropViewModel: ViewModel() {
+    var isCollapsed: Boolean = false
+    var resultCount: Int = 0
+    var containerAttrs: AttributeSet? = null
+}

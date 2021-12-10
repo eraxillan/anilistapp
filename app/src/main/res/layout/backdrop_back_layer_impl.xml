@@ -25,16 +25,17 @@
     </data>
 
     <ScrollView
+        android:id="@+id/fragment_backdrop_backdrop_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="0dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="?attr/actionBarSize"
         android:padding="16dp"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:visibility="gone" >
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:visibility="gone"
-            android:id="@+id/filter_container_layout"
+            android:id="@+id/fragment_backdrop_backdrop_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -200,6 +201,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/sort_input" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </layout>

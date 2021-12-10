@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-rootProject.name = "anilistapp"
 
-if (!System.env.JITPACK)
-    include ':app'
-include ':customviews:chippededittext'
-include ':customviews:backdrop'
+package name.eraxillan.customviews
+
+/**
+ * Constants used throughout the library
+ */
+const val PREF_IS_COLLAPSED_OPTION = "backdropFilterIsCollapsed"

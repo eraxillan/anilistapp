@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.ui.views
+package name.eraxillan.customviews
 
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
-import dagger.hilt.android.AndroidEntryPoint
-import name.eraxillan.anilistapp.R
-import name.eraxillan.anilistapp.databinding.BackdropFrontLayerBinding
+import androidx.fragment.app.Fragment
+import name.eraxillan.customviews.databinding.BackdropFrontLayerBinding
 
 
-@AndroidEntryPoint
 class BackdropFrontLayer : ConstraintLayout {
     private var _binding: BackdropFrontLayerBinding? = null
     private val binding get() = _binding!!
@@ -52,7 +50,12 @@ class BackdropFrontLayer : ConstraintLayout {
                 attrs, R.styleable.BackdropFrontLayer
             )
 
-            // ...
+            if (typedArray.hasValue(R.styleable.BackdropFrontLayer_resultFragment)) {
+                val name = typedArray.getString(R.styleable.BackdropFrontLayer_resultFragment) ?: ""
+                @Suppress("UNCHECKED_CAST")
+                val fragmentClass = Class.forName(name) as Class<out Fragment>
+                binding.fragmentBackdropContainer.tag = fragmentClass
+            }
 
             typedArray.recycle()
         }

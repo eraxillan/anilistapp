@@ -16,6 +16,18 @@
 -->
 
 <resources>
-    <declare-styleable name="BackdropBackLayerImpl">
+    <declare-styleable name="BackdropToolbar">
+    </declare-styleable>
+
+    <declare-styleable name="BackdropBackLayer">
+    </declare-styleable>
+
+    <declare-styleable name="BackdropFrontLayer">
+        <attr name="resultFragment" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="BackdropView">
+        <attr name="backLayerFragment" format="string" />
+        <attr name="frontLayerFragment" format="string" />
     </declare-styleable>
 </resources>

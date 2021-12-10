@@ -16,9 +16,7 @@
 
 package name.eraxillan.anilistapp.ui
 
-import android.content.Context
 import android.graphics.Color
-import android.util.TypedValue
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
 import androidx.navigation.NavController
@@ -57,8 +55,3 @@ fun correctTextColor(@ColorInt textColor: Int, @ColorInt backgroundColor: Int) :
     return textColor
 }
 
-fun actionBarHeight(context: Context) = with(TypedValue().also {
-    context.theme.resolveAttribute(android.R.attr.actionBarSize, it, true)
-}) {
-    TypedValue.complexToDimensionPixelSize(this.data, context.resources.displayMetrics)
-}

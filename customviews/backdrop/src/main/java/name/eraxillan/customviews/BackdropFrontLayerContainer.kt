@@ -14,38 +14,30 @@
  * limitations under the License.
  */
 
-package name.eraxillan.anilistapp.ui.views
+package name.eraxillan.customviews
 
 import android.content.Context
 import android.os.Bundle
 import android.util.AttributeSet
-import androidx.core.os.bundleOf
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.databinding.DataBindingUtil
+import androidx.core.os.bundleOf
+import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.fragment.app.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import dagger.hilt.android.AndroidEntryPoint
-import name.eraxillan.anilistapp.GestureLockedBottomSheetBehavior
-import name.eraxillan.anilistapp.R
-import name.eraxillan.anilistapp.databinding.BackdropFrontLayerContainerBinding
-import name.eraxillan.anilistapp.repository.PreferenceRepository
-import name.eraxillan.anilistapp.utilities.autoCleared
-import name.eraxillan.anilistapp.ui.MediaListFragment
-import name.eraxillan.anilistapp.ui.actionBarHeight
-import name.eraxillan.anilistapp.viewmodel.BackdropViewModel
+import name.eraxillan.customviews.databinding.BackdropFrontLayerContainerBinding
 import timber.log.Timber
 
 
-@AndroidEntryPoint
-class BackdropFrontLayerContainer : Fragment() {
+class BackdropFrontLayerContainer: Fragment() {
     private var binding by autoCleared<BackdropFrontLayerContainerBinding>()
 
     //private val viewModel by viewModels<BackdropViewModel>()
     private val sharedViewModel: BackdropViewModel by activityViewModels()
-    private lateinit var frontLayerFragment: MediaListFragment
+    private lateinit var frontLayerFragment: ResultFragment
     private var attrs: AttributeSet? = null
     private var behavior: BottomSheetBehavior<View>? = null
 
@@ -91,20 +83,11 @@ class BackdropFrontLayerContainer : Fragment() {
         //super.onCreateView(inflater, container, savedInstanceState)
         //check(savedInstanceState == null)
 
-        // The layout for this activity is a Data Binding layout so it needs
-        // to be inflated using DataBindingUtil.
-        binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.backdrop_front_layer_container,
-            container,
-            false
-        )
+        binding = BackdropFrontLayerContainerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.lifecycleOwner = viewLifecycleOwner
-
         createListFragment()
 
         val (container, front, paddingTop, panel) = getParentViews()
@@ -148,16 +131,17 @@ class BackdropFrontLayerContainer : Fragment() {
 
     private fun createListFragment() {
         if (childFragmentManager.fragments.size == 0) {
-            // Add media list fragment
+            binding.toolbarBackdropFrontView.isVisible = true
+
             childFragmentManager.commitNow {
                 setReorderingAllowed(true)
-                add<MediaListFragment>(R.id.container_backdrop_front_view, args = bundleOf())
+                add(R.id.backdrop_front_fragment_container, getResultFragment(), bundleOf())
             }
             Timber.d("Media list fragment was dynamically created")
         }
 
         frontLayerFragment = childFragmentManager
-            .findFragmentById(R.id.container_backdrop_front_view) as MediaListFragment
+            .findFragmentById(R.id.backdrop_front_fragment_container) as ResultFragment
     }
 
     private data class ParentContainer(
@@ -168,24 +152,26 @@ class BackdropFrontLayerContainer : Fragment() {
     )
 
     private fun getParentViews(): ParentContainer {
-        // app:id/fragment_backdrop_container
         val container = binding.root.parent as View
         check(container.id == R.id.fragment_backdrop_container)
         val paddingTop = container.paddingTop
 
-        // app:id/fragment_backdrop_panel
-        val childContainer = parentFragment?.view
-        check(childContainer != null)
-        val panel = childContainer.findViewById<BackdropBackLayer>(R.id.fragment_backdrop_back)
-        check(panel.id == R.id.fragment_backdrop_back)
+        check(parentFragment?.view != null)
+        val childContainer = parentFragment?.view as ViewGroup
 
-        // app:id/fragment_backdrop_front
-        val frontContainer = parentFragment?.view
-        check(frontContainer != null)
-        val front = frontContainer.findViewById<BackdropFrontLayer>(R.id.fragment_backdrop_front)
-        check(front.id == R.id.fragment_backdrop_front)
+        val backView = childContainer.children.first { childView -> childView is BackdropBackLayer }
+        val frontView = childContainer.children.first { childView -> childView is BackdropFrontLayer }
+        val back = backView as BackdropBackLayer
+        val front = frontView as BackdropFrontLayer
 
-        return ParentContainer(container, front, paddingTop, panel)
+        return ParentContainer(container, front, paddingTop, back)
+    }
+
+    private fun getResultFragment(): Class<out Fragment> {
+        val parentContainer = getParentViews()
+
+        @Suppress("UNCHECKED_CAST")
+        return parentContainer.containerView.tag as Class<out Fragment>
     }
 
     private fun setPanelBehavior(container: View, backLayer: BackdropBackLayer) {
@@ -230,7 +216,7 @@ class BackdropFrontLayerContainer : Fragment() {
 
     private fun setToolbarCallbacks() {
         // Update result count on media list load completion
-        frontLayerFragment.onMediaListLoaded = {
+        frontLayerFragment.onDataLoaded = {
             sharedViewModel.resultCount = it
             binding.toolbarBackdropFrontView.itemCount = it
             binding.toolbarBackdropFrontView.updateState()

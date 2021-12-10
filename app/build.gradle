@@ -89,7 +89,6 @@ android {
 }
 
 dependencies {
-
     // Kotlin annotation processors
     kapt "androidx.room:room-compiler:$room_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
@@ -97,7 +96,9 @@ dependencies {
     //kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
-    implementation 'com.github.eraxillan:AiringAnimeSchedule:1.0'
+    // Custom views
+    implementation "com.github.eraxillan.AiringAnimeSchedule:android-backdrop-view:1.0"
+    implementation "com.github.eraxillan.AiringAnimeSchedule:android-chippededittext-view:1.0"
 
     implementation "androidx.core:core-ktx:$core_ctx_version"
     implementation "androidx.appcompat:appcompat:$app_compat_version"
@@ -114,7 +115,6 @@ dependencies {
 
     implementation "androidx.cardview:cardview:$card_view_version"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swipe_refresh_layout_version"
-    implementation "androidx.preference:preference-ktx:$preference_ktx_version"
 
     // Java 8+ API "desugaring" support: allow using new APIs on older versions of Android
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugar_jdk_libs_version"
