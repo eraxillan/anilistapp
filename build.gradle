@@ -24,7 +24,7 @@ buildscript {
         targetSdkVersion = 31
 
         // App dependencies
-        gradle_version = '7.0.3'
+        gradle_version = '7.0.4'
         kotlin_version = '1.6.0'
         junit_version = '4.13.2'
 
