@@ -17,6 +17,7 @@
 
 package name.eraxillan.anilistapp.utilities
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -29,7 +30,7 @@ import kotlin.reflect.KProperty
  *
  * Accessing this variable while the fragment's view is destroyed will throw NPE.
  */
-class AutoClearedValue<T : Any>(val fragment: Fragment) : ReadWriteProperty<Fragment, T> {
+class AutoClearedValueF<T : Any>(val fragment: Fragment) : ReadWriteProperty<Fragment, T> {
     private var _value: T? = null
 
     init {
@@ -57,7 +58,32 @@ class AutoClearedValue<T : Any>(val fragment: Fragment) : ReadWriteProperty<Frag
     }
 }
 
+class AutoClearedValueA<T : Any>(val activity: AppCompatActivity)
+    : ReadWriteProperty<AppCompatActivity, T> {
+    private var _value: T? = null
+
+    init {
+        activity.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                super.onDestroy(owner)
+                _value = null
+            }
+        })
+    }
+
+    override fun getValue(thisRef: AppCompatActivity, property: KProperty<*>): T {
+        return _value ?: throw IllegalStateException(
+            "should never call auto-cleared-value get when it might not be available"
+        )
+    }
+
+    override fun setValue(thisRef: AppCompatActivity, property: KProperty<*>, value: T) {
+        _value = value
+    }
+}
+
 /**
  * Creates an [AutoClearedValue] associated with this fragment.
  */
-fun <T : Any> Fragment.autoCleared() = AutoClearedValue<T>(this)
+fun <T : Any> Fragment.autoCleared() = AutoClearedValueF<T>(this)
+fun <T : Any> AppCompatActivity.autoCleared() = AutoClearedValueA<T>(this)

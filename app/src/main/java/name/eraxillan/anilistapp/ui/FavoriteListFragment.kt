@@ -29,15 +29,14 @@ import kotlinx.coroutines.launch
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.FragmentFavoriteListBinding
 import name.eraxillan.anilistapp.ui.adapter.FavoriteListAdapter
+import name.eraxillan.anilistapp.utilities.autoCleared
 import name.eraxillan.anilistapp.viewmodel.FavoriteMediaViewModel
 import timber.log.Timber
 
 
 @AndroidEntryPoint
 class FavoriteListFragment : Fragment() {
-    private var _binding: FragmentFavoriteListBinding? = null
-    // This property is only valid between `onCreateView` and `onDestroyView`
-    private val binding get() = _binding!!
+    private var binding by autoCleared<FragmentFavoriteListBinding>()
 
     /**
      * `by viewModels<MediaViewModel>()` is a lazy delegate that creates a new `viewModel`
@@ -76,15 +75,8 @@ class FavoriteListFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-        _binding = FragmentFavoriteListBinding.inflate(inflater, container, false)
+        binding = FragmentFavoriteListBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    // NOTE: fragments outlive their views!
-    //       One must clean up any references to the binging class instance here
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

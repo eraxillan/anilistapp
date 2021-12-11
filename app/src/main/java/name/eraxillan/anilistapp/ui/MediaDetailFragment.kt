@@ -30,18 +30,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.ui.adapter.MediaDetailAdapter
 import name.eraxillan.anilistapp.databinding.FragmentMediaDetailBinding
+import name.eraxillan.anilistapp.utilities.autoCleared
 import name.eraxillan.anilistapp.viewmodel.FavoriteMediaViewModel
 
 
 @AndroidEntryPoint
 class MediaDetailFragment : Fragment() {
-
-    private var _binding: FragmentMediaDetailBinding? = null
-    // This property is only valid between `onCreateView` and `onDestroyView`
-    private val binding get() = _binding!!
-
+    private var binding by autoCleared<FragmentMediaDetailBinding>()
     private val args: MediaDetailFragmentArgs by navArgs()
-
     private val favoriteViewModel by viewModels<FavoriteMediaViewModel>()
 
     override fun onCreateView(
@@ -50,13 +46,8 @@ class MediaDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentMediaDetailBinding.inflate(inflater, container, false)
+        binding = FragmentMediaDetailBinding.inflate(inflater, container, false)
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -18,23 +18,18 @@ package name.eraxillan.anilistapp.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.*
 import dagger.hilt.android.AndroidEntryPoint
 import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.ActivityMainBinding
+import name.eraxillan.anilistapp.utilities.autoCleared
 
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    private var _binding: ActivityMainBinding? = null
-    // This property is only valid between `onCreateView` and `onDestroyView`
-    private val binding get() = _binding!!
-
+    private var binding by autoCleared<ActivityMainBinding>()
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,16 +41,10 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
-        _binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setupActionBar(binding)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        _binding = null
     }
 
     override fun onSupportNavigateUp(): Boolean {
