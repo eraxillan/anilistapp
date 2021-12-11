@@ -207,6 +207,7 @@ class AnilistRemoteMediator(
                 endOfPaginationReached,
                 mediaList
             )
+            check(keysSize == mediaList.size)
 
             val mediaIds = database.mediaDao().insertAll(mediaList.map { it.localMedia })
             check(mediaIds.size == mediaList.size) { Timber.e("mediaIds.size != mediaList.size") }

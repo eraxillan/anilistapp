@@ -30,7 +30,6 @@
         android:id="@+id/fragment_backdrop_back_layer"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-
         <name.eraxillan.anilistapp.ui.BackdropBackLayerImpl
             android:id="@+id/back_layer"
             android:layout_width="match_parent"
@@ -43,3 +42,4 @@
         android:layout_height="match_parent"
         app:resultFragment="name.eraxillan.anilistapp.ui.MediaListFragment" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

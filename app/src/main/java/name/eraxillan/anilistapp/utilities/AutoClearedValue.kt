@@ -58,6 +58,11 @@ class AutoClearedValueF<T : Any>(val fragment: Fragment) : ReadWriteProperty<Fra
     }
 }
 
+/**
+ * A lazy property that gets cleaned up when the activity's view is destroyed.
+ *
+ * Accessing this variable while the activity's view is destroyed will throw NPE.
+ */
 class AutoClearedValueA<T : Any>(val activity: AppCompatActivity)
     : ReadWriteProperty<AppCompatActivity, T> {
     private var _value: T? = null
@@ -83,7 +88,12 @@ class AutoClearedValueA<T : Any>(val activity: AppCompatActivity)
 }
 
 /**
- * Creates an [AutoClearedValue] associated with this fragment.
+ * Creates an [AutoClearedValueF] associated with this fragment
  */
 fun <T : Any> Fragment.autoCleared() = AutoClearedValueF<T>(this)
+
+/**
+ * Creates an [AutoClearedValueA] associated with this activity
+ */
 fun <T : Any> AppCompatActivity.autoCleared() = AutoClearedValueA<T>(this)
+

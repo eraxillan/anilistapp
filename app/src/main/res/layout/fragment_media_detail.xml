@@ -42,5 +42,5 @@
         android:layout_gravity="bottom|end"
         app:srcCompat="@android:drawable/ic_menu_add"
         android:contentDescription="@string/add_media_button_hint" />
-
 </FrameLayout>
+
