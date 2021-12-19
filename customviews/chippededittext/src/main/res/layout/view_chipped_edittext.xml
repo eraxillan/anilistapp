@@ -67,7 +67,6 @@
 
             android:hint="@string/cet_hint_text"
             android:maxLines="1"
-            android:singleLine="true"
             android:autofillHints=""
             android:inputType="textNoSuggestions"
             android:imeOptions="actionSearch"

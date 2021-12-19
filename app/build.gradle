@@ -97,8 +97,10 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     // Custom views
-    implementation "com.github.eraxillan.AiringAnimeSchedule:android-backdrop-view:1.0"
-    implementation "com.github.eraxillan.AiringAnimeSchedule:android-chippededittext-view:1.0"
+    implementation project(":customviews:backdrop")
+    implementation project(":customviews:chippededittext")
+    //implementation "com.github.eraxillan.anilistapp:android-backdrop-view:1.0"
+    //implementation "com.github.eraxillan.anilistapp:android-chippededittext-view:1.0"
 
     implementation "androidx.core:core-ktx:$core_ctx_version"
     implementation "androidx.appcompat:appcompat:$app_compat_version"

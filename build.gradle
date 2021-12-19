@@ -93,7 +93,8 @@ allprojects {
         mavenCentral()
         maven {
             url "https://jitpack.io"
-            credentials { username authToken }
+            // Uncomment for private repository usage
+            //credentials { username authToken }
         }
     }
 }

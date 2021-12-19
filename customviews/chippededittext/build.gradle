@@ -47,8 +47,12 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
 
-        // Allow experimental API usage directly in code block, without entire function marking
-        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
+        // 1) Allow experimental API usage directly in code block, without entire function marking
+        // 2) Enable explicit API mode (check https://kotlinlang.org/docs/whatsnew14.html#explicit-api-mode-for-library-authors)
+        freeCompilerArgs += [
+            "-Xopt-in=kotlin.RequiresOptIn",
+            "-Xexplicit-api=strict"
+        ]
     }
 }
 

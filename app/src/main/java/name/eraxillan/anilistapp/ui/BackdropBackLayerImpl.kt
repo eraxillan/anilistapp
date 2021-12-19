@@ -78,7 +78,7 @@ class BackdropBackLayerImpl: ConstraintLayout {
     fun setupListeners(
         onApplyListener: (filterOptions: MediaFilter, sortOption: MediaSort) -> Unit
     ) {
-        binding.yearInput.isCompleteListener = ChippedEditText.Listener {
+        binding.yearInput.onCompleteListener = {
             Timber.d("yearInput data binding completed")
 
             loadSortOption()
@@ -105,42 +105,42 @@ class BackdropBackLayerImpl: ConstraintLayout {
     private fun getFilterOptions(): MediaFilter {
         return MediaFilter(
             search = binding.searchInput.text.toString(),
-            year = binding.yearInput.checkedElementAsInteger,
-            season = binding.seasonInput.checkedElementAsEnumEntry<MediaSeason>(),
-            formats = binding.formatInput.checkedElementAsEnumEntries(),
-            status = binding.airingStatusInput.checkedElementAsEnumEntry<MediaStatus>(),
-            country = binding.countryInput.checkedElementAsEnumEntry<MediaCountry>(),
-            sources = binding.sourceInput.checkedElementAsEnumEntries(),
+            year = binding.yearInput.checkedElementValue(),
+            season = binding.seasonInput.checkedElementValue<MediaSeason>(),
+            formats = binding.formatInput.checkedElementsValues(),
+            status = binding.airingStatusInput.checkedElementValue<MediaStatus>(),
+            country = binding.countryInput.checkedElementValue<MediaCountry>(),
+            sources = binding.sourceInput.checkedElementsValues(),
             isLicensed = (!binding.doujinInput.isChecked),
-            genres = binding.genresInput.checkedElementAsStrings,
-            tags = binding.tagsInput.checkedElementAsStrings,
-            services = binding.streamingServicesInput.checkedElementAsStrings,
+            genres = binding.genresInput.checkedElementsValues(),
+            tags = binding.tagsInput.checkedElementsValues(),
+            services = binding.streamingServicesInput.checkedElementsValues(),
         )
     }
 
     private fun setFilterOptions(filterOptions: MediaFilter) {
         binding.apply {
             searchInput.setText(filterOptions.search)
-            yearInput.checkIntegerElement(filterOptions.year)
-            seasonInput.checkEnumerationElement(filterOptions.season)
-            formatInput.checkEnumerationElements(filterOptions.formats)
-            airingStatusInput.checkEnumerationElement(filterOptions.status)
-            countryInput.checkEnumerationElement(filterOptions.country)
-            sourceInput.checkEnumerationElements(filterOptions.sources)
+            yearInput.checkElement(filterOptions.year)
+            seasonInput.checkElement(filterOptions.season)
+            formatInput.checkElements(filterOptions.formats)
+            airingStatusInput.checkElement(filterOptions.status)
+            countryInput.checkElement(filterOptions.country)
+            sourceInput.checkElements(filterOptions.sources)
             doujinInput.isChecked = filterOptions.isLicensed == false
-            genresInput.checkStringElements(filterOptions.genres)
-            tagsInput.checkStringElements(filterOptions.tags)
-            streamingServicesInput.checkStringElements(filterOptions.services)
+            genresInput.checkElements(filterOptions.genres)
+            tagsInput.checkElements(filterOptions.tags)
+            streamingServicesInput.checkElements(filterOptions.services)
         }
     }
 
     private fun getSortOption(): MediaSort {
-        return binding.sortInput.checkedElementAsEnumEntry<MediaSort>()
+        return binding.sortInput.checkedElementValue<MediaSort>()
             ?: MediaSort.BY_POPULARITY
     }
 
     private fun setSortOption(sortOption: MediaSort) {
-        binding.sortInput.checkEnumerationElement(sortOption)
+        binding.sortInput.checkElement(sortOption)
     }
 
     private fun loadFilterOptions() {
@@ -150,7 +150,7 @@ class BackdropBackLayerImpl: ConstraintLayout {
     }
 
     private fun loadSortOption() {
-        check(binding.sortInput.selectionMode == ChippedEditText.SINGLE_CHOICE)
+        check(binding.sortInput.selectionMode == ChippedEditText.SINGLE_CHOICE_SELECTION)
 
         val preferences = PreferenceRepository.getInstance(context)
         setSortOption(preferences.sortOption)

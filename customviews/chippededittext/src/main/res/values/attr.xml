@@ -17,22 +17,43 @@
 
 <resources>
     <declare-styleable name="ChippedEditText">
+        <!-- Selection dialog title -->
         <attr name="title" format="string" localization="suggested" />
+
+        <!-- Selection mode: either singleChoice or multiChoice -->
         <attr name="selectionMode" format="enum">
             <enum name="singleChoice" value="0" />
             <enum name="multiChoice" value="1" />
         </attr>
+        <!-- FIXME: implement -->
+        <!-- <attr name="checkedElement" format="string"/> -->
+        <!-- <attr name="checkedElements" format="reference"/> -->
+
+        <!-- An element type of data in selection dialog: string, integer or enumeration -->
         <attr name="elementType" format="enum">
-            <enum name="string" value="0" />
-            <enum name="integer" value="1" />
-            <enum name="enumeration" value="2" />
+            <enum name="string" value="1" />
+            <enum name="integer" value="2" />
+            <enum name="enumeration" value="3" />
         </attr>
+
+        <!-- A start integer index to generate selection dialog integer elements -->
         <attr name="integerElementFrom" format="integer" />
+        <!-- An end integer index to generate selection dialog integer elements -->
         <attr name="integerElementTo" format="integer" />
-        <attr name="enumerationFullName" format="string" />
-        <attr name="enumerationSkipEntryName" format="string" />
-        <attr name="stringElements" format="reference" />
-        <attr name="stringSkipEntryName" format="string" />
-        <attr name="checkedElements" format="reference"/>
+        <!-- An integer value to be skipped in dialog elements -->
+        <attr name="integerElementSkip" format="integer" />
+
+        <!-- An enumeration name to generate selection dialog elements
+         from it's entries [toString] method.
+         This must use a Java-style naming convention to ensure the name is unique,
+         for example "com.mycompany.MyEnum" -->
+        <attr name="enumerationElementClassName" format="string" />
+        <!-- An enumeration entry name to be skipped in dialog elements -->
+        <attr name="enumerationElementSkip" format="string" />
+
+        <!-- A reference to an array resource containing selection dialog string elements -->
+        <attr name="stringElementEntries" format="reference" />
+        <!-- A string value to be skipped in dialog elements -->
+        <attr name="stringElementSkip" format="string" />
     </declare-styleable>
 </resources>
