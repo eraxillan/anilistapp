@@ -20,7 +20,10 @@ import android.util.AttributeSet
 import androidx.lifecycle.ViewModel
 
 
-class BackdropViewModel: ViewModel() {
+// https://developer.android.com/topic/libraries/architecture/viewmodel
+// Caution: A ViewModel must never reference a view, Lifecycle,
+// or any class that may hold a reference to the activity context.
+class BackdropViewModel(/*private val state: SavedStateHandle*/): ViewModel() {
     var isCollapsed: Boolean = false
     var resultCount: Int = 0
     var containerAttrs: AttributeSet? = null

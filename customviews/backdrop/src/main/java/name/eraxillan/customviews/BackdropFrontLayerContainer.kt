@@ -115,6 +115,11 @@ class BackdropFrontLayerContainer: Fragment() {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private fun setPanelLayoutBehavior(front: View) {
+        // Check whether app was restarted
+        if (sharedViewModel.containerAttrs == null) {
+            sharedViewModel.containerAttrs = requireContext().loadAttributes(R.layout.backdrop_front_layer)
+        }
+
         check(sharedViewModel.containerAttrs != null)
         check(front.layoutParams is CoordinatorLayout.LayoutParams)
 
