@@ -21,10 +21,9 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.os.Build
-import android.os.Parcel
 import android.os.Parcelable
 import android.text.Editable
+import android.text.InputType
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.util.AttributeSet
@@ -39,6 +38,7 @@ import androidx.databinding.BindingAdapter
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.parcelize.Parcelize
 import name.eraxillan.chippededittext.R
 import name.eraxillan.chippededittext.databinding.ViewChippedEdittextBinding
 import timber.log.Timber
@@ -74,12 +74,13 @@ public class ChippedEditText : ConstraintLayout {
     private lateinit var dropDownDrawable: Drawable
     private lateinit var clearDrawable: Drawable
 
+    @Parcelize
     internal data class ChipData(
         val text: String,
-        val drawable: ChipDrawable,
         val startIndex: Int,
         val endIndex: Int,
-    )
+    ) : Parcelable
+
     private var chips: MutableList<ChipData> = mutableListOf()
     private var chipsDrawn: Int = 0
 
@@ -271,6 +272,7 @@ public class ChippedEditText : ConstraintLayout {
                 super.onRestoreInstanceState(state.superState)
                 state.childrenStates?.let { restoreChildViewStates(it) }
 
+                chipsDrawn = 0
                 binding.chippedEdittextInput.editableText.clear()
                 state.chips.forEach { chip -> addChip(chip.text) }
                 this.checkedElements = state.checkedElements
@@ -472,8 +474,8 @@ public class ChippedEditText : ConstraintLayout {
     }
 
     private fun setupEditTextProperties() {
-        // Hide blinking cursor
-        binding.chippedEdittextInput.isCursorVisible = false
+        // Disable EditText functionality
+        binding.chippedEdittextInput.inputType = InputType.TYPE_NULL
 
         // Disable software keyboard, because modal dialog used instead
         binding.chippedEdittextInput.showSoftInputOnFocus = false
@@ -492,12 +494,9 @@ public class ChippedEditText : ConstraintLayout {
     }
 
     private fun addChip(text: String) {
-        // Create chip from resource file
-        val drawable = createChipDrawable(text)
-
         val startIndex = chips.lastOrNull()?.endIndex ?: 0
         val endIndex = startIndex + text.length
-        chips.add(ChipData(text, drawable, startIndex, endIndex))
+        chips.add(ChipData(text, startIndex, endIndex))
 
         binding.chippedEdittextInput.doOnLayout {
             // Check whether chips were already drawn
@@ -510,8 +509,12 @@ public class ChippedEditText : ConstraintLayout {
             var chipsText = ""
             var chipsWidth = binding.chippedEdittextInput.paddingLeft
             val editTextWidth = width - binding.chippedEdittextInput.paddingLeft - binding.chippedEdittextInput.paddingRight
+            val chipsDrawables: MutableList<ChipDrawable> = mutableListOf()
             for (i in 0 until chips.size) {
-                chipsWidth += chips[i].drawable.intrinsicWidth
+                // Create chip from resource file
+                val drawable = createChipDrawable(chips[i].text)
+                chipsDrawables.add(drawable)
+                chipsWidth += drawable.intrinsicWidth
 
                 if (chipsWidth >= editTextWidth) {
                     lastIndex = i
@@ -532,11 +535,10 @@ public class ChippedEditText : ConstraintLayout {
             binding.chippedEdittextInput.editableText.append(chipsText)
 
             for (i in 0 until lastIndex) {
-                val span = ImageSpan(chips[i].drawable)
+                val span = ImageSpan(chipsDrawables[i])
                 binding.chippedEdittextInput.editableText.setSpan(
                     span, chips[i].startIndex, chips[i].endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
-                chipsDrawn++
             }
 
             if (lastIndex != chips.size) {
@@ -550,13 +552,15 @@ public class ChippedEditText : ConstraintLayout {
                 binding.chippedEdittextInput.editableText.setSpan(
                     span, plusStrStartIndex, plusStrEndIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
-                chipsDrawn++
             }
+
+            chipsDrawn++
         }
     }
 
     private fun removeChips(editable: Editable) {
         //editable.clearSpans()
+        chipsDrawn = 0
         editable.clear()
 
         chips.clear()
@@ -590,7 +594,7 @@ public class ChippedEditText : ConstraintLayout {
     private fun setEndIconListener() {
         binding.chippedEdittextInputLayout.setEndIconOnClickListener {
             if (checkedElements.indexOfFirst { it } != -1) {
-                binding.chippedEdittextInput.editableText.clear()
+                removeChips(binding.chippedEdittextInput.editableText)
                 setEndIcon(EndIconType.Dropdown)
 
                 checkedElements.fill(false)
@@ -641,6 +645,7 @@ public class ChippedEditText : ConstraintLayout {
 
     private fun onDialogOk(elements: Array<String>) {
         // Clear previously added chips if any
+        chipsDrawn = 0
         removeChips(binding.chippedEdittextInput.editableText)
 
         checkedElements.forEachIndexed { index, isChecked ->
@@ -653,39 +658,35 @@ public class ChippedEditText : ConstraintLayout {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    internal class SavedState : BaseSavedState {
-        var childrenStates: SparseArray<Parcelable>? = null
+    @Parcelize
+    internal data class SavedState(
+        val state: Parcelable?,
+        var childrenStates: SparseArray<Parcelable>? = null,
+        var hasFocus: Boolean = false,
+        var chips: MutableList<ChipData> = mutableListOf(),
+        var checkedElements: BooleanArray = booleanArrayOf(),
+    ) : BaseSavedState(state) {
 
-        var hasFocus: Boolean = false
-        var chips: MutableList<ChipData> = mutableListOf()
-        var checkedElements: BooleanArray = booleanArrayOf()
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
 
-        constructor(superState: Parcelable?) : super(superState)
+            other as SavedState
 
-        constructor(source: Parcel) : super(source) {
-            childrenStates = source.readSparseArray(javaClass.classLoader)
+            if (childrenStates != other.childrenStates) return false
+            if (hasFocus != other.hasFocus) return false
+            if (chips != other.chips) return false
+            if (!checkedElements.contentEquals(other.checkedElements)) return false
+
+            return true
         }
 
-        override fun writeToParcel(out: Parcel, flags: Int) {
-            super.writeToParcel(out, flags)
-
-            out.writeSparseArray(childrenStates as SparseArray<*>)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                out.writeBoolean(hasFocus)
-            } else {
-                out.writeInt(if (hasFocus) 1 else 0)
-            }
-            out.writeList(chips)
-            out.writeBooleanArray(checkedElements)
-        }
-
-        companion object {
-            @JvmField
-            @Suppress("unused")
-            val CREATOR = object : Parcelable.Creator<SavedState> {
-                override fun createFromParcel(source: Parcel) = SavedState(source)
-                override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
-            }
+        override fun hashCode(): Int {
+            var result = childrenStates?.hashCode() ?: 0
+            result = 31 * result + hasFocus.hashCode()
+            result = 31 * result + chips.hashCode()
+            result = 31 * result + checkedElements.contentHashCode()
+            return result
         }
     }
 

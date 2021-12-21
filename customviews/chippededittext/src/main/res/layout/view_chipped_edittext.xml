@@ -68,8 +68,8 @@
             android:hint="@string/cet_hint_text"
             android:maxLines="1"
             android:autofillHints=""
-            android:inputType="textNoSuggestions"
-            android:imeOptions="actionSearch"
+            android:inputType="none"
+            android:cursorVisible="false"
 
             android:drawablePadding="0dp"
 
