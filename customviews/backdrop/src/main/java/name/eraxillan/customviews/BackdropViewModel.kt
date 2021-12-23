@@ -21,9 +21,16 @@ import androidx.lifecycle.ViewModel
 
 
 // https://developer.android.com/topic/libraries/architecture/viewmodel
+// https://developer.android.com/topic/libraries/architecture/viewmodel-savedstate
+// https://medium.com/androiddevelopers/viewmodels-persistence-onsaveinstancestate-restoring-ui-state-and-loaders-fc7cc4a6c090
+// https://developer.android.com/reference/android/app/Activity.html#ActivityLifecycle
+// if you want to be the most sure that you won’t lose data, persist it as soon as the user enters it
 // Caution: A ViewModel must never reference a view, Lifecycle,
 // or any class that may hold a reference to the activity context.
-class BackdropViewModel(/*private val state: SavedStateHandle*/): ViewModel() {
+class BackdropViewModel(
+    /*private val state: SavedStateHandle*/
+): ViewModel() {
+
     var isCollapsed: Boolean = false
     var resultCount: Int = 0
     var containerAttrs: AttributeSet? = null

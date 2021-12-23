@@ -30,6 +30,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteMediaViewModel @Inject constructor(
+    /*private val state: SavedStateHandle,*/
     private val favoriteMediaRepository: FavoriteMediaRepository,
 ) : ViewModel() {
 

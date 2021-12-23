@@ -25,9 +25,11 @@
             <enum name="singleChoice" value="0" />
             <enum name="multiChoice" value="1" />
         </attr>
-        <!-- FIXME: implement -->
-        <!-- <attr name="checkedElement" format="string"/> -->
-        <!-- <attr name="checkedElements" format="reference"/> -->
+
+        <!-- Initially checked single element value -->
+        <attr name="checkedElement" format="string"/>
+        <!-- Initially checked elements list values -->
+        <attr name="checkedElements" format="reference"/>
 
         <!-- An element type of data in selection dialog: string, integer or enumeration -->
         <attr name="elementType" format="enum">

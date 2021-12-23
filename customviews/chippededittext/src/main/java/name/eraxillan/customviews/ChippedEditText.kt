@@ -138,7 +138,7 @@ public class ChippedEditText : ConstraintLayout {
             }
         }
 
-        class EnumElementsList(elements: List<Enum<*>>, skipEntry: Enum<*>?)
+        class EnumElementsList(elements: List<Enum<*>>, skipEntry: Enum<*>?, val enumerationName: String)
             : DataType<Enum<*>>(elements, skipEntry) {
 
             override fun displayableElements(): List<String> {
@@ -304,6 +304,12 @@ public class ChippedEditText : ConstraintLayout {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private fun fillStringElements(stringElements: List<String>, skipEntry: String?) {
+        elements = DataType.StringList(stringElements, skipEntry)
+        checkedElements = BooleanArray(elements.elementsSize()) { false }
+        onCompleteListener?.invoke()
+    }
+
     private fun fillStringElements(typedArray: TypedArray) {
         var skipEntry : String? = null
         if (typedArray.hasValue(R.styleable.ChippedEditText_stringElementSkip)) {
@@ -316,7 +322,6 @@ public class ChippedEditText : ConstraintLayout {
                 .getTextArray(R.styleable.ChippedEditText_stringElementEntries)
                 .map { element -> element.toString() }
                 .filter { element -> element != skipEntry }
-            checkedElements = BooleanArray(stringElementEntries.size) { false }
         }
 
         elements = DataType.StringList(stringElementEntries, skipEntry)
@@ -354,6 +359,29 @@ public class ChippedEditText : ConstraintLayout {
         }
     }
 
+    private fun fillEnumerationElements(className: String?, skipElement: String?) {
+        if (className == null)
+            return
+
+        val enumerationJavaClass = Class.forName(className)
+        check(enumerationJavaClass.isEnum)
+
+        var skipEntry: Enum<*>? = null
+        if (skipElement != null) {
+            @Suppress("UNCHECKED_CAST")
+            val enumerationJavaClassObj = enumerationJavaClass as Class<out Enum<*>>
+            skipEntry = java.lang.Enum.valueOf(enumerationJavaClassObj, skipElement)
+        }
+
+        elements = DataType.EnumElementsList(
+            enumerationJavaClass.enumConstants.map { it as Enum<*> },
+            skipEntry,
+            className
+        )
+        checkedElements = BooleanArray(enumerationJavaClass?.enumConstants?.size ?: 0) { false }
+        onCompleteListener?.invoke()
+    }
+
     private fun fillEnumerationElements(typedArray: TypedArray) {
         val enumerationElementClassName: String
         val enumerationJavaClass: Class<*>
@@ -363,6 +391,7 @@ public class ChippedEditText : ConstraintLayout {
             check(enumerationElementClassName.isNotEmpty())
 
             enumerationJavaClass = Class.forName(enumerationElementClassName)
+            check(enumerationJavaClass.isEnum)
         }
         else
             return
@@ -372,8 +401,6 @@ public class ChippedEditText : ConstraintLayout {
             val skipEntryString = typedArray
                 .getString(R.styleable.ChippedEditText_enumerationElementSkip) ?: ""
 
-            check(enumerationJavaClass.isEnum)
-
             @Suppress("UNCHECKED_CAST")
             val enumerationJavaClassObj = enumerationJavaClass as Class<out Enum<*>>
             skipEntry = java.lang.Enum.valueOf(enumerationJavaClassObj, skipEntryString)
@@ -381,7 +408,8 @@ public class ChippedEditText : ConstraintLayout {
 
         elements = DataType.EnumElementsList(
             enumerationJavaClass.enumConstants.map { it as Enum<*> },
-            skipEntry
+            skipEntry,
+            enumerationElementClassName
         )
         checkedElements = BooleanArray(enumerationJavaClass?.enumConstants?.size ?: 0) { false }
         onCompleteListener?.invoke()
@@ -610,7 +638,7 @@ public class ChippedEditText : ConstraintLayout {
         val builder = MaterialAlertDialogBuilder(context)
             .setTitle(title)
             .setNeutralButton(resources.getString(R.string.dialog_cancel_button)) { _, _ -> // dialog, which ->
-                // TODO: Respond to neutral button press
+                // Respond to neutral button press here
             }
             .setPositiveButton(resources.getString(R.string.dialog_ok_button)) { _, _ -> //dialog, which ->
                 // Respond to positive button press
@@ -635,8 +663,8 @@ public class ChippedEditText : ConstraintLayout {
                 builder.setMultiChoiceItems(
                     displayableElements,
                     checkedElements
-                ) { _, _, _ -> //dialog, which, checked ->
-                    // TODO: Respond to item chosen
+                ) { _, _, _ -> // dialog, which, checked ->
+                    // Respond to item chosen here
                 }.show()
             }
             else -> throw InvalidParameterException("Invalid `selectionMode` value!")
@@ -700,9 +728,8 @@ public class ChippedEditText : ConstraintLayout {
             value = ["title"]
         )
         public fun setTitleBindingAdapter(cet: ChippedEditText, title: String?) {
-            // FIXME: implement
-            cet.tag
-            title?.length
+            if (title != null)
+                cet.title = title
         }
 
         //@JvmStatic
@@ -710,28 +737,74 @@ public class ChippedEditText : ConstraintLayout {
             value = ["selectionMode"]
         )
         public fun setSelectionModeBindingAdapter(cet: ChippedEditText, selectionMode: Int?) {
-            // FIXME: implement
-            cet.tag
-            selectionMode?.toByte()
+            if (selectionMode != null)
+                cet.selectionMode = selectionMode
         }
 
-        /*@JvmStatic
+        //@JvmStatic
         @BindingAdapter(
-            value = ["checkedElement", "checkedElements"],
-            requireAll = false
+            value = ["checkedElement"],
         )
-        public fun setCheckedElementsBindingAdapter(cet: ChippedEditText, ...) {
-            // FIXME: implement
-        }*/
+        public fun setCheckedElementBindingAdapter(cet: ChippedEditText, checkedElement: String?) {
+            if (checkedElement == null)
+                return
+
+            when (cet.elementType) {
+                STRING_ELEMENT_TYPE -> cet.checkElement(checkedElement)
+                INTEGER_ELEMENT_TYPE -> cet.checkElement(checkedElement.toInt())
+                ENUMERATION_ELEMENT_TYPE -> {
+                    check(cet.elements is DataType.EnumElementsList)
+                    val elements = cet.elements as DataType.EnumElementsList
+                    check(elements.enumerationName.isNotEmpty())
+
+                    val checkedElementClass = Class.forName(elements.enumerationName)
+                    check(checkedElementClass.isEnum)
+                    @Suppress("UNCHECKED_CAST")
+                    val checkedElementEnumClass = checkedElementClass as Class<out Enum<*>>
+                    val checkedElementEnum =
+                        java.lang.Enum.valueOf(checkedElementEnumClass, checkedElement)
+                    //cet.checkElement<Enum<*>>(checkedElementEnum)
+                    cet.checkElementImpl(checkedElementEnum)
+                }
+            }
+        }
+
+        //@JvmStatic
+        @BindingAdapter(
+            value = ["checkedElements"]
+        )
+        public fun setCheckedElementsBindingAdapter(cet: ChippedEditText, checkedElements: List<String>?) {
+            if (checkedElements == null)
+                return
+
+            when (cet.elementType) {
+                STRING_ELEMENT_TYPE -> cet.checkElements(checkedElements)
+                INTEGER_ELEMENT_TYPE -> cet.checkElements(checkedElements.map { it.toInt() })
+                ENUMERATION_ELEMENT_TYPE -> {
+                    check(cet.elements is DataType.EnumElementsList)
+                    val elements = cet.elements as DataType.EnumElementsList
+                    check(elements.enumerationName.isNotEmpty())
+
+                    val checkedElementClass = Class.forName(elements.enumerationName)
+                    check(checkedElementClass.isEnum)
+                    @Suppress("UNCHECKED_CAST")
+                    val checkedElementEnumClass = checkedElementClass as Class<out Enum<*>>
+
+                    val checkedElementsEnum = checkedElements.map { java.lang.Enum.valueOf(checkedElementEnumClass, it) }
+                    checkedElementsEnum.forEach { cet.checkElementImpl(it) }
+                }
+            }
+        }
 
         //@JvmStatic
         @BindingAdapter(
             value = ["elementType"]
         )
         public fun setElementTypeBindingAdapter(cet: ChippedEditText, elementType: Int?) {
-            // FIXME: implement
-            cet.tag
-            elementType?.toByte()
+            if (elementType == null)
+                return
+
+            cet.elementType = elementType
         }
 
         @JvmStatic
@@ -740,12 +813,17 @@ public class ChippedEditText : ConstraintLayout {
             requireAll = false
         )
         public fun setStringElementsBindingAdapter(
-            cet: ChippedEditText, elements: List<String>?, skipElement: String?
+            cet: ChippedEditText, stringElements: List<String>?, skipElement: String?
         ) {
-            // FIXME: implement
-            cet.tag
-            elements?.size
-            skipElement?.length
+            check(cet.elements is DataType.StringList)
+            val elements = cet.elements as DataType.StringList
+
+            val elementsTemp = if (stringElements != null && elements.elements.isEmpty())
+                stringElements else elements.elements
+            val skipElementTemp = if (skipElement != null && elements.skipElement == null)
+                skipElement else elements.skipElement
+
+            cet.fillStringElements(elementsTemp, skipElementTemp)
         }
 
         @JvmStatic
@@ -762,7 +840,8 @@ public class ChippedEditText : ConstraintLayout {
 
             val fromTemp = if (from != null && elements.from == null) from else elements.from
             val toTemp = if (to != null && elements.to == null) to else elements.to
-            val skipElementTemp = if (skipElement != null && elements.skipElement == null) skipElement else elements.skipElement
+            val skipElementTemp = if (skipElement != null && elements.skipElement == null)
+                skipElement else elements.skipElement
 
             if (fromTemp != null && toTemp != null) {
                 cet.fillIntegerElementsFromRange(fromTemp, toTemp, skipElementTemp)
@@ -777,10 +856,15 @@ public class ChippedEditText : ConstraintLayout {
         public fun setEnumerationElementsBinding(
             cet: ChippedEditText, className: String?, skipElement: String?
         ) {
-            // FIXME: implement
-            cet.tag
-            className?.length
-            skipElement?.length
+            check(cet.elements is DataType.EnumElementsList)
+            val elements = cet.elements as DataType.EnumElementsList
+
+            val classNameTemp = if (className != null && elements.enumerationName.isEmpty())
+                className else elements.enumerationName
+            val skipElementTemp = if (skipElement != null && elements.skipElement == null)
+                skipElement else (elements.skipElement?.name ?: "")
+
+            cet.fillEnumerationElements(classNameTemp, skipElementTemp)
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
