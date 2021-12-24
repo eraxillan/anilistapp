@@ -503,7 +503,7 @@ public class ChippedEditText : ConstraintLayout {
 
     private fun setupEditTextProperties() {
         // Disable EditText functionality
-        binding.chippedEdittextInput.inputType = InputType.TYPE_NULL
+        //binding.chippedEdittextInput.inputType = InputType.TYPE_NULL
 
         // Disable software keyboard, because modal dialog used instead
         binding.chippedEdittextInput.showSoftInputOnFocus = false
