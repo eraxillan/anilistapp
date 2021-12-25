@@ -22,6 +22,7 @@ import androidx.room.OnConflictStrategy.REPLACE
 import name.eraxillan.anilistapp.data.room.LocalMedia
 import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.model.*
+import name.eraxillan.anilistapp.utilities.isWinterSeasonBegin
 
 
 /**
@@ -116,7 +117,7 @@ abstract class MediaDao {
         SELECT * FROM media_collection WHERE
             -- TODO: implement fuzzy full text search like Anilist backend do
             (:search IS NULL OR :search = '' OR romaji_title LIKE '%' || :search || '%') AND
-            (:year IS NULL OR :year = 0 OR start_season_year = :year) AND
+            (:year IS NULL OR :year = 0 OR start_season_year IN (:year, :nextYear)) AND
             (:country IS NULL OR :country = '' OR country_of_origin = :country) AND
             (:season IS NULL OR :season = 'UNKNOWN' OR start_season = :season) AND
             (:status IS NULL OR :status = 'UNKNOWN' OR status = :status) AND
@@ -147,7 +148,8 @@ abstract class MediaDao {
     """
     )
     protected abstract fun getFilteredMediaInternalPaged(
-        search: String? = null, year: Int? = null, season: MediaSeason? = null,
+        search: String? = null, year: Int? = null, nextYear: Int? = null,
+        season: MediaSeason? = null,
         formats: List<MediaFormatEnum> = emptyList(), formatsCount: Int = 0,
         status: MediaStatus? = null, country: MediaCountry? = null,
         sources: List<MediaSourceEnum> = emptyList(), sourcesCount: Int = 0,
@@ -163,7 +165,10 @@ abstract class MediaDao {
         sort: MediaSort
     ): PagingSource<Int, LocalMediaWithRelations> {
         return getFilteredMediaInternalPaged(
-            search = filter.search, year = filter.year, season = filter.season,
+            search = filter.search,
+            year = filter.year,
+            nextYear = if (isWinterSeasonBegin()) filter.year?.plus(1) else null,
+            season = filter.season,
             formats = filter.formats.orEmpty(), formatsCount = filter.formats?.size ?: 0,
             status = filter.status, country = filter.country,
             sources = filter.sources.orEmpty(), sourcesCount = filter.sources?.size ?: 0,

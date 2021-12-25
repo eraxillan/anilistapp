@@ -95,4 +95,20 @@ data class MediaFilter(
             isLicensed: '$isLicensed'
         }""".trimIndent()
     }
+
+    companion object {
+        fun withNextYear(filter: MediaFilter) = MediaFilter(
+            filter.search,
+            filter.genres,
+            filter.tags,
+            filter.year?.plus(1),
+            filter.season,
+            filter.formats,
+            filter.status,
+            filter.services,
+            filter.country,
+            filter.sources,
+            filter.isLicensed,
+        )
+    }
 }

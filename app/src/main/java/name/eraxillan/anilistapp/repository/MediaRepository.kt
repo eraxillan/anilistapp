@@ -15,6 +15,7 @@
  */
 
 package name.eraxillan.anilistapp.repository
+
 import androidx.paging.*
 import kotlinx.coroutines.flow.Flow
 import name.eraxillan.anilistapp.api.AnilistApi
@@ -29,6 +30,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
+
 
 /**
  * Repository class that works with local and remote data sources

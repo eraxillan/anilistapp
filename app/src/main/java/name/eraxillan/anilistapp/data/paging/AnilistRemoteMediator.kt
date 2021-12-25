@@ -22,6 +22,8 @@ import androidx.paging.LoadType.*
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.apollographql.apollo.api.Response
+import name.eraxillan.anilistapp.MediaListQuery
 import name.eraxillan.anilistapp.api.AnilistApi
 import name.eraxillan.anilistapp.api.convertAnilistMedia
 import name.eraxillan.anilistapp.api.convertRemoteMedia
@@ -30,6 +32,7 @@ import name.eraxillan.anilistapp.data.room.MediaDatabase
 import name.eraxillan.anilistapp.data.room.MediaDatabaseHelper
 import name.eraxillan.anilistapp.data.room.RemoteKeys
 import name.eraxillan.anilistapp.model.*
+import name.eraxillan.anilistapp.utilities.isWinterSeasonBegin
 import timber.log.Timber
 import java.io.IOException
 import java.lang.Exception
@@ -49,6 +52,31 @@ class AnilistRemoteMediator(
 ) : RemoteMediator<Int, LocalMediaWithRelations>() {
 
     private val databaseHelper: MediaDatabaseHelper = MediaDatabaseHelper(database)
+
+    private suspend fun queryMedia(response: Response<MediaListQuery.Data>) : Pair<MutableList<RemoteMedia>, Boolean> {
+        val pagination = backend.getResponsePagination(response)
+        val endOfPaginationReached = pagination.totalItems == 0 || !pagination.hasNextPage
+                || response.data?.page?.media?.isEmpty() == true
+
+        val serverMediaList = response.data?.page?.media?.filterNotNull() ?: emptyList()
+        val mediaList = serverMediaList.map { medium -> convertAnilistMedia(medium) }.toMutableList()
+
+        // FIXME: move to background worker
+        backend.fillEpisodeCount(serverMediaList, mediaList)
+
+        Timber.d(
+            """
+            Media list total size: ${pagination.totalItems},
+            media list for current page size: ${mediaList.size},
+            current page: ${pagination.currentPage},
+            items per page: ${pagination.perPage},
+            total pages: ${pagination.totalPages}
+            end of pagination reached: $endOfPaginationReached
+            """.trimIndent()
+        )
+
+        return mediaList to endOfPaginationReached
+    }
 
     override suspend fun initialize(): InitializeAction {
         // Launch remote refresh as soon as paging starts and do not trigger remote prepend or
@@ -88,26 +116,21 @@ class AnilistRemoteMediator(
             val backendResponse = backend.getMediaList(page, pageSize, filter, sortBy)
             Timber.d("Successfully got response from server")
 
-            val pagination = backend.getResponsePagination(backendResponse)
-            val endOfPaginationReached = pagination.totalItems == 0 || !pagination.hasNextPage
-                    || backendResponse.data?.page?.media?.isEmpty() == true
+            var (mediaList, endOfPaginationReached) = queryMedia(backendResponse)
 
-            val serverMediaList = backendResponse.data?.page?.media?.filterNotNull() ?: emptyList()
-            val mediaList = serverMediaList.map { medium -> convertAnilistMedia(medium) }
+            // The Winter season last from December to February, so we should include next year too;
+            // Anilist API don't allow to specify a range of years, so we have to sent the second request
+            if (isWinterSeasonBegin()) {
+                val winterFilter = MediaFilter.withNextYear(filter)
+                val winterBackendResponse = backend.getMediaList(page, pageSize, winterFilter, sortBy)
 
-            // FIXME: move to background worker
-            backend.fillEpisodeCount(serverMediaList, mediaList)
+                val (winterMediaList, winterEndOfPaginationReached) = queryMedia(winterBackendResponse)
+                mediaList.addAll(winterMediaList)
 
-            Timber.d(
-                """
-                    Media list total size: ${pagination.totalItems},
-                    media list for current page size: ${mediaList.size},
-                    current page: ${pagination.currentPage},
-                    items per page: ${pagination.perPage},
-                    total pages: ${pagination.totalPages}
-                    end of pagination reached: $endOfPaginationReached
-                """.trimIndent()
-            )
+                if (!winterEndOfPaginationReached && endOfPaginationReached) {
+                    endOfPaginationReached = false
+                }
+            }
 
             saveMediasToDatabase(
                 loadType, page,
