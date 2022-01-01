@@ -15,7 +15,7 @@
  -->
 
 <resources>
-    <string name="app_name">Anime list</string>
+    <string name="app_name">Unofficial Anilist App</string>
 
     <!-- TODO: global constants -->
     <string name="invalid_url">https://www.invalid.com</string>
