@@ -18,7 +18,6 @@ package name.eraxillan.anilistapp.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.annotation.ColorInt
 import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import name.eraxillan.anilistapp.databinding.ListItemMediaDetailBinding
@@ -26,8 +25,8 @@ import name.eraxillan.anilistapp.data.room.LocalMediaWithRelations
 import name.eraxillan.anilistapp.ui.correctTextColor
 import name.eraxillan.anilistapp.ui.holder.MediaDetailHolder
 
-class MediaDetailAdapter(var media: LocalMediaWithRelations, @ColorInt val surfaceColor: Int) : RecyclerView.Adapter<MediaDetailHolder>() {
 
+class MediaDetailAdapter(var media: LocalMediaWithRelations): RecyclerView.Adapter<MediaDetailHolder>() {
     companion object {
         private const val fieldCount = 22
     }
@@ -107,7 +106,7 @@ class MediaDetailAdapter(var media: LocalMediaWithRelations, @ColorInt val surfa
         }
 
         // Adopt color for current theme: avoid black on black and white on white
-        val imageColor = correctTextColor(imageColorStr.toColorInt(), surfaceColor)
+        val imageColor = correctTextColor(imageColorStr.toColorInt(), holder.elevatedBackgroundColor())
 
         holder.bind(text, imageColor)
     }

@@ -41,17 +41,30 @@ fun searchMedia(filterOptions: MediaFilter, sortOption: MediaSort, navController
     navController.navigate(directions)
 }
 
+private const val MIN_CONTRAST = 4.50f
+
+/*
+This function helps us to always present human-readable text and fix the warning below:
+"""
+The item's text contrast ratio is 2.16.
+This ratio is based on an estimated foreground color of #FFFFFF and an estimated background color of #FF9800.
+Consider increasing this item's text contrast ratio to 4.50 or greater.
+"""
+*/
+@ColorInt
 fun correctTextColor(@ColorInt textColor: Int, @ColorInt backgroundColor: Int) : Int {
-    val textColorIsDark = ColorUtils.calculateLuminance(textColor) < 0.25  // 0.5
-    val textColorIsLight = ColorUtils.calculateLuminance(textColor) > 0.75 // 0.5
+    // Contrast ratios can range from 1 to 21 (commonly written 1:1 to 21:1)
+    var contrast = ColorUtils.calculateContrast(textColor, backgroundColor)
 
-    val backgroundColorIsDark = ColorUtils.calculateLuminance(backgroundColor) < 0.25
-    val backgroundColorIsLight = ColorUtils.calculateLuminance(backgroundColor) > 0.75
-
-    if (textColorIsDark && backgroundColorIsDark)
-        return Color.WHITE
-    if (textColorIsLight && backgroundColorIsLight)
-        return Color.BLACK
-    return textColor
+    val result = if (contrast > MIN_CONTRAST) {
+        // The text color looks fine on the specified background
+        textColor
+    } else {
+        contrast = ColorUtils.calculateContrast(Color.BLACK, backgroundColor)
+        if (contrast > MIN_CONTRAST)
+            Color.BLACK
+        else
+            Color.WHITE
+    }
+    return result
 }
-

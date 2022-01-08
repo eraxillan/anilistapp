@@ -16,8 +16,14 @@
 
 package name.eraxillan.anilistapp.ui.holder
 
+import android.graphics.Color
+import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.color.MaterialColors
+import com.google.android.material.elevation.ElevationOverlayProvider
+import name.eraxillan.anilistapp.R
 import name.eraxillan.anilistapp.databinding.ListItemMediaDetailBinding
+
 
 class MediaDetailHolder(
     private val binding: ListItemMediaDetailBinding
@@ -29,5 +35,14 @@ class MediaDetailHolder(
             setTextColor(textColor)
             executePendingBindings()
         }
+    }
+
+    @ColorInt
+    fun elevatedBackgroundColor(): Int {
+        val backgroundColor = MaterialColors.getColor(
+            binding.detailCard.context, R.attr.colorSurface, Color.TRANSPARENT
+        )
+        val provider = ElevationOverlayProvider(binding.detailCard.context)
+        return provider.compositeOverlayIfNeeded(backgroundColor, binding.detailCard.cardElevation)
     }
 }
