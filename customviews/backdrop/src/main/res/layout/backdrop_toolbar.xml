@@ -35,8 +35,9 @@
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/result_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center|start"
+        android:gravity="center|start"
         android:layout_marginStart="15dp"
         android:text="@string/search_results_loading"
         android:textSize="20sp" />
