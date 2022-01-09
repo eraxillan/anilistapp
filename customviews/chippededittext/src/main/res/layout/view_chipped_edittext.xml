@@ -21,8 +21,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:layout_width="match_parent"
     tools:layout_height="wrap_content"
-    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
-    >
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout" >
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/chipped_edittext_title"
@@ -38,8 +37,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
 
-        tools:text="Title"
-    />
+        tools:text="Title" />
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -51,12 +49,12 @@
 
         app:endIconMode="clear_text"
         app:hintEnabled="false"
+        app:boxStrokeColor="@color/outline_stroke_color"
 
         app:layout_constraintTop_toBottomOf="@+id/chipped_edittext_title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        >
+        app:layout_constraintEnd_toEndOf="parent" >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/chipped_edittext_input"
@@ -64,16 +62,15 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:padding="0dp"
+            android:drawablePadding="0dp"
 
+            android:textStyle="italic"
             android:hint="@string/cet_hint_text"
             android:maxLines="1"
             android:autofillHints=""
             android:inputType="textNoSuggestions"
             android:cursorVisible="false"
 
-            android:drawablePadding="0dp"
-
-            tools:hint="Any"
-            />
+            tools:hint="Any" />
     </com.google.android.material.textfield.TextInputLayout>
 </merge>

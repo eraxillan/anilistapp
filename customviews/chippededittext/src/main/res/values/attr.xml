@@ -17,8 +17,13 @@
 
 <resources>
     <declare-styleable name="ChippedEditText">
-        <!-- Selection dialog title -->
+        <!-- Selection dialog title and satellite label text -->
         <attr name="title" format="string" localization="suggested" />
+
+        <!-- EditText hints for accessibility purposes -->
+        <attr name="hint" format="string" localization="suggested" />
+        <attr name="changeHint" format="string" localization="suggested" />
+        <attr name="clearHint" format="string" localization="suggested" />
 
         <!-- Selection mode: either singleChoice or multiChoice -->
         <attr name="selectionMode" format="enum">

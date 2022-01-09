@@ -16,18 +16,18 @@
  -->
 
 <resources>
-    <!-- Backdrop -->
-    <string name="media_search_hint">Media title</string>
-    <string name="apply_filters_button">Apply</string>
-
-    <!-- Sort options string -->
-    <string name="sort_dialog_title">Sort</string>
+    <!-- Backdrop view -->
+    <string name="media_edit_search_hint">Media title</string>
+    <string name="apply_filters_button_text">Apply</string>
 
     <!-- Filter options strings -->
 
     <!-- Genres dialog strings -->
-    <string name="genres_dialog_title">Genres</string>
-    <string-array name="genres_dialog_genres">
+    <string name="genres_view_title">Genres</string>
+    <string name="genres_view_hint">Tap to select genres</string>
+    <string name="genres_view_change_hint">Change genres</string>
+    <string name="genres_view_clear_hint">Clear genres</string>
+    <string-array name="genres_view_entries">
         <item>Action</item>
         <item>Adventure</item>
         <item>Comedy</item>
@@ -50,8 +50,11 @@
     </string-array>
 
     <!-- Tags dialog strings -->
-    <string name="tags_dialog_title">Tags</string>
-    <string-array name="tags_dialog_tags">
+    <string name="tags_view_title">Tags</string>
+    <string name="tags_view_hint">Tap to select tags</string>
+    <string name="tags_view_change_hint">Change tags</string>
+    <string name="tags_view_clear_hint">Clear tags</string>
+    <string-array name="tags_view_entries">
         <item>4-koma</item>
         <item>Achromatic</item>
         <item>Achronological Order</item>
@@ -372,20 +375,35 @@
     </string-array>
 
     <!-- Year dialog strings -->
-    <string name="year_dialog_title">Year</string>
+    <string name="year_view_title">Year</string>
+    <string name="year_view_hint">Tap to select year</string>
+    <string name="year_view_change_hint">Change year</string>
+    <string name="year_view_clear_hint">Clear year</string>
 
     <!-- Season dialog strings -->
-    <string name="seasons_dialog_title">Season</string>
+    <string name="season_view_title">Season</string>
+    <string name="season_view_hint">Tap to select season</string>
+    <string name="season_view_change_hint">Change season</string>
+    <string name="season_view_clear_hint">Clear season</string>
 
     <!-- Formats dialog string -->
-    <string name="formats_dialog_title">Format</string>
+    <string name="formats_view_title">Format</string>
+    <string name="formats_view_hint">Tap to select formats</string>
+    <string name="formats_view_change_hint">Change formats</string>
+    <string name="formats_view_clear_hint">Clear formats</string>
 
     <!-- Airing status dialog strings -->
-    <string name="airing_status_dialog_title">Airing Status</string>
+    <string name="airing_status_view_title">Airing Status</string>
+    <string name="airing_status_view_hint">Tap to select airing status</string>
+    <string name="airing_status_view_change_hint">Change airing status</string>
+    <string name="airing_status_view_clear_hint">Clear airing status</string>
 
     <!-- Streaming services strings -->
-    <string name="streaming_on_dialog_title">Streaming On</string>
-    <string-array name="streaming_on_dialog_services">
+    <string name="streaming_services_view_title">Streaming On</string>
+    <string name="streaming_services_view_hint">Tap to select streaming services</string>
+    <string name="streaming_services_view_change_hint">Change streaming services</string>
+    <string name="streaming_services_view_clear_hint">Clear services</string>
+    <string-array name="streaming_services_view_entries">
         <item>Crunchyroll</item>
         <item>Funimation</item>
         <item>Hidive</item>
@@ -404,12 +422,26 @@
         <item>\?</item>
     </string-array>
 
-    <!-- Country of origin strings -->
-    <string name="country_dialog_title">Country Of Origin</string>
+    <!-- Country of origin view strings -->
+    <string name="country_view_title">Country Of Origin</string>
+    <string name="country_view_hint">Tap to select country</string>
+    <string name="country_view_change_hint">Change country</string>
+    <string name="country_view_clear_hint">Clear country</string>
 
-    <!-- Source material type strings -->
-    <string name="source_dialog_title">Source Material</string>
+    <!-- Source material view types strings -->
+    <string name="sources_view_title">Source Material</string>
+    <string name="sources_view_hint">Tap to select sources</string>
+    <string name="sources_view_change_hint">Change sources</string>
+    <string name="sources_view_clear_hint">Clear sources</string>
 
-    <!-- Whether media is not licensed (aka jp. doujin) checkbox string -->
-    <string name="doujin">Doujin</string>
+    <!-- Whether media is not licensed (aka jp. "doujin") checkbox string -->
+    <string name="is_doujin_check_text">Doujin</string>
+
+    <!-- Sort options strings -->
+
+    <!-- Sort option view strings -->
+    <string name="sort_view_title">Sort</string>
+    <string name="sort_view_hint">Tap to select sort option</string>
+    <string name="sort_view_change_hint">Change sort option</string>
+    <string name="sort_view_clear_hint">Clear sort option</string>
 </resources>

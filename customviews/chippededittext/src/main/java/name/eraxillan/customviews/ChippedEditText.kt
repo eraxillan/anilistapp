@@ -23,7 +23,6 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Parcelable
 import android.text.Editable
-import android.text.InputType
 import android.text.Spanned
 import android.text.style.ImageSpan
 import android.util.AttributeSet
@@ -59,6 +58,16 @@ public class ChippedEditText : ConstraintLayout {
         set(value) {
             binding.chippedEdittextTitle.text = value
         }
+
+    public var hint: String
+        get() {
+            return binding.chippedEdittextInput.hint.toString()
+        }
+        set(value) {
+            binding.chippedEdittextInput.hint = value
+        }
+    public var clearHint: String = ""
+    public var changeHint: String = ""
 
     @SelectionModeAnnotation
     public var selectionMode: Int = SINGLE_CHOICE_SELECTION
@@ -440,45 +449,7 @@ public class ChippedEditText : ConstraintLayout {
             val typedArray: TypedArray = context
                 .obtainStyledAttributes(attrs, R.styleable.ChippedEditText)
 
-            if (typedArray.hasValue(R.styleable.ChippedEditText_title)) {
-                title = typedArray.getString(R.styleable.ChippedEditText_title) ?: ""
-            }
-
-            if (typedArray.hasValue(R.styleable.ChippedEditText_selectionMode)) {
-                selectionMode = when (val intValue = typedArray.getInt(R.styleable.ChippedEditText_selectionMode, SINGLE_CHOICE_SELECTION)) {
-                    SINGLE_CHOICE_SELECTION -> SINGLE_CHOICE_SELECTION
-                    MULTI_CHOICE_SELECTION -> MULTI_CHOICE_SELECTION
-                    else -> {
-                        Timber.e("Invalid selection mode value $intValue!")
-                        SINGLE_CHOICE_SELECTION
-                    }
-                }
-            }
-
-            if (typedArray.hasValue(R.styleable.ChippedEditText_elementType)) {
-                when (typedArray.getInt(R.styleable.ChippedEditText_elementType, UNKNOWN_ELEMENT_TYPE)) {
-                    STRING_ELEMENT_TYPE -> {
-                        elementType = STRING_ELEMENT_TYPE
-                        fillStringElements(typedArray)
-                    }
-                    INTEGER_ELEMENT_TYPE -> {
-                        elementType = INTEGER_ELEMENT_TYPE
-                        fillIntegerElements(typedArray)
-                    }
-                    ENUMERATION_ELEMENT_TYPE -> {
-                        elementType = ENUMERATION_ELEMENT_TYPE
-                        fillEnumerationElements(typedArray)
-                    }
-                    else -> {
-                        check(false)
-                        STRING_ELEMENT_TYPE
-                    }
-                }
-            } else {
-                // Default type is string
-                elementType = STRING_ELEMENT_TYPE
-                fillStringElements(typedArray)
-            }
+            processAttributes(typedArray)
 
             // NOTE: checked element array size must be synchronized with elements themselves
             BooleanArray(elements.elementsSize()) { false }
@@ -488,6 +459,60 @@ public class ChippedEditText : ConstraintLayout {
 
         setupEditTextProperties()
         setupEditTextClickListener()
+    }
+
+    private fun processAttributes(typedArray: TypedArray) {
+        if (typedArray.hasValue(R.styleable.ChippedEditText_title)) {
+            title = typedArray.getString(R.styleable.ChippedEditText_title) ?: ""
+        }
+
+        if (typedArray.hasValue(R.styleable.ChippedEditText_hint)) {
+            hint = typedArray.getString(R.styleable.ChippedEditText_hint) ?: ""
+        }
+
+        if (typedArray.hasValue(R.styleable.ChippedEditText_changeHint)) {
+            changeHint = typedArray.getString(R.styleable.ChippedEditText_changeHint) ?: ""
+        }
+
+        if (typedArray.hasValue(R.styleable.ChippedEditText_clearHint)) {
+            clearHint = typedArray.getString(R.styleable.ChippedEditText_clearHint) ?: ""
+        }
+
+        if (typedArray.hasValue(R.styleable.ChippedEditText_selectionMode)) {
+            selectionMode = when (val intValue = typedArray.getInt(R.styleable.ChippedEditText_selectionMode, SINGLE_CHOICE_SELECTION)) {
+                SINGLE_CHOICE_SELECTION -> SINGLE_CHOICE_SELECTION
+                MULTI_CHOICE_SELECTION -> MULTI_CHOICE_SELECTION
+                else -> {
+                    Timber.e("Invalid selection mode value $intValue!")
+                    SINGLE_CHOICE_SELECTION
+                }
+            }
+        }
+
+        if (typedArray.hasValue(R.styleable.ChippedEditText_elementType)) {
+            when (typedArray.getInt(R.styleable.ChippedEditText_elementType, UNKNOWN_ELEMENT_TYPE)) {
+                STRING_ELEMENT_TYPE -> {
+                    elementType = STRING_ELEMENT_TYPE
+                    fillStringElements(typedArray)
+                }
+                INTEGER_ELEMENT_TYPE -> {
+                    elementType = INTEGER_ELEMENT_TYPE
+                    fillIntegerElements(typedArray)
+                }
+                ENUMERATION_ELEMENT_TYPE -> {
+                    elementType = ENUMERATION_ELEMENT_TYPE
+                    fillEnumerationElements(typedArray)
+                }
+                else -> {
+                    check(false)
+                    STRING_ELEMENT_TYPE
+                }
+            }
+        } else {
+            // Default type is string
+            elementType = STRING_ELEMENT_TYPE
+            fillStringElements(typedArray)
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -603,16 +628,19 @@ public class ChippedEditText : ConstraintLayout {
                 /*binding.chippedEdittextInputLayout.endIconMode = TextInputLayout.END_ICON_CLEAR_TEXT*/
                 binding.chippedEdittextInputLayout.endIconMode = TextInputLayout.END_ICON_CUSTOM
                 binding.chippedEdittextInputLayout.endIconDrawable = clearDrawable
+                binding.chippedEdittextInputLayout.endIconContentDescription = clearHint
             }
             EndIconType.Dropdown -> {
                 // NOTE: cause exception "EditText needs to be an AutoCompleteTextView if an Exposed Dropdown Menu is being used."
                 //binding.chippedEdittextInputLayout.endIconMode = TextInputLayout.END_ICON_DROPDOWN_MENU
                 binding.chippedEdittextInputLayout.endIconMode = TextInputLayout.END_ICON_CUSTOM
                 binding.chippedEdittextInputLayout.endIconDrawable = dropDownDrawable
+                binding.chippedEdittextInputLayout.endIconContentDescription = changeHint
             }
             EndIconType.None -> {
                 binding.chippedEdittextInputLayout.endIconMode = TextInputLayout.END_ICON_NONE
                 binding.chippedEdittextInputLayout.endIconDrawable = null
+                binding.chippedEdittextInputLayout.endIconContentDescription = ""
             }
         }
 

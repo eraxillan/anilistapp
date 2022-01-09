@@ -107,10 +107,10 @@ class BackdropBackLayerImpl: ConstraintLayout {
             search = binding.searchInput.text.toString(),
             year = binding.yearInput.checkedElementValue(),
             season = binding.seasonInput.checkedElementValue<MediaSeason>(),
-            formats = binding.formatInput.checkedElementsValues(),
+            formats = binding.formatsInput.checkedElementsValues(),
             status = binding.airingStatusInput.checkedElementValue<MediaStatus>(),
             country = binding.countryInput.checkedElementValue<MediaCountry>(),
-            sources = binding.sourceInput.checkedElementsValues(),
+            sources = binding.sourcesInput.checkedElementsValues(),
             isLicensed = (!binding.doujinInput.isChecked),
             genres = binding.genresInput.checkedElementsValues(),
             tags = binding.tagsInput.checkedElementsValues(),
@@ -123,10 +123,10 @@ class BackdropBackLayerImpl: ConstraintLayout {
             searchInput.setText(filterOptions.search)
             yearInput.checkElement(filterOptions.year)
             seasonInput.checkElement(filterOptions.season)
-            formatInput.checkElements(filterOptions.formats)
+            formatsInput.checkElements(filterOptions.formats)
             airingStatusInput.checkElement(filterOptions.status)
             countryInput.checkElement(filterOptions.country)
-            sourceInput.checkElements(filterOptions.sources)
+            sourcesInput.checkElements(filterOptions.sources)
             doujinInput.isChecked = filterOptions.isLicensed == false
             genresInput.checkElements(filterOptions.genres)
             tagsInput.checkElements(filterOptions.tags)
