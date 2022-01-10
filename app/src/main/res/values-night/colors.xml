@@ -16,7 +16,27 @@
  -->
 
 <resources>
+    <!--
+    #ffc947, or rgb(255, 201, 71), or hsl(42, 100%, 64%)
+    relative luminance: 0.635, or super.primaryColor + 0.2
+    -->
     <color name="primaryColor">#ffc947</color>
+
+    <!--
+    #3457cb, or rgb(84, 114, 211), or hsl(226, 59%, 58%)
+    relative luminance: 0.186, or super.secondaryColor + 0.1
+    -->
     <color name="secondaryColor">#5472d3</color>
-    <color name="error">#Ef9A9A</color>
+
+    <!--
+    #ef9a9a, or rgb(239, 154, 154), or hsl(0, 73%, 77%)
+    relative luminance: 0.438, or super.error - 0.24
+    -->
+    <color name="error">#ef9a9a</color>
+
+    <!--
+    #99b8ff, or rgb(153, 184, 255), or hsl(222, 100%, 80%)
+    relative luminance: 0.483, or super.selectedText + 0.4
+    -->
+    <color name="selectedText">#99b8ff</color>
 </resources>

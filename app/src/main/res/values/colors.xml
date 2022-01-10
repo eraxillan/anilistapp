@@ -17,20 +17,55 @@
  -->
 
 <resources>
+    <!--
+    #ff9800, or rgb(255, 152, 0), or hsl(36, 100%, 50%)
+    relative luminance: 0.437
+    -->
     <color name="primaryColor">#ff9800</color>
+    <!--
+    #ffc947. or rgb(255, 201, 71), or hsl(42, 100%, 64%)
+    relative luminance: 0.635, or primaryColor + 0.2
+    -->
     <color name="primaryLightColor">#ffc947</color>
+    <!--
+    #c66900. or rgb(198, 105, 0), or hsl(32, 100%, 39%)
+    relative luminance: 0.221, or primaryColor - 0.2
+    -->
     <color name="primaryDarkColor">#c66900</color>
 
+    <!--
+    #0d47a1, or rgb(13, 71, 161), or hsl(216, 85%, 34%)
+    relative luminance: 0.072
+    -->
     <color name="secondaryColor">#0d47a1</color>
+    <!--
+    #5472d3, or rgb(84, 114, 211), or hsl(226, 59%, 58%)
+    relative luminance: 0.186, secondaryColor + 0.1
+    -->
     <color name="secondaryLightColor">#5472d3</color>
+    <!--
+    #002171, or rgb(0, 33, 113), or hsl(222, 100%, 22%)
+    relative luminance: 0.023, secondaryColor - 0.05
+    -->
     <color name="secondaryDarkColor">#002171</color>
 
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#ffffff</color>
 
-    <color name="white">#deffffff</color>
-    <color name="red">#F01414</color>
-    <color name="grey">#D3D3D3</color>
+    <!--
+    #e53935, or rgb(229, 57, 53), or hsl(1, 77%, 55%)
+    relative luminance: 0.198
+    -->
+    <color name="error">#e53935</color> <!-- Red 600 -->
 
-    <color name="error">#E53935</color> <!-- Red 600 -->
+    <!--
+    #0d47a1, or rgb(13, 71, 161), or hsl(216, 85%, 34%)
+    relative luminance: 0.072
+    -->
+    <color name="selectedText">#0d47a1</color>
+
+    <color name="black">#de000000</color>
+    <color name="white">#deffffff</color>
+    <color name="red">#f01414</color>
+    <color name="grey">#d3d3d3</color>
 </resources>
